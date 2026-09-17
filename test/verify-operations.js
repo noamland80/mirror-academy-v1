@@ -261,8 +261,12 @@ sec('MIRROR_MODE=production SEEDS NOTHING AT ALL');
      /\/etc\/mirror\/mirror\.env[\s\S]{0,200}permissions: '0600'/.test(ci));
   ok('Every secret is a commented placeholder, not a value',
      /# STRIPE_SECRET_KEY=\s*$/m.test(ci) && /# MAIL_API_KEY=\s*$/m.test(ci));
-  ok('It provisions TLS rather than leaving it to be remembered',
-     /caddy/i.test(ci) && /__ADMIN_EMAIL__/.test(ci));
+  // The admin address used to be a placeholder here. It is now filled in, so
+  // what matters is that Caddy has SOME address to send expiry warnings to —
+  // a certificate that silently stops renewing is how a hosted product goes
+  // dark on a Tuesday.
+  ok('Caddy has an address for certificate-expiry warnings',
+     /caddy/i.test(ci) && /\bemail\s+\S+@\S+\.\S+/.test(ci));
   ok('It installs the nightly backup AND the restore rehearsal',
      /mirror-backup\.timer/.test(ci) && /mirror-restore-drill\.timer/.test(ci));
   ok('It closes every port but ssh, http and https',
@@ -290,7 +294,10 @@ sec('EVERY SHELL SCRIPT IN THE DEPLOYMENT KIT PARSES');
     const yamlText = fs.readFileSync(path.join(ROOT, 'deploy', 'cloud-init.yaml'), 'utf8');
     // The scripts are literal blocks under `content: |`, indented six spaces.
     const blocks = [...yamlText.matchAll(/- path: (\/[^\n]*\.sh)\n(?:[^\n]*\n)*?\s+content: \|\n((?:      [^\n]*\n|\n)+)/g)];
-    ok('Both shell scripts were found in the kit', blocks.length === 2, String(blocks.length));
+    // Three now: deploy, rollback and the hostname derivation. Asserted as
+    // "at least the ones we know about" so adding a fourth does not fail the
+    // suite for existing.
+    ok('Every shell script in the kit was found', blocks.length >= 3, String(blocks.length));
     for (const [, scriptPath, body] of blocks) {
       const src = body.split('\n').map(l => l.replace(/^ {6}/, '')).join('\n');
       const f = path.join(tmp, path.basename(scriptPath));
