@@ -91,8 +91,12 @@ ok('The operator opens the clinic', opened.status === 201, JSON.stringify(opened
 ok('A manager account comes with it', !!(opened.body && opened.body.manager && opened.body.manager.email === 'marta@ribe.test'));
 ok('Her password is generated, not chosen for her by a form',
    !!(opened.body && typeof opened.body.password === 'string' && opened.body.password.length >= 12));
-ok('The plan is the Founding Pilot with ten seats',
-   opened.body.clinic.plan === 'founding_pilot' && opened.body.clinic.seats === 10);
+// The entitlement is governance, not a literal: the suite asks the plan what
+// it grants, so a seat-count change cannot leave this asserting the old number.
+const SEATS = require('../server/tenancy').PLANS.founding_pilot.seats;
+ok(`The plan is the Founding Pilot with ${SEATS} seats`,
+   opened.body.clinic.plan === 'founding_pilot' && opened.body.clinic.seats === SEATS,
+   String(opened.body.clinic.seats));
 
 const MANAGER_PW = opened.body.password;
 
@@ -117,7 +121,9 @@ ok('No movement is reported as "0 of 0"',
    j0.body.stages.map(s => `${s.key}:${s.done}/${s.total}`).join(' '));
 ok('With nothing recorded, the next step is not "wait for data"',
    j0.body.next && j0.body.next.kind === 'moment', j0.body.next && j0.body.next.kind);
-ok('It names ten seats she has not used', j0.body.team.seatsTotal === 10 && j0.body.team.practitioners === 0);
+ok(`It names ${SEATS} seats she has not used`,
+   j0.body.team.seatsTotal === SEATS && j0.body.team.practitioners === 0,
+   String(j0.body.team.seatsTotal));
 
 // ===========================================================================
 sec('3 · SHE WALKS ONE REAL CONSULTATION MOMENT HERSELF');
@@ -282,7 +288,9 @@ ok('The clinic keeps the field journal entry',
 const invites = await call('GET', '/api/invites', { token: mgr });
 ok('The accepted invitation is shown as accepted',
    invites.body.invites.some(i => i.email === 'lucia@ribe.test' && i.state === 'accepted'));
-ok('Nine seats remain', invites.body.seats.used === 2 && invites.body.seats.total === 10);
+ok(`${SEATS - 2} seats remain`,
+   invites.body.seats.used === 2 && invites.body.seats.total === SEATS,
+   `${invites.body.seats.used}/${invites.body.seats.total}`);
 
 // ===========================================================================
 sec('8 · TENANTS CANNOT SEE EACH OTHER ALONG THIS PATH');
