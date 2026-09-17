@@ -1,0 +1,47 @@
+{
+  "product": "MIRROR Interactive Sales Academy",
+  "component": "MIRROR Interactive Sales Academy — 10 modules / 60 lessons / 659 minutes. Every lesson closes LEARN→SEE→DECIDE→CONSEQUENCE→UNDERSTAND→RETRY→APPLY→REFLECT with a retry that declares what it changes, teaches its reasoning (why a competent practitioner errs, what the client is thinking, a weak/average/strong ladder), applies that reasoning to named treatments at Madrid prices, and traces itself on screen to chapter, principle, phase, Trust Stage, Standard, Duty and Toolkit. 9 consultation cases. Full EN/ES parity of instructional value, not only of strings.",
+  "version": "4.3.0",
+  "buildId": "mirror-academy-v1",
+  "builtAt": "2026-09-16",
+  "descriptor": "MIRROR Interactive Sales Academy",
+  "intellectualOrigin": "Based on the MIRROR Method from The Beauty Sales Secrets",
+  "endorsement": "Endorsed by Clinic Scale System",
+  "canonicalSource": "MBOK Ch.1 s1.16 (8 phases), Ch.2 (4 duties), Ch.3 (7 stages / 6 standards), Ch.6 (continuum); MIRROR Toolkit v1.0; Five Engines product layer",
+  "contentSource": "The Beauty Sales Secrets (EN/ES) — see BOOK_MIRROR_CONTENT_MAP.md for the per-module provenance table",
+  "languages": [
+    "en",
+    "es"
+  ],
+  "relationshipToReleaseCandidate": "SEPARATE BUILD. mirror-wow-v1-20260901 is untouched and remains the release candidate under Architecture review. This build forks its engine layer and adds the Academy; it must not be merged into that RC without an explicit decision.",
+  "coverage": {
+    "modules": "10/10",
+    "lessons": 60,
+    "teachingMinutes": 659,
+    "exerciseBlocks": 329,
+    "retryMoments": 60,
+    "treatmentCards": 150,
+    "treatmentFamilies": 26,
+    "beforeAfterConversations": 22,
+    "cases": 9,
+    "languages": "EN + ES at full instructional parity",
+    "sourceTracedLessons": "60/60 on screen",
+    "lessonsWhereReadingOutweighsDeciding": 0
+  },
+  "methodVsArchitecture": "TWO LAYERS, NOT ONE. The 6-step MIRROR Method (The Beauty Sales Secrets, Ch.8-13) is the learner-facing method; the 8-phase MIRROR Consultation Architecture (MBOK v0.17 Ch.1 s1.16) is the professional operating system. They are joined, never collapsed, in server/framework/method.js and taught to the learner in Module 1 lesson m1l6. The book does not teach the 8-phase architecture and this build does not claim it does.",
+  "credentialPolicy": "The three demo passwords published in the public repository are burned. MIRROR_MODE=hosted refuses them, requires env-supplied replacements of at least 16 characters, and re-proves at startup that no burned credential authenticates against the live database.",
+  "audit": "See ACADEMY_DEPTH_AUDIT.md — 15-lesson stratified depth audit across six seeds, three learner journeys, and the findings fixed as a result.",
+  "runtime": "Node 22.5+ needs nothing installed (uses node:sqlite). Older Node fetches one component on first run. express/cors/uuid are vendored into the package; there is no build step.",
+  "learningLoop": "60/60 lessons close the loop. 60 retry moments, each naming which of six axes moves: disclosure 15, clientResponse 12, continuation 10, recommendation 9, trust 7, objection 7. translate and drill blocks are explicitly NOT counted as retries — a reveal is not a second attempt.",
+  "bookProvenance": "Citations are verified against the author’s own EPUB by test/verify-book-citations.js, including that every client story is attributed to the chapter it actually appears in. The book text is not shipped in the product.",
+  "validation": "NOT VALIDATED WITH REAL USERS. No efficacy claim is made anywhere in the product. See PILOT_USER_TEST.md for the unrun protocol.",
+  "languagePolicy": "Both languages ship. Every client-facing string is a T(en, es) pair resolved at the API boundary; parity is enforced on instructional value, not only on key sets — see test/verify-spanish-is-spanish.js and test/verify-no-english-comparisons.js.",
+  "treatmentPolicy": "Every lesson applies its own principle to named treatments a Madrid clinic sells, at plausible 2026 prices, in that treatment’s own vocabulary. No efficacy or clinical claim is made anywhere: the product describes what is said in the room, never what a treatment achieves. Enforced by test/verify-treatments.js and test/verify-nothing-invented.js.",
+  "passwordPolicy": "A manager issues a single-use 48-hour reset link for somebody in her own clinic and never sees or chooses the password. A reset preserves the practitioner’s account id, so nothing she has recorded is orphaned. Enforced by test/verify-password-reset.js.",
+  "qa": "20 verifiers, 4,576 assertions, 0 failures. Every screen visited for both roles, in both languages, at 1360px and 390px: zero page errors and zero layout defects. The only failing network request in this environment is Google Fonts, blocked by the sandbox proxy.",
+  "notProductionReady": [
+    "No hosted instance. All deploy artifacts (Dockerfile, render.yaml, fly.toml) exist and are verified, but this environment blocks tunnels and PaaS APIs, so the product has never been served from a public URL.",
+    "Never seen in its real typefaces: Google Fonts is blocked here, so all visual verification used fallback faces.",
+    "No real-user validation, therefore no efficacy claim."
+  ]
+}

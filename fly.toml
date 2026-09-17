@@ -1,0 +1,38 @@
+# Fly.io — same image, same contract.
+#
+#   fly launch --no-deploy
+#   fly volumes create mirror_data --size 1
+#   fly secrets set MIRROR_SEED_PW_PRAC1=... MIRROR_SEED_PW_PRAC2=... \
+#                   MIRROR_SEED_PW_MGR=...   MIRROR_ADMIN_TOKEN=...
+#   fly deploy
+#
+# Each secret must be at least 16 characters and must not be one of the three
+# passwords published to the public repository; the server refuses both.
+app = "mirror-academy"
+primary_region = "mad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  MIRROR_MODE = "hosted"
+  MIRROR_DB = "/data/mirror.db"
+  PORT = "8080"
+
+[[mounts]]
+  source = "mirror_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "4s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/api/health"

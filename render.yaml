@@ -1,0 +1,36 @@
+# Render blueprint — one service, one persistent disk.
+#
+# Deploying:
+#   1. push this repository to GitHub
+#   2. Render → New → Blueprint → select the repository
+#   3. fill the three seed passwords and the admin token when prompted
+#      (generateValue asks Render to create them; read them from the dashboard)
+#
+# MIRROR_MODE=hosted makes the three published demo passwords structurally
+# incapable of authenticating — the server refuses to boot if any of them is
+# supplied, and re-proves it against the live database at startup.
+services:
+  - type: web
+    name: mirror-academy
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: MIRROR_MODE
+        value: hosted
+      - key: MIRROR_DB
+        value: /data/mirror.db
+      - key: PORT
+        value: 8080
+      - key: MIRROR_SEED_PW_PRAC1
+        generateValue: true
+      - key: MIRROR_SEED_PW_PRAC2
+        generateValue: true
+      - key: MIRROR_SEED_PW_MGR
+        generateValue: true
+      - key: MIRROR_ADMIN_TOKEN
+        generateValue: true
+    disk:
+      name: mirror-data
+      mountPath: /data
+      sizeGB: 1
