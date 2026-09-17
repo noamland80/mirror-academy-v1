@@ -42,7 +42,7 @@
 # The three values baked in below do NOT depend on the server, so they are
 # already filled in and there is nothing to edit:
 #   repository   github.com/noamland80/mirror-academy-v1
-#   tag          mirror-commercial-rc-20260917
+#   tag          mirror-commercial-rc-20260917-2
 #   admin email  where Let's Encrypt sends certificate-expiry warnings
 # =============================================================================
 
@@ -336,7 +336,7 @@ write_files:
       #!/bin/bash
       # MIRROR deploy / update / rollback. Usage: /opt/mirror/deploy.sh [git-ref] [--no-record]
       set -euo pipefail
-      REF="${1:-mirror-commercial-rc-20260917}"
+      REF="${1:-mirror-commercial-rc-20260917-2}"
       RECORD=1
       [ "${2:-}" = "--no-record" ] && RECORD=0
       APP=/opt/mirror/app
