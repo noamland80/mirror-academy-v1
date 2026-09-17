@@ -1,0 +1,2088 @@
+/* ==========================================================================
+   MIRROR INTERACTIVE SALES ACADEMY — visual system
+   Porcelain / espresso / champagne. Marcellus display, Mulish text.
+   Mobile first: every layout starts single-column and earns its columns.
+   ========================================================================== */
+:root{
+  --espresso:#241E19; --espresso-2:#2E2620; --espresso-3:#3A3029;
+  --ink:#241E19; --ink-2:#5C544C; --ink-3:#94897D; --ink-4:#B6ABA0;
+  --line:#E5DED4; --line-2:#EFEAE2; --bg:#F5F1EC; --panel:#fff; --panel-2:#FBF7EF;
+  --champagne:#A07E3C; --gold:#C9A45C; --gold-deep:#7E6229; --gold-soft:#F4EDDE;
+  --sage:#47725D; --sage-soft:#E6EEE9;
+  --rose:#A34D53; --rose-soft:#F6E7E7;
+  --amber:#8a5a12; --amber-soft:#F8F1E2;
+  --mercury:linear-gradient(90deg,#C8CCD1 0%,#E9E2D4 42%,#B99C56 100%);
+  --r:14px; --r-lg:20px;
+  --serif:"Marcellus",Georgia,"Times New Roman",serif;
+  --sans:"Mulish",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --shadow:0 22px 55px -34px rgba(36,30,25,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{margin:0 0 .4em;line-height:1.2;font-weight:600}
+h1{font-family:var(--serif);font-weight:400;font-size:25px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-weight:400;font-size:20px}
+h3{font-size:15.5px}
+h4{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+p{margin:0 0 .85em}
+a{color:var(--gold-deep)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+@media(min-width:820px){ .wrap{padding:0 28px} body{font-size:15px} h1{font-size:30px} }
+.hidden{display:none!important}
+.muted{color:var(--ink-3);font-size:13px}
+.center{text-align:center}
+.sp{flex:1}
+
+button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:#fff;padding:10px 16px;color:var(--ink);transition:.15s}
+button:hover:not(:disabled){border-color:var(--ink-4)}
+button.primary{background:var(--espresso);border-color:var(--espresso);color:#fff;font-weight:600}
+button.primary:hover:not(:disabled){background:var(--espresso-2)}
+button.gold{background:var(--champagne);border-color:var(--champagne);color:#fff;font-weight:600}
+button.gold:hover:not(:disabled){background:var(--gold-deep)}
+button.ghost{background:transparent;border-color:transparent;color:var(--ink-2);padding:8px 10px}
+button.lg{padding:14px 24px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;border-radius:999px}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,textarea,select{font-family:inherit;font-size:14px;width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold-soft);border-color:var(--champagne)}
+textarea{min-height:88px;resize:vertical}
+label{display:block;font-size:13px;font-weight:600;margin:0 0 6px;color:var(--ink-2)}
+.field{margin-bottom:14px}
+.err{background:var(--rose-soft);color:var(--rose);border-radius:10px;padding:11px 14px;font-size:13.5px;margin-bottom:14px}
+.notice{background:var(--amber-soft);color:var(--amber);border-radius:10px;padding:11px 14px;font-size:13.5px}
+
+/* ---------- wordmark ---------- */
+.wm{font-family:var(--serif);letter-spacing:.15em;position:relative;display:inline-block;line-height:1}
+.wm::after{content:attr(data-wm);position:absolute;left:0;top:100%;transform:scaleY(-1);
+  background:linear-gradient(to bottom,currentColor,transparent 60%);opacity:.28;
+  -webkit-background-clip:text;background-clip:text;color:transparent;pointer-events:none}
+
+/* ---------- sign in ---------- */
+.signin{min-height:100vh;display:grid;grid-template-columns:1fr}
+@media(min-width:900px){.signin{grid-template-columns:1.05fr .95fr}}
+.brandside{background:linear-gradient(165deg,#241E19 0%,#2E2620 55%,#3A3029 100%);color:#EFEAE3;padding:38px 26px;display:flex;flex-direction:column}
+@media(min-width:900px){.brandside{padding:56px 54px}}
+@media(max-width:899px){.brandside{min-height:auto}}
+.brandside .wm{font-size:34px;color:#EFEAE3}
+@media(min-width:900px){.brandside .wm{font-size:46px}}
+.brandside .desc{font-family:var(--sans);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-top:34px}
+.brandside .pitch{margin-top:34px;font-family:var(--serif);font-size:21px;line-height:1.42;max-width:23ch}
+@media(min-width:900px){.brandside .pitch{margin-top:auto;font-size:24px}}
+.brandside .sub{color:#BCB2A5;font-size:13.5px;margin-top:16px;max-width:38ch}
+.endorse{margin-top:26px;padding-top:20px;border-top:1px solid rgba(239,234,227,.14);display:flex;align-items:center;gap:13px}
+.endorse .logo{width:46px;height:46px;border-radius:9px;background:rgba(239,234,227,.07);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.endorse .et{font-size:11.5px;line-height:1.55;color:#877D71}
+.endorse .et b{color:#BCB2A5;font-weight:600;display:block}
+.formside{display:flex;align-items:center;justify-content:center;padding:34px 22px;background:var(--panel)}
+.formcard{width:100%;max-width:390px}
+.roletabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0 24px}
+.roletab{padding:13px 10px;border:1px solid var(--line);border-radius:11px;text-align:center;cursor:pointer;background:#fff}
+.roletab .rt{font-weight:600;font-size:14px}
+.roletab .rd{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.roletab.on{border-color:var(--espresso);background:var(--espresso);color:#fff}
+.roletab.on .rd{color:#BCB2A5}
+
+/* ---------- app shell ---------- */
+header.top{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60}
+.top-in{display:flex;align-items:center;gap:12px;min-height:56px;padding-top:8px;padding-bottom:8px}
+.top-in .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.top-in .brand .wm{font-size:18px;color:var(--espresso)}
+.top-in .brand small{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+@media(max-width:700px){.top-in .brand small{display:none}}
+.langsw{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:0 0 auto}
+.langsw button{border:0;border-radius:0;padding:6px 11px;font-size:11.5px;font-weight:700;letter-spacing:.08em;background:#fff;color:var(--ink-3)}
+.langsw button.on{background:var(--espresso);color:#fff}
+/* Two lines, each of them ONE line. A clinic called "Clínica Dermoestética
+   Castellana" wrapped under the role and pushed the header open by a row, so
+   both lines are now cut with an ellipsis instead. */
+.whoami{font-size:12px;color:var(--ink-3);text-align:right;line-height:1.3;max-width:190px;min-width:0}
+.whoami b,.whoami span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.whoami b{color:var(--ink);font-weight:600;font-size:13px}
+@media(max-width:860px){.whoami{max-width:140px}}
+@media(max-width:560px){.whoami{display:none}}
+/* The tab rail scrolls on a phone, and says so. Two champagne shadows sit
+   under each edge; two panels of paper sit on top of them and scroll WITH the
+   content, so each shadow is covered exactly when there is nothing more to
+   see in that direction. No script, and nothing to go stale. */
+nav.tabs{border-bottom:1px solid var(--line);position:sticky;top:56px;z-index:55;
+  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;scroll-padding-inline:18px;scrollbar-width:none;
+  background-color:var(--panel);
+  background-image:
+    linear-gradient(90deg,var(--panel) 62%,rgba(255,255,255,0)),
+    linear-gradient(270deg,var(--panel) 62%,rgba(255,255,255,0)),
+    linear-gradient(90deg,var(--gold) 0 1.5px,rgba(126,98,41,.2) 1.5px,rgba(126,98,41,.05) 46%,rgba(126,98,41,0)),
+    linear-gradient(270deg,var(--gold) 0 1.5px,rgba(126,98,41,.2) 1.5px,rgba(126,98,41,.05) 46%,rgba(126,98,41,0));
+  background-position:0 0,100% 0,0 0,100% 0;
+  background-size:32px 100%,32px 100%,22px 100%,22px 100%;
+  background-repeat:no-repeat;
+  background-attachment:local,local,scroll,scroll}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs .tabs-in{display:flex;gap:2px;min-width:max-content}
+nav.tabs button{border:0;border-radius:0;background:transparent;padding:13px 14px;font-size:13.5px;color:var(--ink-2);border-bottom:2px solid transparent;white-space:nowrap;scroll-snap-align:center;transition:color .16s}
+nav.tabs button:first-child{padding-left:18px}
+nav.tabs button:last-child{padding-right:26px}
+nav.tabs button.on{color:var(--espresso);font-weight:700;border-bottom-color:var(--champagne)}
+@media(max-width:719px){
+  nav.tabs button{padding:12px 11px;font-size:13px;letter-spacing:.005em}
+  nav.tabs button:first-child{padding-left:18px}
+  nav.tabs button:last-child{padding-right:30px}
+}
+/* A short screen — an empty field journal, a clinic with nothing recorded —
+   used to end its footer halfway up the window with bare paper underneath it.
+   The shell is a column the height of the viewport and `main` takes the
+   slack, so the footer sits on the bottom edge wherever the content stops. */
+#app{display:flex;flex-direction:column;min-height:100vh}
+#app.hidden{display:none!important}
+main{padding:20px 0 90px;flex:1 0 auto}
+@media(min-width:820px){main{padding:26px 0 90px}}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+@media(min-width:820px){.card{padding:22px 24px}}
+.card.tight{padding:15px 16px}
+.card.flat{box-shadow:none}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
+@media(min-width:940px){.grid2{grid-template-columns:1fr 320px}}
+.grid2>*{min-width:0}
+.cols{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:700px){.cols.two{grid-template-columns:1fr 1fr}}
+@media(min-width:960px){.cols.three{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(160deg,#241E19 0%,#2E2620 100%);color:#EFEAE3;border-radius:var(--r-lg);padding:24px 22px;margin-bottom:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+@media(min-width:820px){.hero{padding:34px 36px}}
+.hero:after{content:"";position:absolute;right:-90px;top:-90px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.16),transparent 65%)}
+.hero h1{color:#fff;margin-bottom:8px;position:relative}
+.hero p{color:#BCB2A5;max-width:62ch;position:relative;margin-bottom:0}
+.hero .kicker{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
+.herostats{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid rgba(239,234,227,.14);position:relative}
+.herostats div{font-size:11.5px;color:#877D71;letter-spacing:.05em}
+.herostats b{display:block;font-family:var(--serif);font-size:23px;color:#EFEAE3;font-weight:400;letter-spacing:0}
+
+/* ---------- module cards ---------- */
+.modgrid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:680px){.modgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:1060px){.modgrid{grid-template-columns:repeat(3,1fr)}}
+.mod{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:.16s}
+.mod.available{cursor:pointer}
+.mod.available:hover{border-color:var(--champagne);transform:translateY(-2px);box-shadow:0 18px 40px -30px rgba(36,30,25,.4)}
+.mod .cover{height:104px;position:relative;background:var(--espresso)}
+.mod .cover svg{position:absolute;inset:0;width:100%;height:100%}
+.mod .cover .num{position:absolute;left:16px;bottom:10px;font-family:var(--serif);font-size:30px;color:rgba(255,255,255,.92);line-height:1}
+.mod .cover .ph{position:absolute;right:14px;top:12px;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(239,234,227,.62);font-weight:700}
+.mod .body{padding:15px 17px;flex:1;display:flex;flex-direction:column}
+.mod h3{font-family:var(--serif);font-weight:400;font-size:18px;margin-bottom:6px}
+.mod .strap{font-size:13px;color:var(--ink-2);margin-bottom:12px;flex:1}
+.mod .meta{display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--line-2);padding-top:11px}
+.badge{display:inline-block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:999px}
+.badge.ready{background:var(--sage-soft);color:var(--sage)}
+.badge.prod{background:var(--line-2);color:var(--ink-3)}
+.badge.done{background:var(--gold-soft);color:var(--gold-deep)}
+.ring{width:34px;height:34px;flex:0 0 auto}
+
+/* ---------- lesson player ---------- */
+.lessonhead{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.lessonhead .back{flex:0 0 auto}
+.progressline{height:4px;background:var(--line-2);border-radius:3px;overflow:hidden;margin:14px 0 18px}
+.progressline i{display:block;height:100%;background:var(--mercury);width:0;transition:width .5s cubic-bezier(.3,.7,.3,1)}
+.stage{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.stage:before{content:"";width:18px;height:1px;background:var(--champagne);display:block}
+.block{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 18px;margin-bottom:16px}
+@media(min-width:820px){.block{padding:26px 28px}}
+.block.done{opacity:.8}
+.block .prompt{font-family:var(--serif);font-size:19px;line-height:1.4;margin-bottom:16px}
+.block p.lead{font-size:15px;color:var(--ink-2)}
+/* The pull-quote treatment for a passage from the book is set out in full with
+   the rest of the lesson player, at the foot of this sheet. */
+.insight{color:#EFEAE3;border:0}
+.clientline{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--champagne);border-radius:0 var(--r) var(--r) 0;padding:16px 18px;margin-bottom:16px}
+.clientline blockquote{margin:0;font-family:var(--serif);font-size:18px;line-height:1.5}
+.clientline .who{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:8px}
+
+.opts{display:grid;gap:10px}
+.opt{border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;background:#fff;transition:.14s;text-align:left;width:100%;display:block;font-size:14px}
+.opt:hover:not(.locked){border-color:var(--champagne);background:#fffdf9}
+.opt.locked{cursor:default}
+.opt .lab{font-weight:600;margin-bottom:5px;font-size:14.5px;line-height:1.45}
+.opt .say{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.opt.sel{border-color:var(--espresso);box-shadow:0 0 0 3px var(--gold-soft)}
+.opt.correct{border-color:var(--sage);background:var(--sage-soft)}
+.opt.wrong{border-color:var(--rose);background:var(--rose-soft)}
+.opt .why{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--ink-2)}
+.verdict{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;padding:4px 10px;border-radius:999px;margin-bottom:8px}
+.v-best{background:var(--sage-soft);color:var(--sage)}
+.v-weak{background:var(--amber-soft);color:var(--amber)}
+.v-harmful{background:var(--rose-soft);color:var(--rose)}
+.principle{margin-top:14px;background:var(--gold-soft);border-radius:10px;padding:12px 14px;font-size:13.5px;color:var(--gold-deep)}
+.principle b{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+
+.transcript{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tline{display:flex;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line-2);cursor:pointer;background:#fff;transition:.14s}
+.tline:last-child{border-bottom:0}
+.tline:hover:not(.locked){background:var(--panel-2)}
+.tline .who{flex:0 0 54px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-3);padding-top:3px}
+.tline.client .who{color:var(--champagne)}
+.tline .txt{font-size:14px;line-height:1.5}
+.tline.client .txt{font-family:var(--serif);font-size:15px}
+.tline.hit{background:var(--rose-soft)}
+.tline.miss{opacity:.55}
+
+.sortgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+@media(min-width:760px){.sortgrid{grid-template-columns:repeat(3,1fr)}}
+.bucket{border:1px dashed var(--line);border-radius:12px;padding:12px;min-height:96px;background:var(--panel-2)}
+.bucket h4{margin-bottom:8px}
+.bucket .drop{font-size:12.5px;color:var(--ink-3)}
+.frag{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;font-family:var(--serif);font-size:14.5px;margin-bottom:8px;cursor:pointer}
+.frag.sel{border-color:var(--espresso);box-shadow:0 0 0 3px var(--gold-soft)}
+.frag.ok{border-color:var(--sage);background:var(--sage-soft)}
+.frag.no{border-color:var(--rose);background:var(--rose-soft)}
+.frag small{display:block;font-family:var(--sans);font-size:11px;color:var(--ink-3);margin-top:4px}
+
+.orderlist{display:grid;gap:9px}
+.orderitem{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:#fff;cursor:pointer}
+.orderitem .ord{flex:0 0 26px;height:26px;border-radius:50%;background:var(--line-2);color:var(--ink-3);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+/* The title block takes the slack so anything after it — a lesson's running
+   time on the module page — sits on one right-hand margin instead of landing
+   wherever that particular title happened to stop. */
+.orderitem .txt{flex:1 1 0;min-width:0}
+.orderitem.picked .ord{background:var(--espresso);color:#fff}
+.orderitem.ok{border-color:var(--sage)}
+.orderitem.no{border-color:var(--rose)}
+.orderitem .txt{font-size:13.5px;line-height:1.5}
+
+.matchrow{display:grid;grid-template-columns:1fr;gap:8px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+@media(min-width:640px){.matchrow{grid-template-columns:1fr 250px;align-items:center;gap:16px}}
+.matchrow:last-child{border-bottom:0}
+.matchrow .q{font-family:var(--serif);font-size:15px}
+.matchrow.ok select{border-color:var(--sage);background:var(--sage-soft)}
+.matchrow.no select{border-color:var(--rose);background:var(--rose-soft)}
+
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:700px){.gallery{grid-template-columns:repeat(4,1fr)}}
+.gitem{border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;cursor:pointer;background:#fff;transition:.14s}
+.gitem:hover{border-color:var(--champagne)}
+.gitem.on{border-color:var(--espresso);background:var(--espresso);color:#fff}
+.gitem svg{display:block;margin:0 auto 7px}
+.gitem .nm{font-size:12px;font-weight:600;line-height:1.3}
+.gpanel{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+.gpanel .say{font-family:var(--serif);font-size:16px;color:var(--ink);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+
+.pausebox{background:linear-gradient(150deg,#FBF7EF,#F5F1EC);border:1px solid var(--line);border-radius:12px;padding:20px;text-align:center}
+.pausedots{display:flex;gap:8px;justify-content:center;margin:14px 0}
+.pausedots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block}
+.pausedots i.on{background:var(--champagne)}
+.second{animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.checklist{display:grid;gap:8px;margin-top:10px}
+.chk{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff;cursor:pointer;font-size:13.5px}
+.chk input{width:auto;flex:0 0 auto;margin-top:2px}
+.chk.ok{border-color:var(--sage);background:var(--sage-soft)}
+.chk.no{border-color:var(--rose);background:var(--rose-soft)}
+.chk .note{display:block;font-size:12px;color:var(--ink-3);margin-top:4px}
+
+/* ---------- consultation runner ---------- */
+.phasebar{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.phasebar .pn{font-family:var(--serif);font-size:22px;color:var(--espresso);line-height:1}
+.phasebar .pl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.phasebar .obj{font-size:13px;color:var(--ink-2);flex:1;min-width:200px}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dot{width:22px;height:5px;border-radius:3px;background:var(--line)}
+.dot.done{background:var(--champagne)}.dot.now{background:var(--espresso)}
+.moment{background:linear-gradient(155deg,#FFFFFF,#FBF7EF);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:0 18px 45px -34px rgba(36,30,25,.3)}
+.moment .lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--champagne);font-weight:700;margin-bottom:12px}
+.clienthead{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.clienthead .avatar{flex:0 0 auto}
+.clienthead .nm{font-family:var(--serif);font-size:17px}
+.persona{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:4px 12px 4px 7px;font-size:11.5px;font-weight:600;margin-top:4px}
+.persona .d{width:8px;height:8px;border-radius:50%}
+.persona.open{background:var(--sage-soft);color:var(--sage)}.persona.open .d{background:var(--sage)}
+.persona.mid{background:var(--gold-soft);color:var(--gold-deep)}.persona.mid .d{background:var(--champagne)}
+.persona.guard{background:var(--rose-soft);color:var(--rose)}.persona.guard .d{background:var(--rose)}
+.moment blockquote{margin:0;font-family:var(--serif);font-size:19px;line-height:1.46}
+@media(min-width:820px){.moment blockquote{font-size:21px}}
+.moment .ctx{font-size:13.5px;color:var(--ink-2);margin-top:12px}
+.moment ul{margin:10px 0 0;padding-left:19px;font-size:13.5px;color:var(--ink-2)}
+.reaction{background:var(--gold-soft);border:1px solid #E5D9BC;border-radius:var(--r);padding:20px;margin-bottom:16px}
+.reaction blockquote{margin:0;font-family:var(--serif);font-size:18px;line-height:1.46}
+.trustline{height:6px;border-radius:3px;background:rgba(36,30,25,.09);overflow:hidden;margin-top:14px}
+.trustline i{display:block;height:100%;border-radius:3px;background:var(--mercury);width:0;transition:width 1.1s cubic-bezier(.25,.6,.25,1)}
+.shift{display:inline-block;font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:999px;margin:8px 6px 0 0}
+.shift.up{background:var(--sage-soft);color:var(--sage)}
+.shift.down{background:var(--rose-soft);color:var(--rose)}
+.shift.neutral{background:var(--line-2);color:var(--ink-2)}
+.fb .blk{padding:13px 0;border-bottom:1px solid var(--line-2)}
+.fb .blk:last-child{border:0;padding-bottom:0}
+.fb .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:5px}
+.fb .v{font-size:14.5px;line-height:1.55}
+.vd{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:4px 11px;border-radius:999px}
+.vd-A{background:var(--sage-soft);color:var(--sage)}.vd-P{background:var(--amber-soft);color:var(--amber)}.vd-N{background:var(--rose-soft);color:var(--rose)}
+.changes{list-style:none;margin:8px 0 0;padding:0}
+.changes li{padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.changes li:last-child{border:0}
+.st{margin-bottom:13px}
+.st .lab{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.bar{height:7px;background:var(--line-2);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px;transition:width .6s}
+.trustrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line-2);font-size:12.5px;gap:10px}
+.trustrow:last-child{border:0}
+.pip{display:flex;gap:3px;flex:0 0 auto}
+.pip i{width:7px;height:7px;border-radius:50%;background:var(--line);display:block}
+.pip i.f{background:var(--sage)}.pip i.n{background:var(--rose)}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--line-2);color:var(--ink-2);margin:0 5px 5px 0}
+.tag.gold{background:var(--gold-soft);color:var(--gold-deep)}
+.tag.rose{background:var(--rose-soft);color:var(--rose)}
+
+/* ---------- case picker ---------- */
+.casecard{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.casecard .top{display:flex;gap:14px;padding:18px;align-items:flex-start}
+.casecard h3{font-family:var(--serif);font-weight:400;font-size:19px;margin-bottom:4px}
+.casecard .sub{font-size:13.5px;color:var(--ink-2)}
+.casecard .facts{padding:0 18px 16px;font-size:12.5px;color:var(--ink-3)}
+.casecard .act{border-top:1px solid var(--line-2);padding:14px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.casecard.locked{opacity:.72}
+
+/* ---------- timeline / journal / manager ---------- */
+.timeline{position:relative;padding-left:26px}
+.timeline:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tp{position:relative;padding:0 0 18px}
+.tp:before{content:"";position:absolute;left:-22px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--champagne);border:2px solid var(--panel);box-shadow:0 0 0 2px var(--gold-soft)}
+.tp.neg:before{background:var(--rose);box-shadow:0 0 0 2px var(--rose-soft)}
+.tp .ph{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.tp .ti{font-size:14px;margin-top:3px}
+.evidence{background:var(--panel-2);border-left:3px solid var(--champagne);border-radius:0 10px 10px 0;padding:13px 15px;font-size:14px;line-height:1.55;margin-bottom:10px}
+.evidence.rose{border-left-color:var(--rose)}
+.evidence.sage{border-left-color:var(--sage)}
+.mgrpanel{margin-bottom:18px}
+.mgrpanel h4{margin-bottom:10px}
+table.people{width:100%;border-collapse:collapse;font-size:13px}
+table.people th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
+table.people td{padding:9px 8px 9px 0;border-bottom:1px solid var(--line-2)}
+table.people td:first-child{font-weight:600}
+@media(max-width:640px){table.people th:nth-child(4),table.people td:nth-child(4){display:none}}
+
+footer.foot{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;color:var(--ink-3);font-size:12px}
+footer.foot .fin{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+footer.foot b{color:var(--ink-2)}
+.spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--champagne);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:-4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- manager pattern graphics ---------- */
+.pbars{display:grid;gap:12px;margin-top:10px}
+.pbar{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.pbl{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13.5px;margin-bottom:7px}
+.pbl b{font-family:var(--serif);font-size:19px;font-weight:400}
+.pbt{height:8px;background:#EFEAE2;border-radius:4px;overflow:hidden}
+.pbt i{display:block;height:100%;border-radius:4px}
+.pbn{font-size:12px;color:var(--ink-3);margin-top:7px}
+
+/* ---------- consultation map ---------- */
+.dg{width:100%;height:auto;min-width:460px}
+.dgwrap{margin:6px 0 18px}
+.mapcard{background:linear-gradient(150deg,#FBF7EF,#F5F1EC);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+
+/* ---------- toolkit preview strip ---------- */
+.tkstrip{display:flex;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--line);
+  border-radius:12px;background:var(--panel-2);margin-bottom:14px}
+.tkstrip .tkm{flex:1;min-width:0}
+.tkstrip .tkm b{display:block;font-family:var(--serif);font-weight:400;font-size:16px}
+.tkstrip .tkm span{font-size:12.5px;color:var(--ink-3)}
+
+/* ---------- section headers with a rule ---------- */
+.secthead{display:flex;align-items:center;gap:14px;margin:28px 0 14px}
+.secthead h2{margin:0;white-space:nowrap}
+.secthead:after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- dark panel variant, to break up the cream ---------- */
+.card.dark{background:linear-gradient(150deg,#2E2620,#241E19);border-color:#241E19;color:#EFEAE3}
+.card.dark h4{color:var(--gold)}
+.card.dark .muted{color:#BCB2A5}
+.card.dark .evidence{background:rgba(239,234,227,.06);border-left-color:var(--gold);color:#EFEAE3}
+.ribbon{margin:-18px -18px 16px;border-radius:var(--r) var(--r) 0 0;overflow:hidden}
+@media(min-width:820px){.ribbon{margin:-22px -24px 18px}}
+
+/* ---------- two-layer reconciliation panel ---------- */
+.layers{display:grid;grid-template-columns:1fr;gap:14px;margin:6px 0 18px}
+@media(min-width:760px){.layers{grid-template-columns:1fr 1fr;gap:18px}}
+.layer{border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 14px;background:var(--panel);position:relative}
+.layer:first-child{background:var(--panel-2)}
+.layer:last-child{background:linear-gradient(150deg,#2E2620,#241E19);border-color:#241E19;color:#EFEAE3}
+.layer .laytag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:8px}
+.layer:last-child .laytag{color:var(--gold)}
+.layer h3{font-family:var(--serif);font-weight:400;font-size:18px;margin-bottom:4px}
+.layer .src{font-size:11.5px;color:var(--ink-3);margin-bottom:12px}
+.layer:last-child .src{color:#BCB2A5}
+.laylist{list-style:none;margin:0 0 12px;padding:0;counter-reset:lay}
+.laylist li{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--line-2);font-size:13.5px}
+.layer:last-child .laylist li{border-bottom-color:rgba(239,234,227,.12)}
+.laylist li:last-child{border-bottom:0}
+.laylist li b{font-family:var(--serif);font-weight:400;min-width:104px;color:var(--champagne)}
+.layer:last-child .laylist li b{color:var(--gold)}
+.laylist li span{flex:1;color:var(--ink-2)}
+.layer:last-child .laylist li span{color:#CFC6BA}
+.layer .note{font-size:12.5px;margin:0;color:var(--ink-2)}
+.layer:last-child .note{color:#BCB2A5}
+.statement{border-left:3px solid var(--gold);background:var(--gold-soft);padding:14px 16px;border-radius:0 var(--r) var(--r) 0;
+  font-family:var(--serif);font-size:16px;line-height:1.5;margin-bottom:16px}
+
+/* ---------- canonical mapping table ---------- */
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);margin-bottom:16px}
+table.matrix{border-collapse:collapse;width:100%;min-width:720px;font-size:12.5px}
+table.matrix th,table.matrix td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line-2)}
+table.matrix thead th{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:700;
+  background:var(--panel-2);border-bottom:1px solid var(--line);position:sticky;top:0}
+table.matrix tbody th[scope=row]{white-space:nowrap;font-weight:400}
+table.matrix .lt{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;
+  background:var(--espresso);color:var(--gold);font-family:var(--serif);font-size:12px;margin-right:8px}
+table.matrix .stepn{font-family:var(--serif);font-size:14px}
+table.matrix td{color:var(--ink-2)}
+table.matrix tr.prov td{background:var(--panel-2);color:var(--ink-3);font-size:11.5px;border-bottom:1px solid var(--line)}
+table.matrix tr.prov b{color:var(--champagne);letter-spacing:.1em;text-transform:uppercase;font-size:9.5px;margin-right:6px}
+table.matrix tr.mrow:hover td,table.matrix tr.mrow:hover th{background:var(--gold-soft)}
+
+/* ---------- honesty clause: where the layers do not line up ---------- */
+.gaps{border:1px dashed var(--line);border-radius:var(--r);padding:16px 18px 8px;background:transparent;margin-bottom:16px}
+.gaps h4{margin-bottom:10px}
+.gap{padding:8px 0;border-bottom:1px solid var(--line-2)}
+.gap:last-child{border-bottom:0}
+.gap b{font-family:var(--serif);font-weight:400;font-size:15px;color:var(--champagne);display:block;margin-bottom:2px}
+.gap p{margin:0;font-size:13px;color:var(--ink-2)}
+
+/* ---------- pattern bars inside the dark panel ----------
+   The bars are reused on both the cream and espresso cards. On the dark card
+   the inherited ink colours fell to near-invisible, so the panel restates
+   every text colour rather than relying on inheritance. */
+.card.dark .pbar{background:rgba(239,234,227,.05);border-color:rgba(239,234,227,.14)}
+.card.dark .pbar .pbl span{color:#EFEAE3}
+.card.dark .pbar .pbl b{color:var(--gold)}
+.card.dark .pbar .pbn{color:#BCB2A5}
+.card.dark .pbt{background:rgba(239,234,227,.12)}
+
+/* ==========================================================================
+   CLINIC — the manager's plan, seats, practitioners and invitations.
+   Everything here is a small extension of components that already exist:
+   two more badge tones, a second line inside a people cell, and the row that
+   carries a generated invitation link next to its copy button.
+   ========================================================================== */
+.badge.warn{background:var(--amber-soft);color:var(--amber)}
+.badge.late{background:var(--rose-soft);color:var(--rose)}
+.clinicref{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;
+  letter-spacing:.02em;word-break:break-all;text-align:right}
+table.people td .em,.inviterow .em{display:block;font-weight:400;font-size:11.5px;
+  color:var(--ink-3);word-break:break-word}
+.inviterow{align-items:flex-start;gap:12px}
+.inviterow>span:first-child{min-width:0}
+.invitemeta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto}
+.invitemeta .muted{font-size:11.5px;white-space:nowrap}
+.invitedone{margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2)}
+.invitelink{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.invitelink input{flex:1 1 220px;min-width:0;font-size:12.5px;background:var(--panel-2);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.invitelink button{flex:0 0 auto}
+
+/* ==========================================================================
+   THE BUYER'S PRODUCT
+   The login, the practitioner dashboard, and the consultation read as one
+   consultation-training system rather than as software with forms.
+   ========================================================================== */
+
+/* ---------- one language ----------
+   The EN/ES control keeps working for whoever re-enables it, but it carries
+   no visible surface: the product ships in English. */
+.langsw.stowed{width:4px;height:4px;min-width:4px;flex:0 0 4px;border:0;opacity:0;
+  overflow:hidden;border-radius:0;margin:0;padding:0}
+.langsw.stowed button{flex:0 0 2px;width:2px;height:2px;padding:0;margin:0;border:0;
+  font-size:0;line-height:0;background:transparent;color:transparent}
+
+/* ---------- sign in ---------- */
+.formcard .prodname{font-family:var(--serif);font-size:19px;line-height:1.3;color:var(--espresso);
+  margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+@media(min-width:900px){.formcard .prodname{font-size:21px}}
+.formcard h1{font-size:23px;margin-bottom:6px}
+.roletabs{margin:18px 0 22px}
+.roletab .rt{font-size:14.5px}
+.signfoot{margin-top:22px;font-size:11.5px;letter-spacing:.06em}
+
+/* ---------- my mirror journey ---------- */
+.jtitle{font-family:var(--serif);font-size:27px;line-height:1.15;color:var(--espresso);margin:2px 0 14px}
+@media(min-width:820px){.jtitle{font-size:34px;margin-bottom:16px}}
+.jhero h1{font-size:24px}
+@media(min-width:820px){.jhero h1{font-size:30px}}
+.lead-note{max-width:74ch;margin:-6px 0 14px}
+.secthead{margin:30px 0 10px}
+
+/* the five engines, each drawn by what it owns */
+.engines{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:6px}
+@media(min-width:620px){.engines{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.engines{grid-template-columns:repeat(5,1fr)}}
+.engine{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;
+  display:flex;flex-direction:column;gap:8px}
+.engine .enm{font-family:var(--serif);font-size:16.5px;line-height:1.25;color:var(--espresso)}
+.engine .eown{width:100%;height:auto;display:block}
+.engine .eph{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+.engine .epu{font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+
+/* the eight canonical phases as one spine */
+.spinecard{padding:18px 10px 6px}
+@media(min-width:820px){.spinecard{padding:20px 16px 8px}}
+.spinewrap{margin:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+svg.spine{min-width:600px}
+
+/* the one objective she is working on now */
+.objcard{border-left:3px solid var(--champagne)}
+.objline{font-family:var(--serif);font-size:20px;line-height:1.42;margin:6px 0 8px;color:var(--espresso)}
+@media(min-width:820px){.objline{font-size:22px}}
+
+/* the primary action: her consultation */
+.sofiacard{border-color:#E5D9BC;background:linear-gradient(150deg,#FFFDF8,#F4EDDE);
+  box-shadow:0 22px 55px -38px rgba(36,30,25,.5)}
+.sofiacard .sc-top{display:flex;gap:16px;align-items:flex-start}
+.sofiacard .sc-face{flex:0 0 auto}
+.sofiacard .sc-kick{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:6px}
+.sofiacard h2{font-size:21px;margin-bottom:4px}
+@media(min-width:820px){.sofiacard h2{font-size:24px}}
+.sofiacard .sc-sub{font-size:14px;color:var(--ink-2);line-height:1.5}
+.sofiacard .sc-facts{margin-top:6px}
+.sofiacard .sc-prog{margin:16px 0 14px;padding-top:14px;border-top:1px solid #E5D9BC}
+.sofiacard .pdots{width:100%;max-width:260px;height:14px;display:block;margin-bottom:8px}
+.sofiacard .sc-progtext{font-size:13.5px;color:var(--ink-2)}
+.sofiacard .sc-progtext b{font-weight:600;color:var(--espresso)}
+.sofiacard .sc-act{display:flex;gap:10px;flex-wrap:wrap}
+
+/* the quieter records below */
+.quiet .card{background:var(--panel-2)}
+.card .herostats{border-top-color:var(--line-2);margin-top:10px;padding-top:12px;gap:20px}
+.card .herostats div{color:var(--ink-3)}
+.card .herostats b{color:var(--espresso);font-size:21px}
+.assignline{font-family:var(--serif);font-size:17px;line-height:1.45;margin-bottom:8px}
+
+/* ---------- the consultation, step by step ---------- */
+.runtop{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.phasebar{display:block;padding:0;overflow:hidden}
+.phasebar .ribbon{margin:0}
+.phasebar .phaseline{display:grid;grid-template-columns:1fr;gap:12px;padding:14px 16px 0}
+@media(min-width:700px){.phasebar .phaseline{grid-template-columns:1.1fr 1fr 1.4fr;gap:18px}}
+.phasebar .pbcol{min-width:0}
+.phasebar .pv{font-size:13.5px;line-height:1.4;color:var(--espresso);font-weight:600;margin-top:2px}
+.phasebar .pn{margin-top:1px}
+.phasebar .obj{padding:10px 16px 14px;margin-top:10px;border-top:1px solid var(--line-2);
+  background:var(--panel-2);font-size:13px;color:var(--ink-2);flex:none}
+
+.cstep{margin-bottom:22px}
+.cstep .stepline{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.cstep .stepn{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--espresso);color:var(--gold);
+  font-family:var(--serif);font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.cstep .stept{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.cstep .stepline:after{content:"";flex:1;height:1px;background:var(--line)}
+.cstep>.card,.cstep>.moment,.cstep>section{margin-bottom:0}
+.cstep .card+.card{margin-top:14px}
+.cstep>section+section{margin-top:14px}
+
+.noticelist{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2);line-height:1.55}
+.noticelist li{margin-bottom:7px}
+.subtext{margin:12px 0 0;font-size:14px;line-height:1.55;color:var(--ink);
+  border-left:3px solid var(--champagne);padding-left:13px}
+.notice-card .noticelist+.subtext{margin-top:14px}
+.decisionprompt{font-family:var(--serif);font-size:19px;line-height:1.42;margin:0 0 14px;color:var(--espresso)}
+.chosen .k,.fb .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.chosenlab{font-size:15px;font-weight:600;margin-top:5px;line-height:1.5}
+.chosensay{margin:6px 0 0;font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.5;color:var(--ink-2)}
+.changecard{background:linear-gradient(150deg,#FBF7EF,#F4EDDE);border-color:#E5D9BC}
+.changecard .changes li{border-bottom-color:#E5D9BC;font-size:14px}
+.fb .fbhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.fb .fbhead h4{margin:0}
+.fb .v.q{font-family:var(--serif);font-size:16.5px;line-height:1.5;color:var(--espresso)}
+.nextcard .nextline{font-size:14px;color:var(--ink-2);margin-bottom:14px}
+.nextcard .nextline b{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--espresso)}
+
+/* her state, beside everything, moving */
+.statepanel{position:relative}
+@media(min-width:940px){.statepanel{position:sticky;top:118px}}
+.delta{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:2px 8px;
+  border-radius:999px;margin-left:6px;vertical-align:1px}
+.delta.up{background:var(--sage-soft);color:var(--sage)}
+.delta.down{background:var(--rose-soft);color:var(--rose)}
+.trustrow.moved{background:var(--gold-soft);border-radius:8px;padding-left:8px;padding-right:8px}
+.tag.fresh{box-shadow:0 0 0 2px var(--gold-soft);border:1px solid var(--gold)}
+
+/* the spine reads across on a laptop and down the page on a phone */
+.spine-tall{display:none}
+svg.spine-wide{display:block}
+@media(max-width:719px){
+  svg.spine-wide{display:none}
+  .spine-tall{display:block;width:100%;height:auto}
+  .spinewrap{overflow:visible}
+  .spinecard{padding:16px 14px}
+}
+
+/* ==========================================================================
+   THE CASE LIBRARY
+   Nine consultations that are not nine versions of one consultation. The
+   library is grouped by what each case trains, and every card carries the two
+   things a practitioner needs before she commits ten minutes: the skill it
+   teaches, and the state the client is in before a word is said.
+   ========================================================================== */
+.openingnote{background:linear-gradient(150deg,#FFFDF8,#F4EDDE);border-color:#E5D9BC;margin-bottom:18px}
+.openingnote h4{margin-bottom:10px}
+.openingnote .onbody{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:860px){.openingnote .onbody{grid-template-columns:1.35fr .9fr;gap:26px}}
+.openingnote p{font-size:13.5px;line-height:1.62;color:var(--ink-2);margin:0;max-width:70ch}
+
+/* the nine opening numbers on one rail — the picture is the argument */
+.orail{align-self:start}
+.orrow{display:grid;grid-template-columns:52px minmax(0,1fr) 26px;align-items:center;gap:9px;margin-bottom:5px}
+.orn{font-size:11.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.orb{position:relative;height:7px;border-radius:4px;background:#EFEAE2;display:block;overflow:visible}
+.orb i{display:block;height:100%;border-radius:4px;background:var(--mercury)}
+.orb em{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--champagne);opacity:.75}
+.orrow b{font-family:var(--serif);font-weight:400;font-size:14px;text-align:right;color:var(--espresso)}
+.orfoot{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--champagne);font-weight:700;margin-top:9px}
+
+/* the track filter */
+.libfilter{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
+.libfilter .lfk{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-right:3px}
+.libfilter button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:12.5px;
+  font-weight:600;color:var(--ink-2);display:inline-flex;align-items:center;gap:7px}
+.libfilter button:hover{border-color:var(--champagne)}
+.libfilter button.on{background:var(--espresso);border-color:var(--espresso);color:#fff}
+.libfilter .lfn{font-size:10.5px;color:var(--ink-3);font-weight:700}
+.libfilter button.on .lfn{color:var(--gold)}
+
+/* a track, and what it trains */
+.track{margin-bottom:8px}
+.trhead{margin:26px 0 4px}
+.trhead .trcount{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;flex:0 0 auto;order:3}
+.trhead:after{order:2}
+.trsub{font-family:var(--serif);font-size:17px;line-height:1.4;color:var(--champagne);margin-bottom:4px}
+.trnote{max-width:78ch;margin:0 0 14px}
+.libgrid{display:grid;grid-template-columns:1fr;gap:16px}
+/* No track holds more than two cases, so two columns fill the row instead of
+   leaving a third of the page empty. */
+@media(min-width:720px){.libgrid{grid-template-columns:1fr 1fr}}
+.libfoot{margin:20px 0 0;max-width:80ch}
+
+.casecard{transition:.16s}
+.casecard:hover{border-color:var(--champagne);box-shadow:0 20px 44px -34px rgba(36,30,25,.42)}
+.casecard .top{padding:16px 16px 10px;gap:13px}
+.casecard .cc-face{flex:0 0 auto}
+.casecard .cc-id{min-width:0}
+.casecard .cc-kick{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne);
+  margin-bottom:5px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.casecard .cc-tr{color:var(--ink-3);background:var(--line-2);border-radius:999px;padding:2px 8px;letter-spacing:.1em}
+.casecard h3{font-size:18px;margin-bottom:3px}
+.casecard .sub{font-size:13px;line-height:1.45}
+.casecard .facts{padding:0 16px 12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.casecard .cc-sec{padding:12px 16px;border-top:1px solid var(--line-2)}
+.casecard .cc-k{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:7px}
+.casecard .cc-teach{background:var(--panel-2)}
+.casecard .cc-teach p{margin:0;font-family:var(--serif);font-size:14.5px;line-height:1.5;color:var(--espresso)}
+.casecard .cc-chips{margin-top:9px}
+.casecard .cc-hard{margin-top:9px;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--rose);
+  background:var(--rose-soft);border-radius:8px;padding:6px 10px;display:inline-block}
+.casecard .cc-histtext{font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.casecard .cc-histtext b{font-weight:600;color:var(--espresso)}
+.casecard .cc-histtext .oc-yes{color:var(--sage)}
+.casecard .cc-histtext .oc-no{color:var(--rose)}
+.casecard .cc-hist .pdots{width:100%;max-width:190px;height:12px;display:block}
+.casecard .act{margin-top:auto;padding:13px 16px}
+
+/* opening willingness, with the YES threshold marked */
+.omet{margin-bottom:2px}
+.ometbar{position:relative;height:8px;border-radius:4px;background:#EFEAE2;overflow:visible}
+.ometbar i{display:block;height:100%;border-radius:4px;background:var(--mercury)}
+.ometthr{position:absolute;top:-4px;bottom:-4px;width:1.5px;background:var(--champagne)}
+.ometlab{display:flex;align-items:baseline;gap:6px;margin-top:7px;font-size:11.5px;color:var(--ink-3)}
+.ometlab b{font-family:var(--serif);font-weight:400;font-size:19px;color:var(--espresso)}
+.ometsp{flex:1}
+.omethr{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+
+/* where every decision path in a case ends */
+.osbar{display:flex;height:9px;border-radius:5px;overflow:hidden;background:#EFEAE2}
+.osbar i{display:block;height:100%}
+.osbar i.y{background:var(--sage)}
+.osbar i.d{background:var(--champagne)}
+.osbar i.n{background:var(--rose)}
+.oskey{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.osk{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-3);display:flex;align-items:baseline;gap:5px}
+.osk b{font-family:var(--serif);font-weight:400;font-size:15px;letter-spacing:0}
+.osk.y b{color:var(--sage)}.osk.d b{color:var(--champagne)}.osk.n b{color:var(--rose)}
+.osfoot{font-size:11.5px;color:var(--ink-2);margin-top:8px;line-height:1.5}
+
+/* ==========================================================================
+   TRUST MOVEMENT — seven stages on one rail, and the one that just fell
+   ========================================================================== */
+.tladder{margin-top:4px}
+.tlrow{display:grid;grid-template-columns:14px minmax(0,1fr) 84px 22px 30px;align-items:center;gap:6px;
+  padding:5px 6px;border-radius:8px;margin:0 -6px}
+.tln{font-size:10px;color:var(--ink-4);font-weight:700;text-align:center}
+.tlname{font-size:11.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlsc{width:84px;height:auto;display:block}
+.tlv{font-family:var(--serif);font-size:13px;color:var(--espresso);text-align:right}
+.tld{font-size:10.5px;font-weight:700;text-align:right;color:transparent}
+.tld.up{color:var(--sage)}
+.tld.down{color:var(--rose)}
+.tld.up:before,.tld.down:before{content:"";display:inline-block;border:4px solid transparent;margin-right:3px;vertical-align:1px}
+.tld.up:before{border-bottom-color:currentColor;border-top-width:0}
+.tld.down:before{border-top-color:currentColor;border-bottom-width:0}
+.tlrow.down{background:var(--rose-soft)}
+.tlrow.down .tlname{color:var(--rose);font-weight:600}
+.tlrow.up{background:var(--sage-soft)}
+.tlrow.up .tlname{color:var(--sage);font-weight:600}
+.tlnote{font-size:11px;color:var(--ink-3);margin:9px 0 0;line-height:1.5}
+
+/* ==========================================================================
+   BEFORE / AFTER — what one decision did to her
+   A short, plain transition: the rail moves from where she was to where she
+   is, and the ghost tick stays behind to say where that was.
+   ========================================================================== */
+.cqp{background:linear-gradient(150deg,#FFFFFF,#FBF7EF);border-color:#E5D9BC}
+.cqp-pair{display:grid;grid-template-columns:1fr 34px 1fr;align-items:center;gap:10px}
+.cqp-side{min-width:0}
+.cqp-side.now{text-align:right}
+.cqp-k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:4px}
+.cqp-w{font-family:var(--serif);font-size:27px;line-height:1.1;color:var(--espresso)}
+.cqp-w small{font-size:12px;color:var(--ink-3);font-family:var(--sans)}
+.cqp-side.was .cqp-w,.cqp-side.was .cqp-p{color:var(--ink-3)}
+.cqp-p{font-size:12.5px;margin-top:3px;color:var(--ink-2)}
+.cqp-arrow{width:34px;height:18px;display:block}
+.cqp-track{position:relative;height:9px;border-radius:5px;background:#EFEAE2;margin:18px 0 0}
+.cqp-fill{display:block;height:100%;border-radius:5px;background:var(--mercury);width:var(--to)}
+.cqp-track.fell .cqp-fill{background:linear-gradient(90deg,#C8CCD1,#C98A8E)}
+.cqp-track.rose .cqp-fill{background:linear-gradient(90deg,#C8CCD1,#7FA893)}
+.cqp-ghost{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--espresso);opacity:.4;border-radius:2px}
+.cqp-thr{position:absolute;top:-5px;bottom:-5px;width:1.5px;background:var(--champagne)}
+.cqp-thr b{position:absolute;top:14px;left:-8px;font-size:9.5px;font-weight:700;color:var(--champagne)}
+.cqp-thrnote{font-size:11.5px;color:var(--ink-3);margin-top:20px;line-height:1.5}
+.cqp-list{list-style:none;margin:14px 0 0;padding:12px 0 0;border-top:1px solid #E5D9BC}
+.cqp-ch{display:grid;grid-template-columns:1fr;gap:2px;padding:6px 0 6px 11px;border-left:3px solid var(--line);margin-bottom:5px}
+.cqp-ch:last-child{margin-bottom:0}
+.cqp-ch.up{border-left-color:var(--sage)}
+.cqp-ch.down{border-left-color:var(--rose)}
+.cqp-ck{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.cqp-cv{font-size:14px;line-height:1.5;color:var(--espresso)}
+@keyframes cqpfill{from{width:var(--from)}to{width:var(--to)}}
+@keyframes cqprise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.cqp-fill{animation:cqpfill .8s cubic-bezier(.3,.7,.3,1) both}
+.cqp-side.now{animation:cqprise .45s .12s both}
+.cqp-list .cqp-ch{animation:cqprise .45s .2s both}
+@media(prefers-reduced-motion:reduce){
+  .cqp-fill,.cqp-side.now,.cqp-list .cqp-ch{animation:none;opacity:1;transform:none;width:var(--to)}
+  .cqp-side.now,.cqp-list .cqp-ch{width:auto}
+}
+
+/* her reaction, before the analysis */
+.reaction .rk{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);margin-bottom:8px}
+.reaction blockquote{color:var(--espresso)}
+
+/* the words you would actually say */
+.optsay .sayk{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-4);margin:9px 0 4px}
+.yousaid{border-left:2px solid var(--line);padding:0 0 0 12px;margin-bottom:14px}
+.yousaid .ysk{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-4);margin-bottom:3px}
+.yousaid q{font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.5;color:var(--ink-3)}
+
+/* ==========================================================================
+   THE CONSULTATION MAP — eight phases, the choice made at each, and where
+   trust moved. Built to be read on a phone and kept as a picture.
+   ========================================================================== */
+.cmapcard{background:linear-gradient(150deg,#FBF7EF,#F5F1EC)}
+.cmap{margin-top:2px}
+.cmrow{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:flex-start;
+  padding:11px 0;border-bottom:1px solid var(--line)}
+.cmrow:last-child{border-bottom:0}
+.cmn{position:relative;display:flex;justify-content:center}
+.cmn span{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:12px;background:#fff;border:1.5px solid var(--line);color:var(--ink-3);z-index:1}
+.cmrow.done .cmn span{background:var(--champagne);border-color:var(--champagne);color:#fff}
+.cmrow.now .cmn span{background:var(--espresso);border-color:var(--espresso);color:var(--gold)}
+.cmrow:not(:last-child) .cmn:after{content:"";position:absolute;top:24px;bottom:-22px;width:2px;background:var(--line)}
+.cmrow.done:not(:last-child) .cmn:after{background:var(--champagne)}
+.cmb{min-width:0}
+.cmph{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.cmch{font-size:14px;line-height:1.45;margin-top:3px;color:var(--espresso)}
+.cmch.none{color:var(--ink-4);font-style:italic}
+.cmrow.now .cmch.none{color:var(--champagne);font-style:normal;font-weight:600}
+.cmmv{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+.cmchip{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px}
+.cmchip.up{background:var(--sage-soft);color:var(--sage)}
+.cmchip.down{background:var(--rose-soft);color:var(--rose)}
+.cmw{text-align:right;flex:0 0 auto;white-space:nowrap}
+.cmw b{font-family:var(--serif);font-weight:400;font-size:19px;color:var(--espresso);display:block;line-height:1.1}
+.cmw span{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);font-weight:700}
+.cmw .delta{margin:4px 0 0 0;display:inline-block}
+
+/* ==========================================================================
+   MOBILE IS A FIRST-CLASS SURFACE
+   Between two clients, on a phone, the order is: where am I, how is she,
+   what did she say, what do I do. Her state is never behind the decision.
+   ========================================================================== */
+.gside{display:none}
+.statemob{display:block;border-color:#E5D9BC;background:linear-gradient(150deg,#FFFDF8,#F7F2E8);padding:14px 16px}
+@media(min-width:940px){
+  .gside{display:block}
+  .statemob{display:none}
+}
+.smhead{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.smk{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:2px}
+.smw b{font-family:var(--serif);font-weight:400;font-size:25px;color:var(--espresso);line-height:1}
+.smw small{font-size:11px;color:var(--ink-3)}
+.smp{text-align:right}
+.smp b{font-size:14px;font-weight:600;color:var(--espresso)}
+.smbar{margin-top:10px}
+.smfell{margin-top:9px;display:flex;gap:5px;flex-wrap:wrap}
+.smmore{margin-top:11px;border-top:1px solid #E5D9BC;padding-top:10px}
+.smmore>summary{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--champagne);cursor:pointer;list-style:none}
+.smmore>summary::-webkit-details-marker{display:none}
+.smmore>summary:after{content:"";display:inline-block;border:4px solid transparent;border-top-color:currentColor;
+  border-bottom-width:0;margin-left:7px;vertical-align:2px}
+.smmore[open]>summary:after{border:4px solid transparent;border-bottom-color:currentColor;border-top-width:0}
+.smbody{padding-top:12px}
+.smbody h4{margin-bottom:8px}
+
+@media(max-width:719px){
+  .cstep{margin-bottom:18px}
+  .runtop{margin-bottom:10px}
+  .phasebar .phaseline{padding:12px 14px 0;gap:9px}
+  .phasebar .pn{font-size:19px}
+  .moment{padding:16px 15px}
+  .moment blockquote{font-size:17.5px}
+  .opt{padding:13px 14px}
+  .cqp-pair{grid-template-columns:1fr 26px 1fr;gap:6px}
+  .cqp-w{font-size:23px}
+  .cqp-arrow{width:26px}
+  .cmrow{grid-template-columns:26px minmax(0,1fr) auto;gap:10px}
+  .cmw b{font-size:16px}
+  .tlrow{grid-template-columns:14px minmax(0,1fr) 84px 22px 28px}
+  .casecard .top{padding:15px 14px 9px}
+  .casecard .facts,.casecard .cc-sec,.casecard .act{padding-left:14px;padding-right:14px}
+  .casecard .facts{-webkit-line-clamp:2;padding-bottom:10px}
+  .casecard .cc-sec{padding-top:11px;padding-bottom:11px}
+  .casecard .cc-teach p{font-size:14px}
+  .osfoot{font-size:11px}
+  .libfilter{gap:6px}
+  .libfilter button{padding:6px 11px;font-size:12px}
+  .openingnote p{font-size:13px}
+  .trsub{font-size:15.5px}
+}
+
+/* ==========================================================================
+   THE WALK-IN
+   A practitioner signing in for the first time is walked in rather than
+   dropped in. It is a stage laid into the top of her first screen, not a
+   sheet thrown over it: nothing underneath is ever unreachable, and she can
+   leave it at any point through the navigation.
+   ========================================================================== */
+.walkin{background:linear-gradient(158deg,#241E19 0%,#2E2620 58%,#3A3029 100%);color:#EFEAE3;
+  border-radius:var(--r-lg);padding:20px 18px 18px;margin-bottom:22px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden}
+@media(min-width:820px){.walkin{padding:30px 34px 26px}}
+.walkin:after{content:"";position:absolute;right:-110px;top:-130px;width:330px;height:330px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,164,92,.16),transparent 66%);pointer-events:none}
+.wi-head{display:flex;align-items:center;gap:12px;position:relative;margin-bottom:18px;flex-wrap:wrap}
+.wi-kick{font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.wi-dots{display:flex;gap:6px;align-items:center}
+.wi-dots i{width:16px;height:3px;border-radius:2px;background:rgba(239,234,227,.22);display:block;transition:.2s}
+.wi-dots i.past{background:rgba(201,164,92,.55)}
+.wi-dots i.on{background:var(--gold);width:26px}
+.wi-skip{background:transparent;border:0;color:#9C9187;font-size:12px;padding:4px 0}
+.wi-skip:hover{color:#EFEAE3;border-color:transparent}
+.wi-body{display:grid;grid-template-columns:1fr;gap:18px;align-items:center;position:relative}
+@media(min-width:820px){.wi-body{grid-template-columns:1.15fr .85fr;gap:34px}.wi-body.wide{grid-template-columns:1fr}}
+.wi-text h2{font-family:var(--serif);font-size:23px;line-height:1.24;color:#fff;margin-bottom:12px;max-width:24ch}
+@media(min-width:820px){.wi-text h2{font-size:30px}}
+.wi-text p{font-size:14.5px;line-height:1.62;color:#CFC6BA;margin:0;max-width:56ch}
+.wi-list{margin:14px 0 0;padding-left:20px;color:#CFC6BA;font-size:13.5px;line-height:1.6}
+.wi-list li{margin-bottom:5px}
+.wi-list li::marker{color:var(--gold)}
+.wi-art{min-width:0}
+.obart{width:100%;height:auto;display:block;max-width:360px;margin:0 auto}
+.wi-panel{background:var(--bg);border-radius:var(--r);padding:12px 10px 4px;margin-top:20px;position:relative}
+@media(min-width:820px){.wi-panel{padding:16px 18px 6px}}
+.wi-panel .spinewrap{overflow-x:auto}
+.wi-starts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:20px;position:relative}
+@media(min-width:700px){.wi-starts{grid-template-columns:1fr 1fr}}
+.wi-start{border:1px solid rgba(239,234,227,.16);border-radius:12px;padding:12px 14px;background:rgba(239,234,227,.05)}
+.wi-start .wi-sk{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:5px}
+.wi-start b{font-family:var(--serif);font-weight:400;font-size:15px;line-height:1.4;color:#EFEAE3}
+.wi-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:16px;
+  border-top:1px solid rgba(239,234,227,.14);position:relative}
+.wi-n{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9C9187;font-weight:700}
+.walkin .primary{background:var(--gold);border-color:var(--gold);color:#241E19}
+.walkin .primary:hover:not(:disabled){background:#D8B771;border-color:#D8B771}
+button.wi-alt{background:transparent;border:1px solid var(--line);color:var(--ink-2);border-radius:999px;
+  padding:9px 16px;font-size:12.5px;font-weight:600}
+button.wi-alt:hover:not(:disabled){border-color:var(--champagne);color:var(--espresso)}
+.walkin button.wi-alt{border-color:rgba(239,234,227,.26);color:#CFC6BA}
+.walkin button.wi-alt:hover:not(:disabled){border-color:var(--gold);color:#fff}
+@media(max-width:719px){
+  .wi-text h2{font-size:21px}
+  .wi-foot .primary.lg{flex:1 1 100%}
+}
+
+/* ==========================================================================
+   THE CURRICULUM MAP
+   Ten modules as one ascent, the eight canonical phases as the rail a real
+   consultation runs, and a line from each module to the phase it is for.
+   ========================================================================== */
+.curmap{padding-bottom:6px}
+.curhead{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:6px}
+@media(min-width:860px){.curhead{grid-template-columns:1.5fr .8fr;gap:30px;align-items:start}}
+.curnote{max-width:68ch;margin:0}
+.curwhere{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+@media(min-width:860px){.curwhere{display:block}}
+.cwn b{font-family:var(--serif);font-weight:400;font-size:30px;color:var(--espresso);display:block;line-height:1}
+.cwn span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.cwnext{border-left:3px solid var(--champagne);padding-left:12px;margin-top:14px;min-width:0}
+.cwk{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:3px}
+.cwnext b{font-family:var(--serif);font-weight:400;font-size:17px;color:var(--espresso);display:block}
+.cwnext .cwt{font-size:12.5px;color:var(--ink-2);display:block;margin-bottom:9px}
+.cmapart{min-width:700px}
+.cmap-tall{display:none}
+svg.cmap-wide{display:block}
+@media(max-width:859px){
+  svg.cmap-wide{display:none}
+  .cmap-tall{display:block;width:100%;height:auto;min-width:0}
+  .cmapwrap{overflow:visible;margin-bottom:2px}
+}
+.mod .stagek{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne);
+  margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mod .stagek .nextk{background:var(--espresso);color:var(--gold);border-radius:999px;padding:2px 9px;letter-spacing:.12em}
+.mod.st-done{border-color:#DCD0B4}
+.mod.st-next{border-color:var(--espresso);box-shadow:0 20px 48px -34px rgba(36,30,25,.5)}
+
+/* ==========================================================================
+   YOUR MATERIALS — a library, not a table
+   ========================================================================== */
+.libempty{background:var(--panel-2);border-style:dashed}
+.libempty p{margin:0;font-size:14px;line-height:1.62;color:var(--ink-2);max-width:74ch}
+.libset{margin-bottom:22px}
+.libsethead{display:flex;gap:13px;align-items:center;padding:0 2px 12px;border-bottom:1px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
+.libsethead .lsface{flex:0 0 auto}
+.libsethead .lsid{min-width:0;flex:1}
+.libsethead .lsk{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+.libsethead h3{font-family:var(--serif);font-weight:400;font-size:18px;margin:2px 0 2px}
+.libsethead .lscount{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700;flex:0 0 auto}
+.tkdocs{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.tkdocs{grid-template-columns:1fr 1fr}}
+.tkdoc{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 6px;
+  box-shadow:0 18px 44px -38px rgba(36,30,25,.45);position:relative;overflow:hidden}
+.tkdoc:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--champagne);opacity:.7}
+.tkdhead{display:flex;gap:13px;align-items:flex-start;padding-bottom:12px;border-bottom:1px solid var(--line-2)}
+.tkdmark{flex:0 0 auto;line-height:0}
+.tkdid{min-width:0}
+.tkdk{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+.tkdoc h3{font-family:var(--serif);font-weight:400;font-size:17px;margin:3px 0 3px}
+.tkdsum{font-size:12px;color:var(--ink-3)}
+.tkdbody{padding-top:6px}
+.dvfield{padding:11px 0;border-bottom:1px dashed var(--line-2)}
+.dvfield:last-child{border-bottom:0}
+.dvk{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:5px}
+.dvtext{font-family:var(--serif);font-size:14.5px;line-height:1.55;color:var(--espresso)}
+.dvticks{display:flex;flex-wrap:wrap;gap:6px}
+.dvt{font-size:11.5px;padding:3px 9px;border-radius:999px;background:var(--line-2);color:var(--ink-3)}
+.dvt.on{background:var(--sage-soft);color:var(--sage);font-weight:600}
+.dvtick{font-size:14px;color:var(--sage)}
+.dvrows{display:grid;gap:7px}
+.dvrow{background:var(--panel-2);border-radius:9px;padding:8px 11px;font-size:13px;display:grid;gap:3px}
+.dvrow span{display:block;color:var(--espresso)}
+.dvrow em{font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  font-weight:700;margin-right:7px}
+.jncard .jnk{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:8px}
+.jncard .jnq{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin:14px 0 6px}
+.jncard .jnq:first-of-type{margin-top:0}
+.bkgrid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.bkgrid{grid-template-columns:1fr 1fr}}
+.bkcard{background:linear-gradient(152deg,#FFFDF8,#F4EDDE);border:1px solid #E5D9BC;border-radius:var(--r);padding:18px}
+.bkcard .bksrc{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);margin-bottom:10px}
+.bkcard blockquote{margin:0;font-family:var(--serif);font-size:17px;line-height:1.5;color:var(--espresso);
+  padding-left:14px;border-left:2px solid var(--gold)}
+.bkcard .bknote{font-size:13px;line-height:1.6;color:var(--ink-2);margin:12px 0 0}
+.bkcard .bkfrom{font-size:11.5px;color:var(--ink-3);margin-top:12px;padding-top:10px;border-top:1px solid #E5D9BC}
+
+/* ==========================================================================
+   COMPLETION — what the work now enables, and what is next
+   ========================================================================== */
+.cmphero .kicker{color:var(--gold)}
+.cmphero.cmpall{background:linear-gradient(150deg,#241E19,#3A3029 70%,#4A3B26)}
+.cmpcard{background:var(--panel-2)}
+.cmpline{font-family:var(--serif);font-size:17px;line-height:1.5;color:var(--espresso);margin:4px 0 0}
+.cmpweek{border-left:3px solid var(--champagne);background:linear-gradient(150deg,#FFFDF8,#F4EDDE);border-color:#E5D9BC}
+.cmpacts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0 10px}
+.cmphonest{margin:0 0 8px}
+.cmpconsult{background:linear-gradient(150deg,#FFFDF8,#F7F2E8);border-color:#E5D9BC}
+.ccm-kick{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:8px}
+.ccm-lead{font-family:var(--serif);font-size:17px;line-height:1.5;color:var(--espresso);margin-bottom:16px;max-width:62ch}
+.cmpweekin{margin-top:16px;padding-top:14px;border-top:1px solid #E5D9BC}
+
+/* ==========================================================================
+   THE FIVE QUESTIONS, AND THE CASE EVIDENCE BEHIND THE FIFTH
+   ========================================================================== */
+.qcard{padding-top:16px}
+.qhead{display:flex;gap:13px;align-items:flex-start;margin-bottom:10px}
+.qn{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:var(--espresso);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px}
+.qh{min-width:0}
+.qh h2{font-size:19px;margin:0 0 3px;line-height:1.25}
+@media(min-width:820px){.qh h2{font-size:21px}}
+.qh h4{margin:0}
+.qsub{max-width:76ch;margin:0 0 14px}
+.qlead{font-size:14px;margin-bottom:12px}
+.coachitem{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line-2)}
+.coachitem:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
+.coachitem h3{font-family:var(--serif);font-weight:400;font-size:17px;margin-bottom:8px}
+.evlist{display:grid;gap:9px}
+.evrow{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;
+  padding:11px 13px;background:var(--panel);cursor:pointer;transition:.15s;flex-wrap:wrap}
+.evrow:hover{border-color:var(--champagne);box-shadow:0 16px 36px -32px rgba(36,30,25,.45)}
+.evrow .evface{flex:0 0 auto;line-height:0}
+.evrow .evmeta{flex:1 1 160px;min-width:0}
+.evrow .evmeta b{display:block;font-size:14px;font-weight:600}
+.evrow .evmeta span{display:block;font-size:12px}
+.evout{font-size:10.5px;letter-spacing:.1em;font-weight:700;padding:4px 10px;border-radius:999px;
+  background:var(--line-2);color:var(--ink-2);flex:0 0 auto}
+.evout.oc-yes{background:var(--sage-soft);color:var(--sage)}
+.evout.oc-defer{background:var(--gold-soft);color:var(--gold-deep)}
+.evout.oc-no{background:var(--rose-soft);color:var(--rose)}
+.evtl .tp{padding-bottom:24px}
+.evtl .ti{font-size:15px;margin-top:4px}
+.evk{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:4px}
+.evsaid{border-left:2px solid var(--line);padding-left:12px;margin-top:10px}
+.evsaid q{font-family:var(--serif);font-style:italic;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.evverdict{margin-top:12px}
+.evverdict .vd{margin-right:8px}
+.evverdict .evk{display:inline-block;margin:0 0 6px}
+.evverdict p{font-size:13.5px;line-height:1.55;margin:6px 0 0;color:var(--ink-2)}
+.evstate{margin-top:13px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;padding:12px 13px}
+.evchips{margin-top:9px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.evchips .evk{flex:0 0 100%;margin-bottom:2px}
+.mtrk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.mtrkbar{position:relative;height:8px;border-radius:4px;background:#EFEAE2;flex:1 1 140px;min-width:110px;overflow:visible;display:block}
+.mtrkbar i{display:block;height:100%;border-radius:4px;background:var(--mercury)}
+.mtrk.fell .mtrkbar i{background:linear-gradient(90deg,#C8CCD1,#C98A8E)}
+.mtrk.rose .mtrkbar i{background:linear-gradient(90deg,#C8CCD1,#7FA893)}
+.mtrkbar em{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--espresso);opacity:.4;border-radius:2px}
+.mtrkbar s{position:absolute;top:-4px;bottom:-4px;width:1.5px;background:var(--champagne);text-decoration:none}
+.mtrkv{font-family:var(--serif);font-size:14px;color:var(--espresso);flex:0 0 auto}
+.mtrkk{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);font-weight:700;flex:0 0 auto}
+.outcard{border-left:3px solid var(--champagne)}
+.outcard.oc-yes{border-left-color:var(--sage)}
+.outcard.oc-no{border-left-color:var(--rose)}
+.ocbig{font-family:var(--serif);font-size:34px;line-height:1;color:var(--espresso);margin-bottom:10px}
+.ocsay{margin:0 0 18px;font-family:var(--serif);font-size:18px;line-height:1.45;color:var(--ink-2);
+  padding-left:14px;border-left:2px solid var(--line)}
+
+@media(max-width:719px){
+  .tkdoc{padding:14px 14px 4px}
+  .tkdoc h3{font-size:16px}
+  .bkcard{padding:16px 15px}
+  .bkcard blockquote{font-size:15.5px}
+  .cmpline{font-size:15.5px}
+  .qh h2{font-size:17.5px}
+  .ocbig{font-size:28px}
+  .evrow{padding:11px 12px}
+  .libsethead h3{font-size:16.5px}
+}
+.evfinal{max-width:520px}
+.evfinal .statepanel{position:static}
+
+/* a Toolkit document opens where it is: a shelf first, the document on demand */
+details.tkdoc{padding:0}
+details.tkdoc>summary{list-style:none;cursor:pointer;padding:16px 16px 13px;margin:0;
+  display:flex;gap:13px;align-items:flex-start;border-bottom:1px solid transparent}
+details.tkdoc>summary::-webkit-details-marker{display:none}
+details.tkdoc[open]>summary{border-bottom-color:var(--line-2)}
+details.tkdoc>summary:hover .tkdopen{border-color:var(--champagne);color:var(--espresso)}
+.tkdopen{margin-left:auto;flex:0 0 auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:5px 11px;white-space:nowrap}
+details.tkdoc .tkdc{display:none}
+details.tkdoc[open] .tkdo{display:none}
+details.tkdoc[open] .tkdc{display:inline}
+details.tkdoc .tkdbody{padding:4px 16px 8px}
+@media(max-width:719px){
+  details.tkdoc>summary{padding:14px 14px 12px;flex-wrap:wrap}
+  details.tkdoc .tkdbody{padding:4px 14px 6px}
+  .tkdopen{margin-left:0}
+}
+
+/* the ladder and the willingness rail keep a readable measure on a wide page */
+.evstate .tladder{max-width:440px}
+.evstate .mtrkbar{flex:0 1 300px;max-width:300px}
+.tkdocs{align-items:start}
+
+/* ==========================================================================
+   THE LESSON, AS SOMETHING MADE
+   A lesson is not a document. It opens on a cover, it runs in beats, the
+   passages from the book are set as passages from a book, and the second
+   attempt after a missed decision is the moment the whole thing is for.
+   Everything here is designed at 390px first: a practitioner reads this
+   between clients, one-handed.
+   ========================================================================== */
+
+/* ---------- the cover ---------- */
+.lcover{position:relative;border-radius:var(--r-lg);overflow:hidden;background:var(--espresso);
+  color:#EFEAE3;margin:0 0 14px;box-shadow:var(--shadow)}
+.cvband{position:absolute;inset:0;opacity:1;filter:saturate(1.4) brightness(1.6)}
+.cvband svg{width:100%;height:100%;display:block}
+.lcover:after{content:"";position:absolute;inset:0;
+  background:linear-gradient(103deg,rgba(36,30,25,.96) 0%,rgba(36,30,25,.88) 42%,rgba(36,30,25,.18) 100%)}
+.lcin{position:relative;z-index:2;padding:24px 20px 20px}
+@media(min-width:820px){.lcin{padding:38px 40px 32px;max-width:62ch}}
+.lckick{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;font-weight:700;color:var(--gold)}
+.lckick .lcdot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:.7;display:block;flex:0 0 auto}
+.lctitle{font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.16;margin:14px 0 0;color:#fff}
+@media(min-width:820px){.lctitle{font-size:38px}}
+.lcobj{margin:12px 0 0;font-size:14.5px;line-height:1.6;color:#C5BAAC;max-width:52ch}
+.lcmeta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;padding-top:16px;
+  border-top:1px solid rgba(239,234,227,.16)}
+.lcm{flex:1 1 118px;min-width:0}
+.lcm span{display:block;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8A7F73;font-weight:700}
+.lcm b{display:block;font-family:var(--serif);font-weight:400;font-size:15px;color:#EFEAE3;margin-top:4px;line-height:1.3}
+
+/* ---------- where she is in it ---------- */
+.lprog{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+.lpk{flex:0 0 auto;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.lpk b{color:var(--champagne);font-size:12px}
+.lprog .progressline{flex:1;margin:0;display:block}
+
+/* ---------- the beats ---------- */
+.block{position:relative}
+.block+.block{margin-top:18px}
+.k-passage .pstitle{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.24;margin:0 0 14px}
+@media(min-width:820px){.k-passage .pstitle{font-size:25px}}
+.plede{font-family:var(--serif);font-size:18.5px;line-height:1.52;color:var(--ink);margin:0 0 6px;max-width:48ch}
+@media(min-width:820px){.plede{font-size:21px}}
+.pbeats{margin-top:18px;display:grid;gap:16px}
+.pbeat{display:flex;gap:14px;align-items:flex-start;padding-top:16px;border-top:1px solid var(--line-2)}
+.pbeat .pbn{flex:0 0 22px;height:22px;border-radius:50%;background:var(--gold-soft);color:var(--gold-deep);
+  font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.pbeat p{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink-2);max-width:60ch}
+/* a teaching picture is a beat of its own: ruled off top and bottom and run to
+   the edges of the block rather than inset inside the prose */
+.pfigure{margin:22px -18px 4px;padding:18px 18px 10px;background:var(--panel-2);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media(min-width:820px){.pfigure{margin:28px -28px 6px;padding:24px 28px 14px}}
+.pfigure .dgwrap{margin:0!important}
+/* a passage that ends on its picture ends on the picture, not on a sliver of
+   empty card underneath it */
+.bi > .pfigure:last-child{margin-bottom:-20px;border-bottom:0}
+@media(min-width:820px){.bi > .pfigure:last-child{margin-bottom:-26px}}
+
+/* ---------- the book ---------- */
+.block.insight{background:linear-gradient(152deg,#332A23 0%,#241E19 58%,#1C1713 100%);
+  border:0;padding:28px 20px 24px;box-shadow:0 30px 70px -44px rgba(36,30,25,.85)}
+@media(min-width:820px){.block.insight{padding:44px 46px 36px}}
+.block.insight .stage{color:var(--gold)}
+.block.insight .stage:before{background:var(--gold)}
+.insmark{margin:2px 0 10px;opacity:.95;line-height:0}
+.inskick{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:12px}
+.inspull{margin:0;font-family:var(--serif);font-weight:400;color:#fff;
+  font-size:24px;line-height:1.34;letter-spacing:.005em;max-width:24ch}
+@media(min-width:720px){.inspull{font-size:31px;line-height:1.3;max-width:22ch}}
+@media(min-width:1100px){.inspull{font-size:35px}}
+.insgrid{display:grid;gap:24px;margin-bottom:12px}
+@media(min-width:980px){
+  .insgrid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);column-gap:56px;align-items:end}
+  .insright{padding-bottom:4px}
+}
+.insrule{width:56px;height:1px;background:var(--gold);opacity:.6;margin:0 0 12px}
+@media(max-width:979px){.insrule{margin-top:22px}}
+.inssrc{display:block;font-style:normal;font-size:12.5px;line-height:1.5;color:#BCB2A5;font-family:var(--serif)}
+.inssrc .insck{display:block;font-family:var(--sans);font-size:8.5px;letter-spacing:.2em;
+  text-transform:uppercase;font-weight:700;color:#7E7368;margin-bottom:5px}
+.insnote{margin-top:20px;padding-top:18px;border-top:1px solid rgba(239,234,227,.13);max-width:58ch}
+.insnk{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#8A7F73;margin-bottom:7px}
+.block.insight .note{font-size:13.5px;line-height:1.66;color:#BCB2A5;margin:0}
+.block.insight [data-next]{background:var(--gold);border-color:var(--gold);color:#241E19;font-weight:700}
+.block.insight [data-next]:hover{background:#D9B673;border-color:#D9B673}
+
+/* ---------- two ways of saying the same thing ---------- */
+.cmpkick{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin-bottom:8px}
+.cmpgrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.cmpgrid{grid-template-columns:1fr 1fr;gap:16px}}
+.cmpcol{display:flex;flex-direction:column;text-align:left;width:100%;padding:0;overflow:hidden;
+  border:1px solid var(--line);border-radius:var(--r);background:#fff;cursor:pointer;transition:.16s;font-size:14px}
+.cmpcol:hover:not(.locked){border-color:var(--champagne);box-shadow:0 18px 40px -34px rgba(36,30,25,.55)}
+.cmpcol.locked{cursor:default}
+.cmptag{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:11px 15px;width:100%;
+  background:var(--panel-2);border-bottom:1px solid var(--line-2)}
+.cmplab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.cmpyours{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  color:#fff;background:var(--espresso);padding:3px 8px;border-radius:999px}
+.cmpturn{padding:15px 15px 13px;width:100%}
+.cmpwho{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-4);margin-bottom:7px}
+.cmpturn.you q{display:block;quotes:none;font-family:var(--serif);font-size:16px;line-height:1.52;color:var(--ink)}
+@media(min-width:820px){.cmpturn.you q{font-size:17px}}
+.cmpjoin{padding:0 15px;height:16px;position:relative}
+.cmpjoin i{position:absolute;left:24px;top:0;bottom:0;width:1px;background:var(--line);display:block}
+.cmpjoin i:after{content:"";position:absolute;left:-2.5px;bottom:0;width:6px;height:6px;border-radius:50%;background:var(--line)}
+.cmpturn.hers{background:var(--panel-2);border-top:1px solid var(--line-2);margin-top:auto;flex:1}
+.cmpher{display:flex;gap:12px;align-items:center}
+.cmpface{flex:0 0 auto;line-height:0}
+.cmpsays{margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.cmpsays.wait{color:var(--ink-4);font-style:italic}
+.cmpcol.correct{border-color:var(--sage)}
+.cmpcol.correct .cmpturn.hers{background:var(--sage-soft)}
+.cmpcol.correct .cmpsays{color:var(--sage);font-weight:600}
+.cmpcol.wrong{border-color:var(--rose)}
+.cmpcol.wrong .cmpturn.hers{background:var(--rose-soft)}
+.cmpcol.wrong .cmpsays{color:var(--rose);font-weight:600}
+.cmpcol.wrong .cmpturn.you q{color:var(--ink-2)}
+
+/* ---------- the retry stage ----------
+   The emotional high point of a lesson. A learner who got it wrong is handed a
+   second live moment while the coaching is still on screen, and it is drawn as
+   a second chance — sage, marked, named — not as an error state. */
+.retry{margin-top:20px;border-radius:var(--r);overflow:hidden;border:1px solid #C9DBD0;
+  background:#fff;box-shadow:0 24px 55px -40px rgba(71,114,93,.75)}
+.retrytop{display:flex;gap:14px;align-items:flex-start;padding:16px 16px 14px;
+  background:linear-gradient(150deg,#E6EEE9,#F2F7F4)}
+@media(min-width:820px){.retrytop{padding:20px 22px 18px}}
+.rtmark{flex:0 0 auto;line-height:0}
+.retryhead{flex:1;min-width:0}
+.rtline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.retryhead p{margin:0;font-size:13px;line-height:1.55;color:#3C5A4B}
+.rtag{display:inline-block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:#fff;background:var(--sage);padding:4px 10px;border-radius:20px;white-space:nowrap}
+.rtstep{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#6D8F7E}
+.retrybody{padding:16px}
+@media(min-width:820px){.retrybody{padding:20px 22px}}
+.retry .prompt{font-family:var(--serif);font-size:17px;line-height:1.45;margin-bottom:14px}
+@media(min-width:820px){.retry .prompt{font-size:19px}}
+.retry .opt:hover:not(.locked){border-color:var(--sage);background:#F6FAF8}
+.retryfoot{margin:0;padding:12px 16px 14px;border-top:1px solid var(--line-2);background:var(--panel-2);
+  font-size:12px;line-height:1.55;color:var(--ink-3)}
+@media(min-width:820px){.retryfoot{padding:13px 22px 15px}}
+.principle.sage{border-left-color:var(--sage);background:var(--sage-soft)}
+
+/* ---------- the end of the lesson ---------- */
+.lend{background:linear-gradient(150deg,#FBF7EF,#F2E9D6);border-color:#E5D9BC}
+.lend h2{font-size:23px;margin-bottom:8px}
+.lendobj{font-size:14.5px;color:var(--ink-2);max-width:56ch;margin-bottom:18px}
+
+/* ==========================================================================
+   THE SIXTH ANSWER — what to send each person back to.
+   A prescription, drawn: the module in its own cover art, the client as the
+   person she is at the door. One card per practitioner, never a league table.
+   ========================================================================== */
+.rxlist{display:grid;gap:16px}
+.rxcard{border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:18px 16px;
+  box-shadow:0 20px 50px -42px rgba(36,30,25,.6)}
+@media(min-width:820px){.rxcard{padding:24px 26px}}
+.rxwho{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rxwho h3{margin:0;font-family:var(--serif);font-weight:400;font-size:20px}
+.rxline{margin:8px 0 16px;font-size:14.5px;line-height:1.55;color:var(--ink-2);max-width:62ch}
+.rxpair{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.rxpair{grid-template-columns:1fr 1fr;gap:16px}}
+.rxslot{border:1px solid var(--line-2);border-radius:12px;padding:14px;background:var(--panel-2);
+  display:flex;flex-direction:column}
+.rxk{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink-4);margin-bottom:11px}
+.rxcover{position:relative;border-radius:10px;overflow:hidden;height:86px;margin-bottom:12px;background:var(--espresso)}
+.rxcover svg{width:100%;height:100%;display:block;filter:saturate(1.35) brightness(1.45)}
+.rxnum{position:absolute;right:11px;bottom:6px;font-family:var(--serif);font-size:25px;color:var(--gold);opacity:.92;line-height:1}
+.rxclient{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.rxface{flex:0 0 auto;line-height:0}
+.rxcn{position:static;font-size:25px;color:var(--champagne);opacity:.85}
+.rxname{font-family:var(--serif);font-weight:400;font-size:17px;line-height:1.25;color:var(--ink);
+  letter-spacing:0;text-transform:none;margin:0}
+.rxsub{font-size:11.5px;color:var(--ink-3);margin-top:5px}
+.rxwhy{margin:11px 0 12px;font-size:13px;line-height:1.6;color:var(--ink-2)}
+.rxwhy b{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--champagne);margin-bottom:4px}
+.rxgo{margin-top:auto;align-self:flex-start}
+.rxnone{margin:0}
+.rxfoot{margin-top:16px;display:grid;gap:12px}
+@media(min-width:900px){.rxfoot{grid-template-columns:1fr 1fr;gap:18px}}
+.rxblk p{margin:0;font-size:13px;line-height:1.6;color:var(--ink-2)}
+.rxtalk p{color:var(--gold-deep)}
+.rxbasis{margin-top:14px;padding-top:11px;border-top:1px solid var(--line-2);font-size:11.5px;color:var(--ink-4)}
+.rxcard.waiting{background:var(--panel-2)}
+.rxcard.waiting .rxline{margin-bottom:8px;color:var(--ink)}
+.rxwait{margin:0;font-size:13px;line-height:1.6;color:var(--ink-3);max-width:62ch}
+
+/* ==========================================================================
+   390px — a practitioner between clients.
+   ========================================================================== */
+@media(max-width:719px){
+  .lcover{border-radius:var(--r)}
+  .lcin{padding:20px 16px 18px}
+  .lckick{gap:0;flex-direction:column;align-items:flex-start;line-height:1.7}
+  .lckick .lcdot{display:none}
+  .lctitle{font-size:24px}
+  .lcobj{font-size:14px}
+  .lcmeta{gap:8px 12px;margin-top:18px;padding-top:13px}
+  .lcm{flex:1 1 44%}
+  .lcm b{font-size:14px}
+  .lprog{gap:10px;margin-bottom:14px}
+  .lpk{font-size:9px}
+  .block.insight{padding:24px 16px 20px}
+  .inspull{font-size:22px}
+  .plede{font-size:17.5px}
+  .pbeat{gap:11px}
+  .pbeat .pbn{flex-basis:20px;height:20px;font-size:10px}
+  .pfigure{margin-left:-18px;margin-right:-18px;padding-left:14px;padding-right:14px}
+  .cmpturn.you q{font-size:15.5px}
+  .cmpjoin{height:12px}
+  .cmpjoin i{left:22px}
+  .retrytop{padding:14px 14px 12px;gap:11px}
+  .retrybody{padding:14px}
+  .retryfoot{padding:11px 14px 12px}
+  .retry .prompt{font-size:16px}
+  .lend h2{font-size:20px}
+  .rxcard{padding:16px 14px}
+  .rxwho h3{font-size:18px}
+  .rxslot{padding:12px}
+  .rxcover{height:62px}
+  .block [data-next],.lend #fin{width:100%}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .cmpcol,.rxcard,.retry,.opt,.lcover{transition:none!important}
+  .progressline i{transition:none!important}
+}
+
+/* ---------- where this lesson comes from ----------
+   Folded away by default: a practitioner mid-lesson does not need the citation,
+   and a clinic auditing the curriculum needs nothing else. */
+.prov{border:1px solid var(--line);border-radius:var(--r);background:var(--panel-2);margin:0 0 16px;overflow:hidden}
+.prov summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;padding:12px 16px}
+.prov summary::-webkit-details-marker{display:none}
+.prov summary:after{content:"+";margin-left:auto;color:var(--ink-3);font-size:16px;line-height:1}
+.prov[open] summary:after{content:"–"}
+.pvtag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--champagne);white-space:nowrap}
+.pvsum{font-size:12.5px;color:var(--ink-3)}
+.pvprin{margin:0 16px 14px;padding:12px 16px;border-left:2px solid var(--gold);background:var(--gold-soft);
+  border-radius:0 8px 8px 0;font-family:var(--serif);font-size:15.5px;line-height:1.5}
+.pvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:0 18px;padding:0 16px 14px}
+.pvr{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-top:1px solid var(--line-2)}
+.pvr span{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.pvr b{font-size:13px;font-weight:400;color:var(--ink)}
+
+/* ---------- what the retry changed ---------- */
+.rchange{margin-top:12px;padding:12px 14px;border:1px dashed var(--sage);border-radius:var(--r);background:transparent}
+.rcax{display:inline-block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--sage);margin-bottom:5px}
+.rchange p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+@media(max-width:719px){.pvgrid{grid-template-columns:1fr 1fr}.pvprin{font-size:14.5px}}
+
+/* ==========================================================================
+   WHAT A MODULE BUYS HER
+   The strapline says what a module is about. The outcome says what she will
+   be able to DO once it is behind her, and it is set as a promise, in the
+   module's own gold, wherever she meets the module.
+   ========================================================================== */
+.modout{margin:12px 0 0;padding:11px 12px;border-radius:10px;background:var(--gold-soft);
+  border:1px solid #EADFC6}
+.modout .mok{display:block;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--gold-deep);margin-bottom:5px}
+.modout p{margin:0;font-family:var(--serif);font-size:14px;line-height:1.45;color:var(--ink)}
+.mod:not(.available) .modout{background:var(--panel-2);border-color:var(--line-2)}
+.mod:not(.available) .modout .mok{color:var(--ink-3)}
+
+/* the module's own page: the promise, given a whole band of its own */
+.outpromise{margin:0 0 16px;padding:20px 18px;border-radius:var(--r);
+  background:linear-gradient(140deg,#FBF4E6 0%,#F6EEDC 60%,#F2E7CE 100%);
+  border:1px solid #E8DBBE}
+@media(min-width:820px){.outpromise{padding:26px 28px}}
+.outpromise .opk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-deep);margin-bottom:9px}
+.outpromise p{margin:0;font-family:var(--serif);font-size:19px;line-height:1.46;color:var(--ink);max-width:56ch}
+@media(min-width:820px){.outpromise p{font-size:22px}}
+
+/* the lesson cover: the same promise, named as the thing this lesson feeds */
+.lcout{margin:16px 0 0;padding-left:13px;border-left:2px solid var(--gold)}
+.lcout .lcoutk{display:block;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin-bottom:5px}
+.lcout p{margin:0;font-size:13.5px;line-height:1.55;color:#D6CCBE;max-width:50ch}
+
+/* ==========================================================================
+   THE JOURNEY RAIL
+   Eight rungs at most, drawn as one line. Past rungs have settled, the current
+   one is lit, the ones ahead are waiting, and a RETRY that has not fired yet
+   says so rather than pretending to be part of the route.
+   ========================================================================== */
+.jrail{position:sticky;top:100px;z-index:40;margin:0 0 18px;padding:11px 14px;
+  border:1px solid var(--line);border-radius:999px;
+  background:rgba(251,247,239,.94);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px)}
+.jrsteps{list-style:none;display:flex;align-items:center;margin:0;padding:0}
+.jst{display:flex;align-items:center;gap:7px;min-width:0;position:relative;padding:2px 0}
+.jst+.jst:before{content:"";flex:1 1 10px;height:1px;min-width:8px;background:var(--line);margin:0 9px}
+.jst+.jst{flex:1 1 auto}
+.jdot{flex:0 0 auto;width:13px;height:13px;border-radius:50%;border:1px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;position:relative}
+.jdot i{width:5px;height:5px;border-radius:50%;background:transparent;display:block}
+.jlab{font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink-4);
+  white-space:nowrap}
+.jmaybe{font-size:9px;color:var(--ink-4);font-style:italic;letter-spacing:0;text-transform:none;white-space:nowrap}
+.jnow{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.jst.is-past .jdot{border-color:var(--ink-4);background:var(--ink-4)}
+.jst.is-past .jlab{color:var(--ink-3)}
+.jst.is-now .jdot{border-color:var(--champagne);background:#fff;box-shadow:0 0 0 3px var(--gold-soft)}
+.jst.is-now .jdot i{background:var(--champagne)}
+.jst.is-now .jlab{color:var(--espresso)}
+.jst.is-ahead .jlab{color:var(--ink-4)}
+.jst[data-maybe] .jdot{border-style:dashed}
+.jst[data-maybe] .jlab{color:var(--ink-4)}
+.jst.is-real .jmaybe{display:none}
+
+/* the loop: a miss sent her back, and the rail says so out loud */
+.jst[data-st="retry"].is-real .jdot{border-color:var(--sage);border-style:solid;background:var(--sage)}
+.jst[data-st="retry"].is-real .jlab{color:var(--sage)}
+.jst.is-again .jdot{border-color:var(--sage);box-shadow:0 0 0 3px var(--sage-soft)}
+.jst.is-again .jlab{color:var(--sage)}
+.jst.is-again .jdot:after{content:"2";position:absolute;top:-9px;right:-8px;font-size:8px;
+  font-weight:700;color:var(--sage);line-height:1}
+.jrail.looped .jst[data-st="choose"]:after,
+.jrail.looped .jst[data-st="consequence"]:after,
+.jrail.looped .jst[data-st="understand"]:after,
+.jrail.looped .jst[data-st="retry"]:after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;
+  background:repeating-linear-gradient(90deg,var(--sage) 0 3px,transparent 3px 7px);opacity:.6}
+.jrail.looped .jst[data-st="choose"]:after{left:-4px}
+.jloop{display:none}
+.jrail.looped .jloop{display:block;margin:11px 4px 1px;padding-top:9px;border-top:1px solid var(--line-2);
+  font-size:11.5px;line-height:1.55;color:var(--sage);max-width:76ch}
+@keyframes jpulse{0%{box-shadow:0 0 0 3px var(--sage-soft)}50%{box-shadow:0 0 0 8px rgba(71,114,93,.16)}100%{box-shadow:0 0 0 3px var(--sage-soft)}}
+.jst.pulse .jdot{animation:jpulse 1.1s ease-in-out 2}
+
+/* ==========================================================================
+   THE REASONING UNDER THE LESSON
+   Why a careful practitioner walks into the trap, what the client is thinking
+   while she does, and the same moment answered three ways. Teaching, not an
+   exercise: no stage chip, nothing marked, nothing recorded.
+   ========================================================================== */
+.depth{margin:0 0 18px}
+.depth>*+*{margin-top:16px}
+.dpk{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--champagne);
+  margin-bottom:11px}
+
+.dwhy{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px 20px}
+@media(min-width:820px){.dwhy{padding:34px 38px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:0 44px;align-items:start}
+  .dwhy .dpk{grid-column:1/-1}}
+.dwhy h2{font-family:var(--serif);font-weight:400;font-size:23px;line-height:1.2;margin:0 0 16px;
+  max-width:24ch;position:relative;padding-bottom:15px}
+@media(min-width:820px){.dwhy h2{font-size:29px}}
+.dwhy h2:after{content:"";position:absolute;left:0;bottom:0;width:46px;height:1px;background:var(--gold)}
+.dwhy p{margin:0;font-family:var(--serif);font-size:17px;line-height:1.72;color:var(--ink-2);max-width:64ch}
+@media(min-width:820px){.dwhy p{font-size:18.5px}}
+
+/* her interior voice: no rule, no shadow, no edge — quieter than anything
+   anyone says out loud in this product */
+.dthink{position:relative;border-radius:var(--r);padding:22px 20px 20px;
+  background:linear-gradient(158deg,#F2EEE8 0%,#EEE8E0 55%,#EAE3D9 100%);
+  display:flex;gap:14px;align-items:flex-start}
+@media(min-width:820px){.dthink{padding:28px 34px 26px;margin-left:34px}}
+.dtmark{flex:0 0 auto;line-height:0;opacity:.42;margin-top:2px}
+.dtbody{min-width:0}
+.dtk{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink-3);
+  margin-bottom:10px}
+.dthink blockquote{margin:0;font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.55;
+  color:var(--ink-2);max-width:46ch}
+@media(min-width:820px){.dthink blockquote{font-size:22px}}
+.dtnote{margin:14px 0 0;font-size:12px;line-height:1.6;color:var(--ink-3);max-width:50ch}
+
+/* the ladder: three rungs of one moment, and the difference has to be earned */
+.dladder{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px 18px}
+@media(min-width:820px){.dladder{padding:28px 30px}}
+.dladder h2{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.22;margin:0 0 8px}
+@media(min-width:820px){.dladder h2{font-size:25px}}
+.dlsub{margin:0 0 18px;font-size:13.5px;line-height:1.6;color:var(--ink-3);max-width:60ch}
+.dlrungs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dlrung{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;
+  padding:12px 12px 13px;border-radius:11px;border:1px solid var(--line);background:#fff;
+  border-top:3px solid var(--line)}
+.dlrung .dlnum{font-size:9px;letter-spacing:.14em;font-weight:700;color:var(--ink-4)}
+.dlrung .dlname{font-family:var(--serif);font-size:16px;line-height:1.15;color:var(--ink)}
+.dlrung .dllock{display:none;font-size:10px;line-height:1.35;color:var(--ink-4);font-style:italic}
+.dlrung.r-weak{border-top-color:#DCC3C4}
+.dlrung.r-average{border-top-color:var(--ink-4)}
+.dlrung.r-strong{border-top-color:var(--gold)}
+.dlrung.read{background:var(--panel-2)}
+.dlrung.on{border-color:var(--espresso);background:#fff;box-shadow:0 12px 30px -24px rgba(36,30,25,.8)}
+.dlrung.on .dlname{font-weight:600}
+.dlrung.shut{opacity:.5;cursor:default;background:var(--panel-2)}
+.dlrung.shut .dllock{display:block}
+.dlrung.shut .dlname{color:var(--ink-3)}
+
+.dlstage{margin-top:16px;border-radius:12px;padding:18px 16px;background:var(--panel-2);
+  border-left:3px solid var(--line)}
+@media(min-width:820px){.dlstage{padding:22px 24px}}
+.dlstage.r-weak{border-left-color:#C08D90;background:#FAF4F4}
+.dlstage.r-average{border-left-color:var(--ink-4);background:#FAFAF8}
+.dlstage.r-strong{border-left-color:var(--gold);background:linear-gradient(140deg,#FBF4E6,#F7F0E1)}
+.dlempty{margin:0;font-size:13px;color:var(--ink-3)}
+.dlhead{margin-bottom:12px}
+.dlbadge{display:inline-block;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.dlstage.r-strong .dlbadge{color:var(--gold-deep);border-color:#E3D3AE}
+.dlk{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-4);
+  margin-bottom:6px}
+.dlsays q{display:block;quotes:none;font-family:var(--serif);font-size:19px;line-height:1.45;color:var(--ink);max-width:48ch}
+@media(min-width:820px){.dlsays q{font-size:21px}}
+.dldoes{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
+.dldoes p{margin:0;font-size:14px;line-height:1.66;color:var(--ink-2);max-width:60ch}
+.dlcost{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line-2);
+  font-size:12.5px;line-height:1.6;color:var(--ink-3);max-width:62ch}
+.dlgate{margin:12px 0 0;font-size:12px;line-height:1.55;color:var(--gold-deep);max-width:56ch}
+@keyframes dnudge{0%,100%{opacity:1}35%{opacity:.25}70%{opacity:1}}
+.dlgate.nudge{animation:dnudge .7s ease-in-out 1}
+.dlfoot{margin:16px 0 0;padding-top:12px;border-top:1px solid var(--line-2);
+  font-size:11.5px;color:var(--ink-4)}
+
+/* ==========================================================================
+   THE SEVENTH ANSWER — what changed after coaching.
+   Every state is set in the same type on the same paper. "Too early to say"
+   is an answer. "Happening more" is reported as plainly as "happening less":
+   no red, no alarm, and nothing anywhere that reads as a score.
+   ========================================================================== */
+.coachfoot{margin-top:9px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.coachfoot .muted{margin:0}
+.cnjump{flex:0 0 auto;font-size:12.5px;padding:7px 13px}
+
+.cnform{border:1px solid var(--line);border-radius:var(--r);background:var(--panel-2);
+  padding:18px 16px;margin-bottom:18px}
+@media(min-width:820px){.cnform{padding:22px 24px}}
+.cnfk{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+.cnfsub{margin:8px 0 16px;font-size:13px;line-height:1.6;color:var(--ink-3);max-width:66ch}
+.cnrow{display:grid;grid-template-columns:1fr;gap:0 16px}
+@media(min-width:760px){.cnrow{grid-template-columns:1fr 1.25fr}}
+.cnform textarea{min-height:84px;background:#fff}
+.cnacts{display:flex;gap:10px;flex-wrap:wrap}
+.cnguide{margin:0 0 14px;padding:12px 14px;border-radius:10px;font-size:13.5px;line-height:1.55;
+  background:var(--amber-soft);color:var(--amber);border:1px solid #EADFC6}
+.cnguide.good{background:var(--sage-soft);color:var(--sage);border-color:#CFE0D6}
+
+.cnlist{display:grid;gap:14px}
+.cneff{border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:18px 16px}
+@media(min-width:820px){.cneff{padding:22px 24px}}
+.cnhd{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.cnwho{min-width:0;flex:1 1 auto}
+.cnwho h3{margin:0;font-family:var(--serif);font-weight:400;font-size:19px}
+.cnwhen{font-size:11.5px;color:var(--ink-4)}
+.cnstate{flex:0 0 auto;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.cnsubj{margin-top:12px;font-size:13px;line-height:1.5;color:var(--ink-2)}
+.cnsubj span{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-4);margin-bottom:4px}
+.cnsubj b{font-weight:600}
+.cnsaid{margin-top:14px;padding:13px 15px;border-radius:10px;background:var(--panel-2)}
+.cnsaid q{display:block;quotes:none;font-family:var(--serif);font-size:16px;line-height:1.5;color:var(--ink);max-width:58ch}
+.cnhead{margin:16px 0 0;font-family:var(--serif);font-size:17.5px;line-height:1.46;color:var(--ink);max-width:60ch}
+@media(min-width:820px){.cnhead{font-size:19px}}
+.cnba{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.cnbax{flex:1 1 150px;padding:11px 13px;border:1px solid var(--line-2);border-radius:10px;background:var(--panel-2)}
+.cnbax span{display:block;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-4)}
+.cnbax b{display:block;font-family:var(--serif);font-weight:400;font-size:22px;line-height:1.1;margin-top:5px;color:var(--ink)}
+.cnbax i{font-style:normal;font-size:11px;color:var(--ink-3)}
+.cnlines{margin-top:16px;padding-top:13px;border-top:1px solid var(--line-2)}
+.cnlines .cnk{margin-bottom:8px}
+.cnlines p{margin:0 0 8px;font-size:13.5px;line-height:1.65;color:var(--ink-2);max-width:66ch}
+.cnlines p:last-child{margin-bottom:0}
+.cndetail{margin:14px 0 0;font-size:13.5px;line-height:1.65;color:var(--ink-2);max-width:66ch}
+.cncaution{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line-2);
+  font-size:11.5px;line-height:1.6;color:var(--ink-4);max-width:70ch}
+.cnempty{margin:0;max-width:70ch}
+.cneff .cnk{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-4);margin-bottom:6px}
+
+/* ==========================================================================
+   A WRITTEN LINE
+   The words keep the punctuation their author gave them — "like this" in
+   English, «así» in Spanish — so the sheet adds no marks of its own. What it
+   does is set a stage direction differently from speech, which is the only
+   distinction the screen is entitled to make.
+   ========================================================================== */
+.say{margin:0;font-family:var(--serif);font-size:17px;line-height:1.5;color:var(--ink)}
+.aside{margin:7px 0 0;font-size:12.5px;line-height:1.6;color:var(--ink-3);font-style:italic}
+.aside+.say,.say+.say{margin-top:8px}
+.aside.lone{margin-top:0;font-family:var(--serif);font-size:16px;line-height:1.5;color:var(--ink-2)}
+
+/* ==========================================================================
+   TREATMENT CARDS
+   The lesson's own principle, put against treatments a Madrid clinic actually
+   sells, at prices it actually quotes. A set of related cards — never a table.
+   ========================================================================== */
+.trx,.cv{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:22px 18px;margin:0 0 16px}
+@media(min-width:820px){.trx,.cv{padding:30px 32px}}
+.trx>h2,.cv>h2{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.22;margin:0 0 8px}
+@media(min-width:820px){.trx>h2,.cv>h2{font-size:25px}}
+.trxsub,.cvsub{margin:0 0 20px;font-size:13.5px;line-height:1.65;color:var(--ink-3);max-width:72ch}
+.trxk{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-4);margin-bottom:7px}
+
+.trxset{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:760px){.trxset{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1060px){.trxset[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.trxc{display:flex;flex-direction:column;background:var(--panel-2);
+  border:1px solid var(--line);border-top:2px solid var(--gold);border-radius:12px;padding:18px 16px}
+.trxh{margin-bottom:12px}
+.trxn{display:block;font-size:9px;letter-spacing:.18em;font-weight:700;color:var(--ink-4);margin-bottom:6px}
+.trxname{font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.22;margin:0 0 9px;color:var(--ink)}
+.trxprice{display:inline-block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-deep);background:var(--gold-soft);border:1px solid #E7DBBE;border-radius:999px;padding:4px 11px}
+.trxwhy{margin:0 0 14px;font-family:var(--serif);font-size:15.5px;line-height:1.62;color:var(--ink-2)}
+.trxmom{background:#fff;border:1px solid var(--line-2);border-radius:10px;padding:13px;margin-bottom:14px}
+.trxmom p{margin:0;font-size:13.5px;line-height:1.62;color:var(--ink-2)}
+.trxlines{margin-top:auto;display:grid;gap:10px}
+.trxl{border-radius:10px;padding:13px;border-left:3px solid var(--line)}
+.trxl.weak{background:#FAF4F4;border-left-color:#C08D90}
+.trxl.strong{background:linear-gradient(140deg,#FBF4E6,#F7F0E1);border-left-color:var(--gold)}
+.trxl .say{font-size:15.5px;line-height:1.48}
+.trxeff{margin:11px 0 0;padding-top:9px;border-top:1px solid rgba(36,30,25,.09);
+  font-size:12.5px;line-height:1.62;color:var(--ink-2)}
+.trxeff span{display:block;font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-4);margin-bottom:4px}
+.trxfoot{margin:18px 0 0;padding-top:12px;border-top:1px solid var(--line-2);
+  font-size:11.5px;line-height:1.6;color:var(--ink-4);max-width:72ch}
+
+/* ==========================================================================
+   THE SAME CONVERSATION, RUN TWICE
+   The shared opening line is lifted above both columns, because the contract
+   guarantees it is identical and the whole comparison rests on that. The turn
+   at which the two versions stop agreeing is marked in both.
+   ========================================================================== */
+.cvset{background:var(--panel-2);border-left:2px solid var(--champagne);border-radius:0 10px 10px 0;
+  padding:13px 15px;margin-bottom:18px}
+.cvset p{margin:0;font-family:var(--serif);font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.cvshared{border:1px dashed #DCCFA6;background:var(--gold-soft);border-radius:12px;padding:15px}
+.cvsharedk,.cvsharednote{text-align:center}
+.cvsharedk{font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-deep);margin-bottom:10px}
+.cvsharednote{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--gold-deep)}
+.cvshared .cvt{align-items:center;margin:0}
+.cvshared .cvbub{max-width:54ch;background:#fff}
+
+.cvt{list-style:none;margin:0 0 12px;display:flex;flex-direction:column;gap:5px}
+.cvt.cl{align-items:flex-start}
+.cvt.pr{align-items:flex-end}
+.cvwho{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink-4)}
+.cvbub{max-width:94%;border:1px solid var(--line);border-radius:13px;padding:11px 13px}
+.cvbub .say{font-size:15px;line-height:1.5}
+.cvt.cl .cvbub{background:#fff;border-bottom-left-radius:4px}
+.cvt.pr .cvbub{background:var(--espresso);border-color:var(--espresso);border-bottom-right-radius:4px}
+.cvt.pr .cvwho{color:var(--champagne)}
+.cvt.pr .cvbub .say{color:#F0EAE2}
+.cvt.pr .cvbub .aside{color:#B3A899}
+
+.cvcols{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+@media(min-width:880px){.cvcols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cvcol{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px 14px}
+.cvcol.was{border-top:2px solid #C08D90}
+.cvcol.is{border-top:2px solid var(--gold)}
+.cvch{margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid var(--line-2)}
+.cvtag{display:block;font-family:var(--serif);font-size:17.5px;line-height:1.2;color:var(--ink)}
+.cvcol.is .cvtag{color:var(--gold-deep)}
+.cvch p{margin:5px 0 0;font-size:12px;line-height:1.55;color:var(--ink-3)}
+.cvturns{list-style:none;margin:0;padding:0}
+.cvsplit{list-style:none;position:relative;margin:2px 0 13px;text-align:center}
+.cvsplit:before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.cvsplit span{position:relative;display:inline-block;background:var(--panel-2);padding:0 9px;
+  font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+.cvcol.was .cvsplit span{color:var(--rose)}
+.cvt.diverge .cvbub{box-shadow:0 0 0 2px #E0CFA4,0 14px 30px -24px rgba(36,30,25,.7)}
+.cvcol.was .cvt.diverge .cvbub{box-shadow:0 0 0 2px #E0BFC0,0 14px 30px -24px rgba(36,30,25,.7)}
+
+.cvchanged{margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2)}
+.cvchanged p{margin:0;font-family:var(--serif);font-size:16.5px;line-height:1.7;color:var(--ink-2);max-width:68ch}
+@media(min-width:820px){.cvchanged p{font-size:18px}}
+.cvcost{display:flex;gap:14px;align-items:flex-start;margin-top:16px;border-radius:14px;padding:20px 18px;
+  background:linear-gradient(150deg,var(--espresso),var(--espresso-3))}
+@media(min-width:820px){.cvcost{padding:26px 28px;gap:20px}}
+.cvcostmark{flex:0 0 auto;line-height:0;opacity:.8}
+.cvcostk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:9px}
+.cvcost p{margin:0;font-family:var(--serif);font-size:18px;line-height:1.6;color:#EFEAE3;max-width:58ch}
+@media(min-width:820px){.cvcost p{font-size:21px}}
+
+/* ==========================================================================
+   THE END OF A LESSON IS NOT THE END OF THE ARC
+   Stages seven, eight and nine, named at the point she would otherwise think
+   she had finished: the assignment, the write-up, and her manager reading it.
+   ========================================================================== */
+.cont{margin:18px 0 20px;padding-top:18px;border-top:1px solid #E1D3B4}
+.contk{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-deep);margin-bottom:8px}
+.cont h2{font-family:var(--serif);font-weight:400;font-size:20px;margin:0 0 7px}
+.contlead{margin:0 0 16px;font-size:13.5px;line-height:1.65;color:var(--ink-2);max-width:68ch}
+.contst{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+@media(min-width:900px){.contst{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}}
+.contstep{display:flex;align-self:stretch;gap:12px;background:rgba(255,255,255,.74);
+  border:1px solid #E7DBBE;border-radius:12px;padding:14px}
+.contn{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);
+  color:var(--gold-deep);display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:13px}
+.contbody{min-width:0}
+.contbody h3{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-3);margin:4px 0 8px}
+.contbody p{margin:0 0 7px;font-size:13px;line-height:1.6;color:var(--ink-2)}
+.contbody p:last-child{margin-bottom:0}
+.contbody .assignline{font-size:15.5px;line-height:1.45;margin-bottom:7px}
+.contwhen{font-size:11.5px;line-height:1.5;color:var(--gold-deep);font-weight:600}
+.contq{font-size:12.5px;line-height:1.55;font-style:italic;color:var(--ink-3)}
+.contacts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* the same last stages, restated where a lesson is marked complete */
+.cmpon{list-style:none;margin:16px 0 0;padding:16px 0 0;border-top:1px solid var(--line-2);display:grid;gap:11px}
+.cmpon li{display:flex;gap:11px;align-items:flex-start}
+.cmpon li>span{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:1px solid var(--gold);
+  color:var(--gold-deep);display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:12px}
+.cmpon b{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:3px;font-weight:700}
+.cmpon li>div{font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+
+/* ==========================================================================
+   THE NINE-STAGE ARC
+   Six stages on the screen, three in the clinic, and a visible break between
+   them: the point at which her work leaves the product. A stage nobody has
+   reached says "not yet" and carries no number, because an invented zero
+   reads as a score and none of this is a score.
+   ========================================================================== */
+.arcx{margin:0 0 26px}
+.arcxband{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 14px}
+@media(min-width:820px){.arcxband{padding:22px 24px}}
+.arcxband.b-clinic{background:linear-gradient(160deg,#FBF4E6,#FBF7EF 62%);border-color:#E7DBBE}
+.arcxbh{margin-bottom:14px}
+.arcxbk{display:block;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--champagne)}
+.arcxband.b-clinic .arcxbk{color:var(--gold-deep)}
+.arcxbh p{margin:5px 0 0;font-size:12.5px;line-height:1.6;color:var(--ink-3);max-width:72ch}
+.arcxset{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:620px){.arcxset{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:960px){.arcxset{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.arcxst{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.arcxband.b-clinic .arcxst{background:#fff}
+.arcxst.ahead{opacity:.72}
+.arcxst.done{background:#fff;border-color:#E3D3AE}
+.arcxst.now{background:linear-gradient(160deg,var(--espresso-2),var(--espresso));border-color:var(--espresso)}
+.arcxtop{display:flex;align-items:baseline;gap:9px;margin-bottom:7px}
+.arcxn{font-family:var(--serif);font-size:13px;color:var(--champagne)}
+.arcxst.now .arcxn{color:var(--gold)}
+.arcxstate{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink-4)}
+.arcxst.done .arcxstate{color:var(--champagne)}
+.arcxst.now .arcxstate{color:var(--gold)}
+.arcxst h4{font-family:var(--serif);font-weight:400;font-size:16px;line-height:1.22;letter-spacing:0;
+  text-transform:none;color:var(--ink);margin:0 0 6px}
+.arcxst.now h4{color:#fff}
+.arcxnum{font-family:var(--serif);font-size:24px;line-height:1.05;color:var(--ink);margin-bottom:5px}
+.arcxst.now .arcxnum{color:#EFEAE3}
+.arcxnum .arcof{font-family:var(--sans);font-size:11.5px;letter-spacing:.02em;color:var(--ink-3)}
+.arcxst.now .arcxnum .arcof{color:#BCB2A5}
+.arcxst p{margin:0;font-size:12.5px;line-height:1.58;color:var(--ink-2)}
+.arcxst.now p{color:#CFC6BA}
+.arcxdetail{margin-top:9px;padding-top:8px;border-top:1px solid var(--line-2);
+  font-size:11px;line-height:1.5;color:var(--ink-3)}
+.arcxst.now .arcxdetail{color:#BCB2A5;border-top-color:rgba(239,234,227,.17)}
+.arcxleave{display:flex;flex-direction:column;align-items:center;gap:5px;padding:13px 0}
+.arcxleave i{display:block;width:2px;height:8px;border-radius:2px;background:var(--gold);opacity:.75}
+.arcxleave i:nth-child(2){opacity:.55}
+.arcxleave i:nth-child(3){opacity:.35}
+.arcxhonest{margin:14px 0 0;font-size:11.5px;line-height:1.62;color:var(--ink-4);max-width:74ch}
+
+/* ==========================================================================
+   390px — the rail compresses to dots and names only where she is standing.
+   ========================================================================== */
+@media(max-width:719px){
+  .trx,.cv{padding:20px 15px;border-radius:12px}
+  .trx>h2,.cv>h2{font-size:19px}
+  .trxc{padding:16px 14px}
+  .trxname{font-size:17.5px}
+  .trxwhy{font-size:14.5px}
+  .trxl .say,.cvbub .say{font-size:14.5px}
+  .cvcol{padding:14px 12px}
+  .cvbub{max-width:100%}
+  .cvshared{padding:13px 12px}
+  .cvchanged p{font-size:15.5px}
+  .cvcost{flex-direction:column;gap:10px;padding:18px 15px}
+  .cvcost p{font-size:17px}
+  .cont h2{font-size:18px}
+  .contstep{padding:13px 12px}
+  .contacts button{width:100%}
+  .arcxband{padding:15px 13px;border-radius:12px}
+  .arcxst h4{font-size:15px}
+  .jrail{top:96px;padding:9px 12px;border-radius:16px}
+  .jst .jlab,.jst .jmaybe{display:none}
+  .jst.is-now .jlab{display:inline;font-size:9.5px}
+  .jst+.jst:before{margin:0 6px;min-width:6px}
+  .jst.is-now{flex:0 0 auto}
+  .jrail.looped .jloop{font-size:11px;margin-top:9px}
+  .dwhy{padding:22px 17px}
+  .dwhy h2{font-size:21px}
+  .dwhy p{font-size:16px;line-height:1.7}
+  .dthink{padding:20px 17px 18px;gap:11px}
+  .dthink blockquote{font-size:18px}
+  .dtmark svg{width:28px;height:20px}
+  .dladder{padding:20px 16px}
+  .dladder h2{font-size:19px}
+  .dlrungs{gap:6px}
+  .dlrung{padding:10px 9px 11px;border-radius:9px}
+  .dlrung .dlname{font-size:14px}
+  .dlrung .dllock{font-size:9px}
+  .dlstage{padding:16px 14px}
+  .dlsays q{font-size:17.5px}
+  .lcout p{font-size:13px}
+  .outpromise{padding:18px 16px}
+  .outpromise p{font-size:17.5px}
+  .modout p{font-size:13.5px}
+  .cnform{padding:16px 14px}
+  .cneff{padding:16px 14px}
+  .cnhead{font-size:16.5px}
+  .cnbax{flex:1 1 100%}
+  .cnjump{width:100%}
+  .cnacts button{width:100%}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .jst.pulse .jdot,.dlgate.nudge{animation:none!important}
+  .dlrung,.cneff,.dlstage{transition:none!important}
+}
+
+/* ==========================================================================
+   MOVEMENT
+   Everything below is the same rule twice: a change the practitioner caused
+   should be seen to happen, and nothing else should move at all. No bounce,
+   no overshoot, no colour that is not already in the palette. Every one of
+   these is switched off entirely under prefers-reduced-motion, where the
+   change is still legible because the drawing, not the motion, carries it.
+   ========================================================================== */
+
+/* ---------- the client, changing state -----------------------------------
+   Her portrait is redrawn in both postures and the old one is retired under
+   the new one. It is the moment she learns something cost her, so it is a
+   cross-fade and not a flicker. */
+.portrait .pvwas{animation:pvwas .5s cubic-bezier(.4,0,.2,1) both}
+.portrait .pvnow{animation:pvnow .58s cubic-bezier(.4,0,.2,1) both;transform-box:fill-box;transform-origin:50% 62%}
+@keyframes pvwas{from{opacity:1}60%{opacity:0}to{opacity:0}}
+@keyframes pvnow{from{opacity:0;transform:scale(1.012)}45%{opacity:.55}to{opacity:1;transform:none}}
+
+/* ---------- the trust ledger, moving -------------------------------------
+   Seven stages on one rail. The stage that moved lights its new ground cell
+   by cell from where she stood, draws the distance underneath, and names it.
+   The six that did not move stay completely still. */
+.tlrow.up,.tlrow.down{animation:tltint .55s .12s both}
+@keyframes tltint{from{background:transparent}}
+.tladder.moved .tlrow.flat{opacity:.7;transition:opacity .4s .5s}
+.tlc{animation:tlcell .42s both;animation-delay:calc(.14s + var(--i,0) * .085s)}
+.tlc.gain{transform-box:fill-box;transform-origin:50% 100%}
+@keyframes tlcell{from{fill:#EFEAE2}}
+.tlc.loss{animation-name:tlcellout}
+@keyframes tlcellout{from{fill:var(--was,#B88C8F)}}
+.tlmv{animation:tldraw .5s .18s both}
+@keyframes tldraw{to{stroke-dashoffset:0}}
+.tlhead{animation:tlhead .3s .62s both}
+@keyframes tlhead{from{opacity:0}to{opacity:1}}
+.tlrow.up .tlmv,.tlrow.up .tlhead{stroke:var(--sage);fill:var(--sage)}
+.tlrow.down .tlmv,.tlrow.down .tlhead{stroke:var(--rose);fill:var(--rose)}
+.tlrow.flat .tlmv,.tlrow.flat .tlhead{display:none}
+.tlrow .tld{animation:tlchip .38s .5s both}
+@keyframes tlchip{from{opacity:0;transform:translateX(-3px)}}
+.tlrow.flat .tld{animation:none}
+
+/* ---------- the willingness line, drawing itself ------------------------- */
+.tcline{animation:tldraw .9s .1s both}
+.tcarea{animation:tlhead .7s .5s both}
+.tcpt{animation:tcpt .3s both;animation-delay:calc(.2s + var(--i,0) * .09s)}
+@keyframes tcpt{from{opacity:0;r:1.5}}
+.tcnow{animation:tcnow .5s .9s both}
+@keyframes tcnow{from{opacity:0;r:14}to{opacity:1}}
+
+/* ---------- before / after ---------------------------------------------- */
+.cqp-shaft{animation:tldraw .5s .18s both}
+.cqp-tip{animation:tlhead .3s .6s both}
+.cqp.fell .cqp-shaft,.cqp.fell .cqp-tip{stroke:var(--rose)}
+.cqp.rose .cqp-shaft,.cqp.rose .cqp-tip{stroke:var(--sage)}
+
+/* ---------- a rail that fills rather than appearing filled --------------- */
+.mtrkbar i{animation:mtfill .7s cubic-bezier(.3,.7,.3,1) both}
+@keyframes mtfill{from{width:var(--from,0)}}
+.ometbar i{animation:omfill .8s cubic-bezier(.3,.7,.3,1) both}
+@keyframes omfill{from{width:0}}
+.bar i{animation:omfill .7s cubic-bezier(.3,.7,.3,1) both}
+.progressline i{animation:omfill .8s .1s cubic-bezier(.3,.7,.3,1) both}
+
+/* ---------- settling in --------------------------------------------------
+   Cards arrive rather than appear. Two hundred milliseconds and four pixels:
+   enough to read as arrival, not enough to notice as an effect. */
+@keyframes settle{from{opacity:0;transform:translateY(5px)}}
+.modgrid>.mod{animation:settle .42s both;animation-delay:calc(var(--n,0) * .045s)}
+.modgrid>.mod:nth-child(1){--n:0}.modgrid>.mod:nth-child(2){--n:1}
+.modgrid>.mod:nth-child(3){--n:2}.modgrid>.mod:nth-child(4){--n:3}
+.modgrid>.mod:nth-child(5){--n:4}.modgrid>.mod:nth-child(6){--n:5}
+.modgrid>.mod:nth-child(7){--n:6}.modgrid>.mod:nth-child(8){--n:7}
+.modgrid>.mod:nth-child(9){--n:8}.modgrid>.mod:nth-child(n+10){--n:9}
+.hero{animation:settle .5s both}
+.opts>.opt{animation:settle .36s both;animation-delay:calc(.06s + var(--n,0) * .05s)}
+.opts>.opt:nth-child(1){--n:0}.opts>.opt:nth-child(2){--n:1}
+.opts>.opt:nth-child(3){--n:2}.opts>.opt:nth-child(4){--n:3}
+.opts>.opt:nth-child(n+5){--n:4}
+
+/* ---------- a chosen option acknowledging the hand that chose it --------- */
+.opt{transition:border-color .16s,background .16s,box-shadow .22s,transform .12s}
+.opt:not(.locked):active{transform:scale(.994)}
+.opt.sel,.opt.correct,.opt.wrong{animation:optpick .42s both}
+@keyframes optpick{from{box-shadow:0 0 0 0 var(--gold-soft)}}
+.opt .why{animation:settle .4s .1s both}
+
+@media(prefers-reduced-motion:reduce){
+  .portrait .pvwas{display:none}
+  .portrait .pvnow,.tlrow.up,.tlrow.down,.tlc,.tlhead,.tlrow .tld,.tcarea,.tcpt,.tcnow,
+  .cqp-tip,.mtrkbar i,.ometbar i,.bar i,.progressline i,
+  .modgrid>.mod,.hero,.opts>.opt,.opt.sel,.opt.correct,.opt.wrong,.opt .why{animation:none!important}
+  .tladder.moved .tlrow.flat{transition:none}
+  .tlmv,.tcline,.cqp-shaft{animation:none!important;stroke-dashoffset:0}
+  .opt:not(.locked):active{transform:none}
+}
+
+/* the progress ring draws its arc rather than arriving already drawn */
+.ringarc{animation:ringdraw .8s .1s cubic-bezier(.3,.7,.3,1) both}
+@keyframes ringdraw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.ringarc{animation:none!important;stroke-dashoffset:0}}
+
+/* the numbered beats of a consultation arrive in the order they are read */
+.cstep{animation:settle .42s both;animation-delay:calc(var(--n,0) * .06s)}
+.cstep:nth-of-type(1){--n:0}.cstep:nth-of-type(2){--n:1}.cstep:nth-of-type(3){--n:2}
+.cstep:nth-of-type(4){--n:3}.cstep:nth-of-type(5){--n:4}.cstep:nth-of-type(n+6){--n:5}
+.block{animation:settle .4s both}
+@media(prefers-reduced-motion:reduce){.cstep,.block{animation:none!important}}
+
+/* ==========================================================================
+   THE SCREENS THAT ARE EMPTY, LOADING, OR BROKEN
+   Three states every surface eventually shows and none of them had a design.
+   A blank shelf in a clinic is still a shelf: it says what it holds and how
+   it fills, in the same porcelain-and-champagne language as a full one.
+   ========================================================================== */
+.blank{position:relative;display:flex;gap:18px;align-items:flex-start;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:24px 22px 22px;margin-bottom:16px;overflow:hidden}
+.blank::before{content:"";position:absolute;left:0;top:0;height:2px;width:72px;
+  background:linear-gradient(90deg,var(--gold),rgba(201,164,92,0))}
+.blank .bkmark{flex:0 0 auto;width:54px;height:54px;border-radius:12px;
+  background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.blank .bktext{min-width:0;flex:1 1 auto}
+.blank .bkk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin-bottom:6px}
+.blank h3{font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.28;
+  color:var(--ink);margin:0 0 7px}
+.blank p{font-size:13.5px;line-height:1.62;color:var(--ink-2);margin:0;max-width:64ch}
+.blank p+p{margin-top:7px}
+.blank .bkacts{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.blank .bkacts button{padding:9px 16px;font-size:12.5px}
+@media(max-width:560px){
+  .blank{padding:20px 17px 18px;gap:14px}
+  .blank .bkmark{width:44px;height:44px;border-radius:10px}
+  .blank h3{font-size:17px}
+}
+/* Inside a two-column card the blank is the whole column, so it drops its own
+   frame and lets the card it sits in be the frame. */
+.card>.blank:only-child,.card>.blank:last-child:first-child{
+  background:transparent;border:0;padding:2px 0 0;margin:0}
+.card>.blank:only-child::before{display:none}
+
+/* Waiting. Not a spinner alone on a white field: the shape of the screen that
+   is coming, so the page does not jump when it arrives. */
+.loadpane{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:22px 22px 26px;margin-bottom:16px}
+.loadpane .lphead{display:flex;align-items:center;gap:11px;margin-bottom:18px}
+.loadpane .lpword{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-3)}
+.skel{height:12px;border-radius:999px;margin-bottom:11px;
+  background:linear-gradient(90deg,var(--line-2) 0%,#F6F1E8 38%,var(--line-2) 72%);
+  background-size:280% 100%;animation:skelpan 1.5s linear infinite}
+.skel.w1{width:38%;height:20px;margin-bottom:16px}
+.skel.w2{width:92%}
+.skel.w3{width:76%}
+.skel.w4{width:58%;margin-bottom:0}
+@keyframes skelpan{from{background-position:120% 0}to{background-position:-120% 0}}
+@media(prefers-reduced-motion:reduce){
+  .skel{animation:none;background:var(--line-2)}
+  .spinner{animation-duration:2.4s}
+}
+
+/* Something failed. What happened, and the one button that fixes it. */
+.failpane{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--rose);
+  border-radius:var(--r);padding:22px 24px;margin-bottom:16px}
+.failpane .fpk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--rose);margin-bottom:7px}
+.failpane h3{font-family:var(--serif);font-weight:400;font-size:19px;margin:0 0 7px}
+.failpane p{font-size:13.5px;line-height:1.62;color:var(--ink-2);margin:0 0 15px;max-width:60ch}
+
+/* ==========================================================================
+   THE MODULE PAGE — its lesson list was the only index in the product with
+   no right-hand margin and no sign of what had been finished.
+   ========================================================================== */
+.orderitem.lessonrow{align-items:center;transition:border-color .15s,background .15s}
+.orderitem.lessonrow:hover{border-color:var(--ink-4);background:var(--panel-2)}
+.orderitem.lessonrow .txt b{font-size:14px}
+.orderitem.lessonrow.done .ord{background:var(--sage-soft);color:var(--sage)}
+.orderitem.lessonrow .lmin{flex:0 0 auto;font-size:12px;color:var(--ink-3);
+  white-space:nowrap;text-align:right;min-width:52px}
+.orderitem.lessonrow .lgo{flex:0 0 auto;color:var(--ink-4);font-size:15px;line-height:1;
+  margin-left:2px;transition:transform .15s,color .15s}
+.orderitem.lessonrow:hover .lgo{color:var(--champagne);transform:translateX(2px)}
+.orderitem.lessonrow.locked .lgo{visibility:hidden}
+@media(prefers-reduced-motion:reduce){.orderitem.lessonrow:hover .lgo{transform:none}}
+@media(max-width:560px){
+  /* The row stays one row on a phone: a lesson number stranded on a line of
+     its own above its own title is worse than a narrower title. */
+  .orderitem.lessonrow{gap:10px;align-items:flex-start}
+  .orderitem.lessonrow .ord,.orderitem.lessonrow .lmin{margin-top:1px}
+  .orderitem.lessonrow .lmin{min-width:44px;font-size:11.5px}
+  .orderitem.lessonrow .lgo{display:none}
+}
+
+/* A short card beside a long one was being stretched to match it, which left
+   a hand's width of empty paper under "Payment" and under a consultations
+   list holding one line. Each card is now the height of what is in it. */
+.cols.two>.card,.cols.two>section.card{align-self:start}
+
+/* A row that opens a whole consultation should look like it opens something.
+   `cursor:pointer` alone is not a promise anybody can see. */
+table.people tr[data-ev]{transition:background .14s}
+table.people tr[data-ev]:hover td{background:var(--panel-2)}
+table.people tr[data-ev]:hover td:first-child{box-shadow:inset 2px 0 0 var(--champagne)}
+table.people tr[data-ev]:focus-visible{outline:2px solid var(--gold-soft)}
+
+/* ==========================================================================
+   THE TOOLKIT WORKSPACE — the one place inside a consultation where she
+   writes. It is the document that is kept afterwards, so it is laid out as a
+   document: numbered entries down a ruled margin, criteria in a grid, and a
+   footer that says what submitting settles.
+   ========================================================================== */
+.tkwork .tkintro{margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.tkwork .tkintro p{font-size:13.5px;line-height:1.62;color:var(--ink-2);margin:0;max-width:74ch}
+.tkentry{display:flex;gap:14px;align-items:flex-start;padding:0 0 15px}
+.tkentry .tkno{flex:0 0 auto;width:26px;padding-top:2px;font-family:var(--serif);
+  font-size:13px;color:var(--gold-deep);letter-spacing:.04em;text-align:right;opacity:.75}
+.tkentry .tkfield{flex:1 1 auto;min-width:0;border-left:1px solid var(--line-2);padding-left:15px}
+.tkentry label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.tkentry textarea{min-height:56px}
+.tkwork .tkcrit{margin:4px 0 20px;padding:16px 16px 14px;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:12px}
+.tkwork .tkcrit h4{margin-bottom:11px}
+.checklist.crit{gap:8px}
+@media(min-width:760px){.checklist.crit{grid-template-columns:1fr 1fr}}
+.tkfoot{display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+  margin-top:6px;padding-top:16px;border-top:1px solid var(--line-2)}
+.tkfnote{font-size:12.5px;color:var(--ink-3);flex:1 1 220px;min-width:0}
+.tkissues{margin-top:14px;background:var(--rose-soft);border-radius:12px;padding:14px 16px}
+.tkissues h4{color:var(--rose);margin-bottom:8px}
+.tkissues div{font-size:13.5px;line-height:1.6;color:var(--rose);padding-left:14px;position:relative}
+.tkissues div+div{margin-top:6px}
+.tkissues div::before{content:"·";position:absolute;left:3px;font-weight:700}
+@media(max-width:560px){
+  .tkentry{gap:10px}
+  .tkentry .tkno{width:20px;font-size:12px}
+  .tkentry .tkfield{padding-left:11px}
+  .tkfoot button{width:100%}
+}
+
+/* The follow-up plan: three intervals, each one a row of the plan rather than
+   a nested card, so the shape of the sequence is visible before it is filled. */
+.fuplan{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;margin-bottom:18px}
+.furow{background:#fff;padding:15px 16px 16px}
+.fuwhen{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:11px;
+  padding-bottom:9px;border-bottom:1px solid var(--line-2)}
+.fuwhen b{font-family:var(--serif);font-weight:400;font-size:17px;color:var(--ink)}
+.fuwhen span{font-size:12.5px;color:var(--ink-3);flex:1 1 200px;min-width:0}
+.fufields{gap:12px}
+.fufields label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-3)}
+.tklater{font-size:13.5px;line-height:1.62;color:var(--ink-2);margin:0;max-width:66ch;
+  padding-left:14px;border-left:2px solid var(--gold)}

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241E19">
+<title>MIRROR — Set a new password</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<style>
+/* ==========================================================================
+   RESET — the page a practitioner opens from the link her manager handed her
+   because she could not sign in. Deliberately the same shell and the same
+   shapes as /join: this is the one moment she is already frustrated, and an
+   unfamiliar page would be the second thing to go wrong.
+   ========================================================================== */
+.jn-who{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+  padding:10px 13px;font-size:13px;color:var(--ink-2);margin:0 0 18px;word-break:break-word}
+.jn-who b{display:block;color:var(--ink);font-weight:600;font-size:13.5px}
+.jn-hint{font-size:12px;color:var(--ink-3);margin:-8px 0 14px}
+.jn-state{margin-top:6px}
+.jn-state .badge{margin-bottom:12px}
+.jn-foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-2);
+  font-size:12px;color:var(--ink-3)}
+.jn-foot a{color:var(--gold-deep);font-weight:600}
+.rs-keep{background:var(--gold-soft);border-radius:10px;padding:12px 14px;margin:0 0 18px;
+  font-size:13px;color:var(--ink-2);line-height:1.55}
+.rs-keep b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="signin">
+  <div class="brandside">
+    <div>
+      <span class="wm" data-wm="MIRROR">MIRROR</span>
+      <div class="desc" data-t="brandDesc">Interactive Sales Academy</div>
+    </div>
+    <div class="pitch" data-t="pitch">Practise the consultation, not the presentation.</div>
+    <div class="sub" data-t="sub">Ten modules, interactive lessons and full simulated consultations, built on the MIRROR Method from The Beauty Sales Secrets.</div>
+    <div class="endorse">
+      <div class="logo" id="rs-logo"></div>
+      <div class="et"><b data-t="endorse1">Endorsed by Clinic Scale System</b><span data-t="endorse2">Based on the MIRROR Method from The Beauty Sales Secrets</span></div>
+    </div>
+  </div>
+
+  <div class="formside">
+    <div class="formcard">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:18px">
+        <div class="langsw" id="rs-lang">
+          <button type="button" data-lang="en" class="on">EN</button>
+          <button type="button" data-lang="es">ES</button>
+        </div>
+      </div>
+      <div id="rs-body"><p class="muted" data-t="loading">Checking your link…</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="/art.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* =======================================================================
+     COPY — every visible string, in both languages.
+     ======================================================================= */
+  const COPY = {
+    en: {
+      brandDesc: 'Interactive Sales Academy',
+      pitch: 'Practise the consultation, not the presentation.',
+      sub: 'Ten modules, interactive lessons and full simulated consultations, built on the MIRROR Method from The Beauty Sales Secrets.',
+      endorse1: 'Endorsed by Clinic Scale System',
+      endorse2: 'Based on the MIRROR Method from The Beauty Sales Secrets',
+
+      loading: 'Checking your link…',
+
+      openBadge: 'New password',
+      openTitle: name => name ? 'Hello again, ' + name : 'Set a new password',
+      openLead: 'Choose a new password and you are back in. Nobody else sees it — not your manager, not the clinic.',
+      keep: 'Everything you have already done stays exactly where it is: your lessons, your recorded consultations, the documents you wrote inside them and your field journal. This changes your password and nothing else.',
+      password: 'Choose a new password',
+      confirm: 'Type it again',
+      minHint: 'At least ten characters. Choose something you will remember.',
+      submit: 'Set my password and sign in',
+      submitting: 'Signing you in…',
+      signedOutNote: 'Anywhere you were already signed in will be signed out.',
+
+      errShort: 'Choose a password of at least 10 characters.',
+      errMatch: 'The two passwords do not match.',
+      errNetwork: 'The Academy could not be reached. Check your connection and try again.',
+
+      usedBadge: 'Already used',
+      usedTitle: 'This link has already been used',
+      usedBody: 'A password has already been set from this link, so it cannot be used a second time. Sign in with the password you chose. If that was not you, ask your clinic manager for a new link straight away.',
+
+      expiredBadge: 'Expired',
+      expiredTitle: 'This link has expired',
+      expiredBody: 'Reset links stay open for 48 hours, so that one left in an inbox cannot be used later by somebody else. Ask your clinic manager for a new one — it takes her a moment, and nothing you have recorded is affected.',
+
+      goneBadge: 'Not found',
+      goneTitle: 'This link is not valid',
+      goneBody: 'The address is incomplete or the link no longer exists. Links are long and messaging apps sometimes break them across two lines. Copy the whole link again, or ask your clinic manager for a new one.',
+
+      toApp: 'Go to sign in',
+      footNote: 'MIRROR Interactive Sales Academy'
+    },
+    es: {
+      brandDesc: 'Academia Interactiva de Ventas',
+      pitch: 'Practica la consulta, no la presentación.',
+      sub: 'Diez módulos, lecciones interactivas y consultas simuladas completas, sobre el Método MIRROR de The Beauty Sales Secrets.',
+      endorse1: 'Avalado por Clinic Scale System',
+      endorse2: 'Basado en el Método MIRROR de The Beauty Sales Secrets',
+
+      loading: 'Comprobando tu enlace…',
+
+      openBadge: 'Contraseña nueva',
+      openTitle: name => name ? 'Hola otra vez, ' + name : 'Pon una contraseña nueva',
+      openLead: 'Elige una contraseña nueva y vuelves a entrar. No la ve nadie más: ni la dirección de la clínica ni nadie del equipo.',
+      keep: 'Todo lo que ya has hecho se queda tal cual: tus lecciones, tus consultas registradas, los documentos que escribiste dentro de ellas y tu diario de campo. Esto cambia tu contraseña y nada más.',
+      password: 'Elige una contraseña nueva',
+      confirm: 'Escríbela otra vez',
+      minHint: 'Diez caracteres como mínimo. Elige algo que vayas a recordar.',
+      submit: 'Guardar la contraseña y entrar',
+      submitting: 'Entrando…',
+      signedOutNote: 'Se cerrará la sesión en cualquier sitio donde la tuvieras abierta.',
+
+      errShort: 'Elige una contraseña de al menos 10 caracteres.',
+      errMatch: 'Las dos contraseñas no coinciden.',
+      errNetwork: 'No se ha podido conectar con la Academia. Comprueba tu conexión e inténtalo de nuevo.',
+
+      usedBadge: 'Ya utilizado',
+      usedTitle: 'Este enlace ya se ha utilizado',
+      usedBody: 'Con este enlace ya se puso una contraseña, así que no puede volver a usarse. Inicia sesión con la contraseña que elegiste. Si no fuiste tú, pide otro enlace a la dirección de tu clínica ahora mismo.',
+
+      expiredBadge: 'Caducado',
+      expiredTitle: 'Este enlace ha caducado',
+      expiredBody: 'Los enlaces para cambiar la contraseña duran 48 horas, para que uno olvidado en el correo no pueda usarlo otra persona más adelante. Pide uno nuevo a la dirección de tu clínica: es cuestión de un momento y no afecta a nada de lo que tengas registrado.',
+
+      goneBadge: 'No encontrado',
+      goneTitle: 'Este enlace no es válido',
+      goneBody: 'La dirección está incompleta o el enlace ya no existe. Los enlaces son largos y algunas aplicaciones de mensajería los parten en dos líneas. Copia el enlace entero otra vez o pide uno nuevo a la dirección de tu clínica.',
+
+      toApp: 'Ir a iniciar sesión',
+      footNote: 'MIRROR · Academia Interactiva de Ventas'
+    }
+  };
+
+  const $  = s => document.querySelector(s);
+  const $$ = s => Array.prototype.slice.call(document.querySelectorAll(s));
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  let lang = 'en';
+  let state = { kind: 'loading', data: null };   // loading | open | used | expired | gone
+  let inlineError = null;                        // a COPY key, so it survives a language switch
+
+  function readStored() {
+    try { const v = localStorage.getItem('mirror.lang'); if (v === 'es' || v === 'en') return v; }
+    catch (e) { /* storage unavailable — English it is */ }
+    return 'en';
+  }
+  function storeLang(v) { try { localStorage.setItem('mirror.lang', v); } catch (e) { /* ignore */ } }
+
+  const token = (function () {
+    const m = /[?&]token=([^&#]+)/.exec(window.location.search);
+    try { return m ? decodeURIComponent(m[1]) : ''; } catch (e) { return m ? m[1] : ''; }
+  })();
+
+  /* =======================================================================
+     RENDER
+     ======================================================================= */
+  function render(l) {
+    lang = (l === 'es') ? 'es' : 'en';
+    const t = COPY[lang];
+    document.documentElement.lang = lang;
+
+    $$('[data-t]').forEach(node => {
+      const v = t[node.getAttribute('data-t')];
+      if (typeof v === 'string') node.textContent = v;
+    });
+    $$('#rs-lang button').forEach(b => b.classList.toggle('on', b.getAttribute('data-lang') === lang));
+
+    const logo = window.ART && window.ART.csLogo;
+    $('#rs-logo').innerHTML = typeof logo === 'function' ? logo(30) : '';
+
+    // What she has already typed survives a language switch rather than being
+    // thrown away by the re-render.
+    const kept = { pw: ($('#rs-pass') || {}).value || '', pw2: ($('#rs-pass2') || {}).value || '' };
+
+    if (state.kind === 'loading') { $('#rs-body').innerHTML = `<p class="muted">${esc(t.loading)}</p>`; return; }
+    if (state.kind === 'open') return renderOpen(kept);
+    return renderClosed();
+  }
+
+  function renderOpen(kept) {
+    const t = COPY[lang];
+    const d = state.data || {};
+    const first = String(d.name || '').trim().split(/\s+/)[0] || '';
+
+    $('#rs-body').innerHTML = `
+      <div class="jn-state">
+        <span class="badge ready">${esc(t.openBadge)}</span>
+        <h1>${esc(t.openTitle(first))}</h1>
+        <p class="muted" style="font-size:13.5px">${esc(t.openLead)}</p>
+        ${d.clinicName ? `<div class="jn-who"><b>${esc(d.name || '')}</b>${esc(d.clinicName)}</div>` : ''}
+        <div class="rs-keep">${esc(t.keep)}</div>
+        <div id="rs-err" class="err hidden"></div>
+        <form id="rs-form" novalidate>
+          <div class="field">
+            <label for="rs-pass">${esc(t.password)}</label>
+            <input id="rs-pass" type="password" autocomplete="new-password">
+          </div>
+          <div class="jn-hint">${esc(t.minHint)}</div>
+          <div class="field">
+            <label for="rs-pass2">${esc(t.confirm)}</label>
+            <input id="rs-pass2" type="password" autocomplete="new-password">
+          </div>
+          <button class="primary lg" style="width:100%" id="rs-submit" type="submit">${esc(t.submit)}</button>
+        </form>
+        <div class="jn-foot">${esc(t.signedOutNote)} <a href="/app">${esc(t.toApp)}</a></div>
+      </div>`;
+
+    $('#rs-pass').value = kept.pw;
+    $('#rs-pass2').value = kept.pw2;
+    if (inlineError) showError(inlineError);
+    $('#rs-form').addEventListener('submit', submit);
+  }
+
+  function renderClosed() {
+    const t = COPY[lang];
+    const map = {
+      used: ['done', t.usedBadge, t.usedTitle, t.usedBody],
+      expired: ['prod', t.expiredBadge, t.expiredTitle, t.expiredBody],
+      gone: ['prod', t.goneBadge, t.goneTitle, t.goneBody]
+    };
+    const [tone, badge, title, body] = map[state.kind] || map.gone;
+    $('#rs-body').innerHTML = `
+      <div class="jn-state">
+        <span class="badge ${tone}">${esc(badge)}</span>
+        <h1>${esc(title)}</h1>
+        <p style="color:var(--ink-2);font-size:14px">${esc(body)}</p>
+        <button class="primary lg" style="width:100%;margin-top:6px" type="button" id="rs-toapp">${esc(t.toApp)}</button>
+        <div class="jn-foot">${esc(t.footNote)}</div>
+      </div>`;
+    $('#rs-toapp').addEventListener('click', () => { window.location.href = '/app'; });
+  }
+
+  /* =======================================================================
+     THE FORM
+     ======================================================================= */
+  function showError(keyOrText, verbatim) {
+    const box = $('#rs-err');
+    inlineError = verbatim ? null : keyOrText;
+    if (!box) return;
+    box.textContent = verbatim ? keyOrText : COPY[lang][keyOrText];
+    box.classList.remove('hidden');
+  }
+  function clearError() {
+    inlineError = null;
+    const box = $('#rs-err');
+    if (box) { box.classList.add('hidden'); box.textContent = ''; }
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    clearError();
+    const pw = $('#rs-pass').value;
+    const pw2 = $('#rs-pass2').value;
+
+    // Both checks run before anything leaves the browser.
+    if (pw.length < 10) return showError('errShort');
+    if (pw !== pw2) return showError('errMatch');
+
+    const btn = $('#rs-submit');
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = COPY[lang].submitting;
+
+    let r = null, data = null;
+    try {
+      r = await fetch('/api/password-resets/' + encodeURIComponent(token) + '/use', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Mirror-Lang': lang },
+        body: JSON.stringify({ password: pw })
+      });
+      try { data = await r.json(); } catch (err) { data = null; }
+    } catch (err) {
+      btn.disabled = false; btn.textContent = label;
+      return showError('errNetwork');
+    }
+
+    if (r.status === 201 && data && data.token) {
+      // The key the application reads on load, so she arrives already signed in
+      // rather than being asked for the password she has just chosen.
+      try { localStorage.setItem('mirror.token', data.token); } catch (err) { /* ignore */ }
+      window.location.href = '/app';
+      return;
+    }
+
+    btn.disabled = false; btn.textContent = label;
+    showError((data && data.error) ? String(data.error) : COPY[lang].errNetwork, true);
+  }
+
+  /* =======================================================================
+     BOOT
+     ======================================================================= */
+  $$('#rs-lang button').forEach(b => b.addEventListener('click', () => {
+    const v = b.getAttribute('data-lang');
+    storeLang(v);
+    render(v);
+  }));
+
+  render(readStored());
+
+  (async function load() {
+    if (!token) { state = { kind: 'gone', data: null }; return render(lang); }
+    let r = null, data = null;
+    try {
+      r = await fetch('/api/password-resets/' + encodeURIComponent(token) + '?lang=' + lang,
+        { headers: { 'X-Mirror-Lang': lang } });
+      try { data = await r.json(); } catch (e) { data = null; }
+    } catch (e) {
+      state = { kind: 'gone', data: null };
+      return render(lang);
+    }
+    if (!r.ok || !data || !data.state) { state = { kind: 'gone', data: null }; return render(lang); }
+    const kind = data.state === 'open' ? 'open'
+      : data.state === 'used' ? 'used'
+      : data.state === 'expired' ? 'expired' : 'gone';
+    state = { kind, data };
+    render(lang);
+  })();
+})();
+</script>
+</body>
+</html>

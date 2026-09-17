@@ -1,0 +1,229 @@
+/* ==========================================================================
+   MIRROR — THE COMMERCIAL EXPERIENCE
+   The screens a buyer walks before the learning product begins: the first ten
+   minutes, the consultation moment, the four-movement arc, the handover a
+   manager sends, and what the clinic keeps afterwards.
+
+   Nothing here redefines an Academy class. It uses the Academy's own tokens
+   (--espresso, --champagne, --line, --r) so the two sheets read as one system.
+   Mobile first: every layout starts in one column and earns its second.
+   ========================================================================== */
+
+/* ---------- THE ARC -------------------------------------------------- */
+.arc{margin:0 0 26px}
+.arcrail{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media(min-width:760px){.arcrail{grid-template-columns:repeat(4,1fr)}}
+.arcst{background:var(--panel);padding:16px 16px 18px;position:relative}
+.arcst.done{background:var(--panel-2)}
+.arcst.now{background:linear-gradient(160deg,#2E2620,#241E19);color:#EFEAE3}
+.arcst.ahead{background:var(--panel);opacity:.72}
+.arcst .arcn{font-family:var(--serif);font-size:12px;color:var(--champagne);
+  letter-spacing:.06em;display:inline-block;margin-right:8px}
+.arcst.now .arcn{color:var(--gold)}
+.arcstate{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.arcst.now .arcstate{color:var(--gold)}
+.arcst.done .arcstate{color:var(--champagne)}
+.arcst h4{font-family:var(--serif);font-weight:400;font-size:16.5px;text-transform:none;
+  letter-spacing:0;color:var(--ink);margin:8px 0 6px}
+.arcst.now h4{color:#fff}
+.arcnum{font-family:var(--serif);font-size:26px;line-height:1.05;color:var(--ink)}
+.arcst.now .arcnum{color:#EFEAE3}
+.arcnum .arcof{font-family:var(--sans);font-size:12px;color:var(--ink-3);letter-spacing:.02em}
+.arcst.now .arcnum .arcof{color:#BCB2A5}
+.arcst p{font-size:12.5px;color:var(--ink-2);margin:8px 0 0}
+.arcst.now p{color:#CFC6BA}
+.arcdetail{margin-top:8px;font-size:11.5px;color:var(--ink-3);letter-spacing:.02em}
+.arcst.now .arcdetail{color:#BCB2A5}
+
+.arcnext{margin-top:14px;border:1px solid var(--line);border-left:3px solid var(--champagne);
+  border-radius:var(--r);background:var(--panel);padding:18px 20px}
+.arcnk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin-bottom:8px}
+.arcnext h3{font-family:var(--serif);font-weight:400;font-size:19px;margin-bottom:6px}
+.arcwhy{font-size:14px;color:var(--ink-2);max-width:62ch;margin-bottom:14px}
+
+/* ---------- START HERE ------------------------------------------------ */
+.ststeps{display:grid;grid-template-columns:1fr;gap:14px;margin:4px 0 26px}
+@media(min-width:900px){.ststeps{grid-template-columns:repeat(3,1fr);gap:18px}}
+.stcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;display:flex;flex-direction:column}
+.stcard.now{border-color:var(--champagne);box-shadow:var(--shadow)}
+.stcard.done{background:var(--panel-2)}
+.stcard.next{opacity:.86}
+.sthead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.stn{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.stbadge{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  border-radius:999px;padding:3px 9px;background:var(--gold-soft);color:var(--gold-deep)}
+.stcard.done .stbadge{background:var(--sage-soft);color:var(--sage)}
+.stcard.next .stbadge{background:var(--line-2);color:var(--ink-3)}
+.stmin{font-size:11.5px;color:var(--ink-3)}
+.stcard h3{font-family:var(--serif);font-weight:400;font-size:19px;margin-bottom:8px}
+.stcard p{font-size:13.5px;color:var(--ink-2);flex:1}
+.stcard button{margin-top:14px;align-self:flex-start}
+@media(max-width:520px){.stcard button{width:100%}}
+.stsample{border-left:3px solid var(--champagne)}
+.stq{font-family:var(--serif);font-size:18px;line-height:1.45;color:var(--ink);
+  margin:6px 0 12px;padding:0;border:0}
+@media(min-width:820px){.stq{font-size:20px}}
+.stfoot{margin:22px 0 0}
+
+/* ---------- THE FIRST MOMENT ------------------------------------------ */
+.fmhero{background:linear-gradient(163deg,#241E19 0%,#2E2620 56%,#3A3029 100%);
+  color:#EFEAE3;border-radius:var(--r-lg);padding:26px 22px;margin-bottom:18px;
+  position:relative;overflow:hidden}
+@media(min-width:820px){.fmhero{padding:38px 34px}}
+.fmhero:after{content:"";position:absolute;right:-120px;top:-140px;width:420px;height:420px;
+  border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.18),transparent 66%);pointer-events:none}
+.fmhero .kicker{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin-bottom:12px;position:relative}
+.fmhero h1{font-family:var(--serif);font-weight:400;color:#fff;font-size:24px;
+  line-height:1.2;max-width:24ch;margin-bottom:12px;position:relative}
+@media(min-width:820px){.fmhero h1{font-size:32px}}
+.fmhero p{color:#C6BCAF;font-size:14.5px;max-width:64ch;margin-bottom:14px;position:relative}
+.fmnote{font-size:12px;color:#877D71;letter-spacing:.02em;position:relative}
+
+.fmroom .fmwho{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px}
+.fmroom .fmface{flex:0 0 auto}
+.fmid h2{font-family:var(--serif);font-weight:400;font-size:20px;margin-bottom:4px}
+.fmk{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin:16px 0 8px}
+.fmid .fmk{margin-top:0}
+.fmphase{font-size:12.5px;color:var(--ink-2);margin-top:8px;padding-top:8px;border-top:1px solid var(--line-2)}
+.fmsetting{font-size:14px;color:var(--ink-2);font-style:italic;margin:0}
+.fmquote{font-family:var(--serif);font-size:20px;line-height:1.42;color:var(--ink);
+  margin:0;padding:0 0 0 16px;border-left:3px solid var(--gold)}
+@media(min-width:820px){.fmquote{font-size:23px}}
+.fmsub{font-size:13.5px;color:var(--ink-2);margin:0}
+
+.fmchoose .decisionprompt{margin-bottom:14px}
+.fmopts{display:grid;grid-template-columns:1fr;gap:10px}
+.fmopt{display:block;width:100%;text-align:left;border:1px solid var(--line);
+  border-radius:var(--r);background:var(--panel-2);padding:15px 17px;transition:.15s}
+.fmopt:hover{border-color:var(--champagne);background:#fff}
+.fmol{display:block;font-weight:600;font-size:14.5px;color:var(--ink);margin-bottom:7px}
+.fmoq{display:block;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.fmoq:before{content:"\201C"}
+.fmoq:after{content:"\201D"}
+.fmskip{margin-top:14px}
+
+.fmsaid .fmyou{font-family:var(--serif);font-size:17.5px;line-height:1.45;margin:0;
+  padding:0 0 0 16px;border-left:3px solid var(--espresso);color:var(--ink)}
+.fmsaid .fmyou:before{content:"\201C"}
+.fmsaid .fmyou:after{content:"\201D"}
+.fmread{margin-top:14px}
+.fmmove .fmrow{display:flex;justify-content:space-between;gap:14px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13.5px}
+.fmmove .fmrow:last-child{border-bottom:0}
+.fmmove .fmrow span{color:var(--ink-3)}
+.fmmove .fmrow b{text-align:right;color:var(--ink);font-weight:600}
+.fmdeltas{list-style:none;margin:12px 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.fmdl{font-size:12px;border-radius:999px;padding:4px 11px;background:var(--sage-soft);color:var(--sage)}
+.fmdl.down{background:var(--rose-soft);color:var(--rose)}
+.fmdl b{margin-left:6px}
+.fmclose{border-left:3px solid var(--champagne)}
+.fmclose h3{font-family:var(--serif);font-weight:400;font-size:20px;margin-bottom:12px}
+.fmpoints{margin:0 0 18px;padding:0 0 0 18px}
+.fmpoints li{font-size:14px;color:var(--ink-2);margin-bottom:9px}
+.fmacts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media(max-width:520px){.fmacts{display:block}.fmacts button{width:100%;margin-bottom:10px}}
+
+/* ---------- THE HANDOVER ---------------------------------------------- */
+.handover{margin-top:20px}
+.hoto{margin:0 0 4px;font-size:14px}
+.hoto span{color:var(--ink-3);margin-left:8px;font-size:13px;word-break:break-word}
+.holead{margin-bottom:4px}
+.hok{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin:18px 0 8px}
+/* a long link has no spaces to break at, and a textarea will not break it
+   without being told to — so on a phone it scrolls sideways forever */
+.homsg{font-family:var(--sans);font-size:13.5px;line-height:1.6;background:var(--panel-2);
+  color:var(--ink-2);min-height:104px;resize:vertical;
+  overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
+.handover .invitelink input{overflow-wrap:anywhere}
+
+/* the pending list: a name and an address that must not become one letter a line */
+.mgrpanel .trustrow.inviterow{flex-wrap:wrap;gap:6px 12px;align-items:flex-start}
+.mgrpanel .trustrow.inviterow>span:first-child{flex:1 1 180px;min-width:0}
+.mgrpanel .trustrow.inviterow .em{display:block;overflow-wrap:anywhere;word-break:break-word;
+  white-space:normal;text-align:left}
+.mgrpanel .trustrow.inviterow .invitemeta{flex:0 0 auto;display:flex;align-items:center;
+  gap:8px;flex-wrap:wrap}
+.hoacts{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.hownote{margin-top:18px}
+.inviterow .hore{margin-left:10px;padding:5px 12px;font-size:12px}
+@media(max-width:560px){.inviterow .hore{margin:8px 0 0}}
+
+/* ---------- WHAT THE CLINIC KEEPS ------------------------------------- */
+.keeps{margin-top:18px}
+.keepgrid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media(min-width:720px){.keepgrid{grid-template-columns:repeat(3,1fr)}}
+.keepcard{background:var(--panel-2);padding:18px 16px}
+.keepcard b{display:block;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.05}
+.keeplab{display:block;font-size:11px;letter-spacing:.06em;color:var(--ink-3);margin:4px 0 10px}
+.keepcard p{font-size:12.5px;color:var(--ink-2);margin:0}
+.keepacts{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.keepempty{margin:14px 0 0}
+
+/* ---------- small screens --------------------------------------------- */
+@media(max-width:420px){
+  .fmroom .fmwho{gap:12px}
+  .fmquote{font-size:18px;padding-left:13px}
+  .arcst{padding:14px}
+}
+
+/* ==========================================================================
+   THE PEOPLE ON THE PLAN
+   A four-column table was the wrong shape for the one action a manager needs
+   beside a name on a phone. Each practitioner is a row that wraps: who she is,
+   what she has done, and the way out of "she cannot sign in".
+   ========================================================================== */
+.ppl{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden}
+.pplrow{background:#fff;display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  padding:14px 16px}
+.pplrow.on{background:var(--panel-2)}
+.pplwho{flex:1 1 210px;min-width:0}
+.pplwho b{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.pplwho .em{display:block;font-size:11.5px;color:var(--ink-3);overflow-wrap:anywhere;margin-top:1px}
+.pplstat{flex:0 0 auto;display:flex;gap:18px;align-items:baseline}
+.pplstat span{display:block;font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+.pplstat b{display:block;font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.1;color:var(--ink)}
+/* a date is not a quantity: it reads at text size beside the counts */
+.pplstat .pplwhen b{font-family:var(--sans);font-size:12.5px;font-weight:600;line-height:1.35;padding-top:5px}
+.pplquiet{flex:1 1 140px;font-size:12px;color:var(--ink-4);font-style:italic}
+.pplact{flex:0 0 auto;margin-left:auto}
+.pplact button{padding:7px 14px;font-size:12.5px;white-space:nowrap}
+@media(max-width:620px){
+  .pplrow{gap:10px}
+  .pplstat{gap:14px;order:3;flex:1 1 100%}
+  .pplact{order:4;margin-left:0;flex:1 1 100%}
+  .pplact button{width:100%}
+}
+
+/* ---------- the password link, handed over the way an invitation is ------ */
+.pwpanel{margin-top:16px;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel-2);padding:18px 18px 16px;position:relative;overflow:hidden}
+.pwpanel::before{content:"";position:absolute;left:0;top:0;height:2px;width:84px;
+  background:linear-gradient(90deg,var(--gold),rgba(201,164,92,0))}
+.pwpanel .invitedone{margin-top:0;padding-top:0;border-top:0}
+.pwfor{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin:0 0 4px}
+.pwfacts{list-style:none;margin:0 0 4px;padding:0;display:grid;gap:9px}
+.pwfacts li{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.pwfacts li::before{content:"";flex:0 0 auto;width:6px;height:6px;margin-top:7px;
+  border-radius:50%;background:var(--gold)}
+.pwfacts li b{color:var(--ink);font-weight:600}
+.pwknow{margin:14px 0 16px;padding:14px 16px;background:#fff;border:1px solid var(--line);
+  border-radius:12px}
+.pwknow h4{margin-bottom:10px}
+.pwguide{margin-top:14px}
+.pwguide b{display:block;margin-bottom:3px}
+@media(max-width:560px){.pwpanel{padding:16px 15px 14px}}
+
+/* On a phone a long address trailing a long name shares its last line and the
+   pair reads as one run-on string. The address takes its own line instead. */
+@media(max-width:620px){
+  .hoto span{display:block;margin-left:0;margin-top:3px}
+}

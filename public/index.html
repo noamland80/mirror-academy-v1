@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241E19">
+<title>MIRROR Consultation Training System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- ===================== SIGN IN ===================== -->
+<div id="signin" class="signin">
+  <div class="brandside">
+    <div>
+      <span class="wm" data-wm="MIRROR">MIRROR</span>
+      <div class="desc" id="si-desc">Consultation Training System</div>
+    </div>
+    <div class="pitch" id="si-pitch">Practise the consultation, not the presentation.</div>
+    <div class="sub" id="si-sub">Ten modules, interactive lessons and full simulated consultations, built on the MIRROR Method from <i>The Beauty Sales Secrets</i>.</div>
+    <div class="endorse">
+      <div class="logo" id="si-logo"></div>
+      <div class="et"><b id="si-end1">Endorsed by Clinic Scale System</b><span id="si-end2">Based on the MIRROR Method from The Beauty Sales Secrets</span></div>
+    </div>
+  </div>
+  <div class="formside">
+    <div class="formcard">
+      <div class="langsw stowed" id="si-lang"></div>
+      <div class="prodname" id="si-prod">MIRROR Consultation Training System</div>
+      <h1 id="si-title">Sign in</h1>
+      <p class="muted" id="si-hint">Sign in with the account your clinic issued you.</p>
+      <div class="roletabs" id="si-roles"></div>
+      <div id="si-err" class="err hidden"></div>
+      <form id="si-form">
+        <div class="field"><label id="si-lemail">Email</label><input id="si-email" type="email" autocomplete="username" required></div>
+        <div class="field"><label id="si-lpass">Password</label><input id="si-pass" type="password" autocomplete="current-password" required></div>
+        <button class="primary lg" style="width:100%" id="si-submit" type="submit">Enter</button>
+      </form>
+      <p class="muted signfoot" id="si-foot"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="wrap top-in">
+      <div class="brand">
+        <span class="wm" data-wm="MIRROR">MIRROR</span>
+        <small id="hdr-desc">Consultation Training System</small>
+      </div>
+      <div class="sp"></div>
+      <div class="langsw stowed" id="hdr-lang"></div>
+      <div class="whoami"><b id="hdr-name"></b><span id="hdr-role"></span></div>
+      <button class="ghost" id="hdr-out">Sign out</button>
+    </div>
+  </header>
+  <nav class="tabs"><div class="wrap tabs-in" id="tabs"></div></nav>
+  <main><div class="wrap" id="view"></div></main>
+  <footer class="foot"><div class="wrap fin">
+    <span id="ft-1"></span><span class="sp"></span><span id="ft-2"></span>
+  </div></footer>
+</div>
+
+<script src="/art.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

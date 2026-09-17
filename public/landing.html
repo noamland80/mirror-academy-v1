@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241E19">
+<title>MIRROR Interactive Sales Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<style>
+/* ==========================================================================
+   LANDING — commercial page. Uses the Academy's own variables and components;
+   everything here is layout the app shell does not already own.
+   ========================================================================== */
+
+/* ---------- top bar ---------- */
+.lp-top{position:sticky;top:0;z-index:70;background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.lp-top .in{display:flex;align-items:center;gap:10px;min-height:60px}
+.lp-top .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.lp-top .wm{font-size:19px;color:var(--espresso)}
+.lp-top .brand small{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+@media(max-width:760px){.lp-top .brand small{display:none}}
+.lp-signin{font-size:12.5px;font-weight:600;color:var(--ink-2);text-decoration:none;
+  border:1px solid var(--line);border-radius:999px;padding:8px 14px;white-space:nowrap;background:#fff}
+.lp-signin:hover{border-color:var(--ink-4);color:var(--ink)}
+
+/* ---------- bands and sections ---------- */
+.band{background:linear-gradient(163deg,#241E19 0%,#2E2620 56%,#3A3029 100%);color:#EFEAE3;
+  position:relative;overflow:hidden}
+.band:after{content:"";position:absolute;right:-140px;top:-160px;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,164,92,.17),transparent 66%);pointer-events:none}
+.band .wrap{position:relative;z-index:1}
+.sect{padding:40px 0}
+@media(min-width:820px){.sect{padding:64px 0}}
+.sect.pale{background:var(--panel)}
+.eyebrow{font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:12px}
+.band .eyebrow{color:var(--gold)}
+.sect h2{font-family:var(--serif);font-weight:400;font-size:23px;line-height:1.22;margin-bottom:10px}
+@media(min-width:820px){.sect h2{font-size:30px}}
+.lead{font-size:15.5px;color:var(--ink-2);max-width:66ch;margin-bottom:0}
+@media(min-width:820px){.lead{font-size:16.5px}}
+.band .lead{color:#BCB2A5}
+.rule{height:1px;background:var(--line);margin:26px 0}
+
+/* ---------- hero ---------- */
+.hero-l{padding:44px 0 40px}
+@media(min-width:820px){.hero-l{padding:80px 0 64px}}
+.hero-l .wm{font-size:15px;color:var(--gold);letter-spacing:.32em}
+.hero-l h1{font-family:var(--serif);font-weight:400;color:#fff;letter-spacing:.005em;
+  font-size:clamp(27px,6.4vw,46px);line-height:1.16;margin:0 0 18px;max-width:22ch}
+.hero-l h1 em{font-style:normal;color:var(--gold)}
+.hero-l .sub{color:#C6BCAF;font-size:16px;line-height:1.6;max-width:56ch;margin:0 0 12px}
+@media(min-width:820px){.hero-l .sub{font-size:17.5px}}
+.hero-l .powered{color:#877D71;font-size:12.5px;letter-spacing:.02em;margin:0 0 28px}
+.hero-l .powered i{color:#BCB2A5}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.cta a{text-decoration:none}
+a.btn{display:inline-block;text-decoration:none;font-family:inherit;padding:14px 24px;font-size:11.5px;letter-spacing:.15em;
+  text-transform:uppercase;font-weight:700;border-radius:999px;border:1px solid transparent;transition:.15s;text-align:center}
+a.btn.gold{background:var(--champagne);border-color:var(--champagne);color:#fff}
+a.btn.gold:hover{background:var(--gold);border-color:var(--gold)}
+a.btn.line{border-color:rgba(239,234,227,.34);color:#EFEAE3}
+a.btn.line:hover{border-color:#EFEAE3}
+@media(max-width:430px){.cta{display:block}.cta a.btn{display:block;margin-bottom:10px}}
+.hstats{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;margin-top:34px;padding-top:24px;
+  border-top:1px solid rgba(239,234,227,.15)}
+@media(min-width:700px){.hstats{grid-template-columns:repeat(4,1fr)}}
+.hstats b{display:block;font-family:var(--serif);font-weight:400;font-size:26px;color:#EFEAE3;line-height:1.1}
+.hstats span{display:block;font-size:11.5px;color:#877D71;letter-spacing:.05em;margin-top:4px}
+
+/* ---------- three columns ---------- */
+.tri{display:grid;grid-template-columns:1fr;gap:16px;margin-top:26px}
+@media(min-width:900px){.tri{grid-template-columns:repeat(3,1fr);gap:20px}}
+.tri .col{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px 20px}
+.sect.pale .tri .col{background:var(--panel-2)}
+.tri .col .n{font-family:var(--serif);font-size:13px;color:var(--champagne);display:block;margin-bottom:10px}
+.tri .col h3{font-family:var(--serif);font-weight:400;font-size:19px;margin-bottom:8px}
+.tri .col p{font-size:14px;color:var(--ink-2);margin:0}
+
+/* ---------- diagram scroller ---------- */
+.dgscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
+  border-radius:var(--r);background:var(--panel);padding:18px 16px}
+.dgscroll .dg{display:block;max-width:940px;margin:0 auto}
+.dghint{font-size:11.5px;color:var(--ink-3);margin:8px 2px 0}
+@media(min-width:700px){.dghint{display:none}}
+.layerpair{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+@media(min-width:860px){.layerpair{grid-template-columns:1fr 1fr;gap:20px}}
+.lay{border:1px solid var(--line);border-radius:var(--r);padding:20px;background:var(--panel-2)}
+.lay.dark{background:linear-gradient(150deg,#2E2620,#241E19);border-color:#241E19;color:#EFEAE3}
+.lay .tagl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--champagne);margin-bottom:8px}
+.lay.dark .tagl{color:var(--gold)}
+.lay h3{font-family:var(--serif);font-weight:400;font-size:19px;margin-bottom:6px}
+.lay .src{font-size:11.5px;color:var(--ink-3);margin-bottom:12px}
+.lay.dark .src{color:#BCB2A5}
+.lay p{font-size:14px;color:var(--ink-2);margin:0}
+.lay.dark p{color:#CFC6BA}
+
+/* ---------- figures ---------- */
+.figs{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:24px}
+@media(min-width:640px){.figs{grid-template-columns:repeat(4,1fr)}}
+.figs div{background:var(--panel);padding:16px 14px}
+.sect.pale .figs div{background:#fff}
+.figs b{display:block;font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.1}
+.figs span{display:block;font-size:11.5px;color:var(--ink-3);margin-top:5px;letter-spacing:.03em}
+
+/* ---------- module grid (reuses .mod from the app) ---------- */
+.modgrid.lp{margin-top:24px}
+.mod .body .strap{font-size:13px}
+.tkrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px;
+  border:1px solid var(--line);border-radius:var(--r);background:var(--panel-2);padding:14px 16px}
+.tkrow .tkl{font-size:13px;color:var(--ink-2);flex:1;min-width:200px}
+.tkrow .tkg{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.tkrow .tkg svg{flex:0 0 auto}
+
+/* ---------- cases ---------- */
+.cases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:24px}
+@media(min-width:820px){.cases{grid-template-columns:repeat(3,1fr)}}
+.case{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column}
+.sect.pale .case{background:var(--panel-2)}
+.case .hd{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.case .hd svg{flex:0 0 auto}
+.case .nm{font-family:var(--serif);font-size:18px;line-height:1.2}
+.case .cn{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:3px}
+.case p{font-size:14px;color:var(--ink-2);margin:0}
+.ribbonbox{margin-top:26px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);padding:18px 20px}
+.sect.pale .ribbonbox{background:var(--panel-2)}
+.ribbonbox .ph{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--ink-3);margin-top:9px}
+.ribbonbox h4{margin-bottom:12px}
+
+/* ---------- manager evidence ---------- */
+.quote{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--champagne);
+  border-radius:0 var(--r) var(--r) 0;padding:22px 24px;margin-top:24px}
+.sect.pale .quote{background:#fff}
+.quote blockquote{margin:0;font-family:var(--serif);font-size:18px;line-height:1.5}
+@media(min-width:820px){.quote blockquote{font-size:20px}}
+.quote .attr{font-size:12px;color:var(--ink-3);margin-top:14px}
+
+/* ---------- price ---------- */
+.pricewrap{display:grid;grid-template-columns:1fr;gap:20px;margin-top:26px}
+@media(min-width:900px){.pricewrap{grid-template-columns:1fr 1fr;gap:28px;align-items:start}}
+.pricecard{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);
+  padding:26px 24px;box-shadow:var(--shadow)}
+.pricecard .plan{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--champagne);font-weight:700}
+.pricecard .amt{font-family:var(--serif);font-size:52px;line-height:1;margin:12px 0 4px}
+.pricecard .per{font-size:13px;color:var(--ink-3);margin-bottom:20px}
+.inclist{list-style:none;margin:0;padding:0}
+.inclist li{position:relative;padding:9px 0 9px 24px;border-bottom:1px solid var(--line-2);font-size:14px;color:var(--ink-2)}
+.inclist li:last-child{border-bottom:0}
+.inclist li:before{content:"";position:absolute;left:2px;top:17px;width:9px;height:9px;border-radius:50%;
+  border:1.5px solid var(--champagne)}
+
+/* ---------- form ---------- */
+.formbox{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);padding:24px 22px}
+@media(min-width:820px){.formbox{padding:28px 26px}}
+.formbox h3{font-family:var(--serif);font-weight:400;font-size:21px;margin-bottom:6px}
+.f2{display:grid;grid-template-columns:1fr;gap:0 14px}
+@media(min-width:560px){.f2{grid-template-columns:1fr 1fr}}
+.fnote{font-size:12px;color:var(--ink-3);margin:12px 0 0}
+#pilot-done .row{padding:12px 0;border-bottom:1px solid var(--line-2)}
+#pilot-done .row:last-of-type{border-bottom:0}
+#pilot-done .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:4px}
+#pilot-done .v{font-size:15px;word-break:break-word}
+.pwbox{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:17px;letter-spacing:.02em;
+  background:var(--espresso);color:#EFEAE3;border-radius:10px;padding:14px 16px;margin-top:6px;
+  overflow-x:auto;white-space:nowrap}
+.oncewarn{background:var(--amber-soft);color:var(--amber);border-radius:10px;padding:11px 14px;font-size:13px;margin-top:14px}
+#pilot-done a.btn.dark{background:var(--espresso);border-color:var(--espresso);color:#fff;margin-top:18px;display:inline-block}
+#pilot-done a.btn.dark:hover{background:var(--espresso-2)}
+
+/* the sticky bar must not sit on top of whatever was jumped to */
+#sixty,#inside,#start,#price,#manager,#engine,#what,#layers{scroll-margin-top:76px}
+
+/* ---------- the sentence she repeats to her partner ---------- */
+.sayit{margin-top:28px;border:1px solid var(--line);border-left:3px solid var(--champagne);
+  border-radius:var(--r);background:var(--panel-2);padding:22px 24px}
+.sayk{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--champagne);margin-bottom:10px}
+.sayq{font-family:var(--serif);font-size:19px;line-height:1.45;color:var(--ink);margin:0;max-width:60ch}
+@media(min-width:820px){.sayq{font-size:23px}}
+
+/* ---------- how a founding clinic starts ---------- */
+.startsteps{list-style:none;margin:18px 0 0;padding:0;counter-reset:ss}
+.startsteps li{counter-increment:ss;position:relative;padding:0 0 18px 40px}
+.startsteps li:last-child{padding-bottom:0}
+.startsteps li:before{content:counter(ss);position:absolute;left:0;top:1px;width:26px;height:26px;
+  border-radius:50%;background:var(--espresso);color:#EFEAE3;font-family:var(--serif);
+  font-size:13px;line-height:26px;text-align:center}
+.startsteps b{display:block;font-size:14.5px;font-weight:600;margin-bottom:4px}
+.startsteps span{display:block;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+
+/* ---------- footer ---------- */
+.lp-foot{border-top:1px solid var(--line);background:var(--panel);padding:30px 0 46px}
+.lp-foot .in{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.lp-foot .bld{font-size:12px;color:var(--ink-2);font-weight:600;letter-spacing:.01em}
+.lp-foot .endorseline{display:flex;gap:9px;align-items:center;flex:0 0 auto;max-width:100%}
+.lp-foot .mark{width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;opacity:.85}
+.lp-foot .mark svg{width:20px;height:20px}
+.lp-foot .et{font-size:11.5px;line-height:1.5;color:var(--ink-3);min-width:0}
+.lp-foot .et b{display:block;color:var(--ink-3);font-weight:600;font-size:11.5px}
+</style>
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header class="lp-top">
+  <div class="wrap in">
+    <div class="brand">
+      <span class="wm" data-wm="MIRROR">MIRROR</span>
+      <small data-t="brandDesc">Interactive Sales Academy</small>
+    </div>
+    <div class="sp"></div>
+    <div class="langsw" id="langsw">
+      <button type="button" data-lang="en" class="on">EN</button>
+      <button type="button" data-lang="es">ES</button>
+    </div>
+    <a class="lp-signin" href="/app" data-t="signIn">Sign in</a>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="band">
+  <div class="wrap hero-l">
+    <div class="eyebrow" data-t="heroKicker">MIRROR Interactive Sales Academy</div>
+    <h1 data-th="heroH1">Your practitioners know the treatments. The consultation still ends in <em>“I’ll think about it.”</em></h1>
+    <p class="sub" data-t="heroSub">MIRROR is where a practitioner practises the consultation itself — sixty interactive lessons and nine full simulated consultations in which every choice changes what the client tells you next, and the ending is derived from what was actually done.</p>
+    <p class="powered" data-th="poweredBy">Powered by the MIRROR Method from <i>The Beauty Sales Secrets</i>.</p>
+    <div class="cta">
+      <a class="btn gold" href="#sixty" data-t="ctaPrimary">What MIRROR is, in sixty seconds</a>
+      <a class="btn line" href="#start" data-t="ctaSecondary">How a founding clinic starts</a>
+    </div>
+    <div class="hstats" id="hstats"></div>
+  </div>
+</section>
+
+<!-- ===================== SIXTY SECONDS ===================== -->
+<section class="sect" id="sixty">
+  <div class="wrap">
+    <div class="eyebrow" data-t="sxEyebrow">In sixty seconds</div>
+    <h2 data-t="sxH2">A client decides whether you are safe to be honest with. That decision — not your treatment menu — decides the outcome.</h2>
+    <p class="lead" data-t="sxLead">She will not say it out loud. She will say “I’ll think about it”, leave, and book somewhere else or nowhere. MIRROR trains the twenty minutes in which that decision is actually made.</p>
+    <div class="tri">
+      <div class="col">
+        <span class="n" data-t="sxK1">The problem</span>
+        <h3 data-t="sx1H">She is deciding something else</h3>
+        <p data-t="sx1P">While your practitioner describes the treatment, the client is answering a different question: can I tell this person the real reason I am here? When the answer is no she keeps it, the recommendation is aimed at the wrong thing, and the consultation ends politely and empty.</p>
+      </div>
+      <div class="col">
+        <span class="n" data-t="sxK2">What your team does</span>
+        <h3 data-t="sx2H">They practise the room, not the pitch</h3>
+        <p data-t="sx2P">Sixty interactive lessons, then whole consultations with nine clients who react. Every reply your practitioner chooses changes what the client discloses next, which objection arrives, and whether a yes is still reachable. The ending is derived from what she did — nobody selects it.</p>
+      </div>
+      <div class="col">
+        <span class="n" data-t="sxK3">What you will see</span>
+        <h3 data-t="sx3H">You read the choice, not a score</h3>
+        <p data-t="sx3P">You open any consultation and read it decision by decision: what was said, what the client did with it, and the phase where she was lost. Your coaching page names the pattern repeating across the team and what to say about it this week.</p>
+      </div>
+    </div>
+    <div class="sayit">
+      <div class="sayk" data-t="sayK">If your business partner asks what you bought</div>
+      <p class="sayq" data-t="sayQ">“A place where the team practises the consultation itself, on clients who react to what they actually say — and where I can read exactly what each of them did, and what it cost.”</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHAT THIS IS ===================== -->
+<section class="sect" id="what">
+  <div class="wrap">
+    <div class="eyebrow" data-t="whatEyebrow">What this is</div>
+    <h2 data-t="whatH2">Three things, in one place, for one clinic</h2>
+    <p class="lead" data-t="whatLead">Not a video library and not a slide deck. A curriculum that is sequenced, a simulator where decisions carry consequences, and a manager view that produces evidence instead of opinions.</p>
+    <div class="tri">
+      <div class="col">
+        <span class="n">01</span>
+        <h3 data-t="what1H">A structured Academy</h3>
+        <p data-t="what1P">Ten modules and sixty interactive lessons, sequenced from the psychology of the consultation through to mastery. Every module ends with an assignment for a real consultation, and the journal refuses a one-line answer.</p>
+      </div>
+      <div class="col">
+        <span class="n">02</span>
+        <h3 data-t="what2H">Consultations with consequences</h3>
+        <p data-t="what2P">Nine full cases across the eight phases. Each choice writes to the client's trust ledger: what she discloses later, which objection appears, and whether a YES is still reachable all follow from it.</p>
+      </div>
+      <div class="col">
+        <span class="n">03</span>
+        <h3 data-t="what3H">Evidence a manager can coach from</h3>
+        <p data-t="what3P">The coaching view names who is practising, the phase where the team loses trust, and the pattern that repeats — as sentences carrying counts and consequences, never as scores or rankings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THE TWO MIRROR LAYERS ===================== -->
+<section class="sect pale" id="layers">
+  <div class="wrap">
+    <div class="eyebrow" data-t="layersEyebrow">The intellectual spine</div>
+    <h2 data-t="layersH2">The two MIRROR layers, joined and never collapsed</h2>
+    <p class="lead" data-t="layersLead">MIRROR names two different things, and most training conflates them. The Academy keeps them apart, on purpose, and teaches the joins.</p>
+
+    <div class="dgscroll" id="dg-two-mirrors" style="margin-top:24px"></div>
+    <p class="dghint" data-t="dgHint">Scroll the diagram sideways to read both columns.</p>
+
+    <div class="layerpair">
+      <div class="lay">
+        <div class="tagl" data-t="layAtag">Layer one — the method</div>
+        <h3 data-t="layAh">The six steps a practitioner runs</h3>
+        <p class="src" data-th="layAsrc">The MIRROR Method — <i>The Beauty Sales Secrets</i></p>
+        <p data-t="layAp">Make Safe, Inquire, Reflect, Recommend, Overcome, Resolve &amp; Rise. This is what a practitioner actually does in the room, in order, and it is what the lessons teach her to perform.</p>
+      </div>
+      <div class="lay dark">
+        <div class="tagl" data-t="layBtag">Layer two — the architecture</div>
+        <h3 data-t="layBh">The eight phases a consultation is reviewed against</h3>
+        <p class="src" data-t="layBsrc">The MIRROR Consultation Architecture — canonical, not from the book</p>
+        <p data-t="layBp">Preparation to Relationship Continuation. This is the spine every simulated consultation is assessed along, phase by phase, and the frame the manager view reports in. Six does not divide into eight, so the joins are drawn rather than assumed — and the book is never credited with teaching the eight phases.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHAT IS INSIDE ===================== -->
+<section class="sect" id="inside">
+  <div class="wrap">
+    <div class="eyebrow" data-t="insideEyebrow">What is inside</div>
+    <h2 data-t="insideH2">Built, counted and verified — not promised</h2>
+    <p class="lead" data-t="insideLead">These are the figures of the programme you are buying, counted from its own content rather than written for a brochure.</p>
+
+    <div class="figs" id="figs"></div>
+
+    <div class="modgrid lp" id="modgrid"></div>
+
+    <div class="tkrow">
+      <div class="tkg" id="tkg"></div>
+      <div class="tkl" data-t="tkLine">Six MIRROR toolkits — #1, #3, #4, #5, #6 and #8 — are executable inside the lessons and the cases, with honesty validation that reads the case you are actually in.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THE PRACTICE ENGINE ===================== -->
+<section class="sect pale" id="engine">
+  <div class="wrap">
+    <div class="eyebrow" data-t="engineEyebrow">The practice engine</div>
+    <h2 data-t="engineH2">Nine clients, each difficult in a different way</h2>
+    <p class="lead" data-t="engineLead">The consultation simulator is where the Academy is practised. A practitioner runs a whole consultation with a client who reacts to what she is given — and it is the same eight-phase spine every time.</p>
+
+    <div class="cases" id="cases"></div>
+
+    <div class="ribbonbox">
+      <h4 data-t="ribbonH">The eight phases</h4>
+      <div id="ribbon"></div>
+      <div class="ph"><span data-t="ribbonL">1 · Preparation</span><span data-t="ribbonR">8 · Relationship Continuation</span></div>
+      <p class="lead" style="margin-top:16px" data-t="ribbonP">Shown at Phase 3, Discovery — the phase most consultations finish in ninety seconds and the one that decides the rest.</p>
+    </div>
+
+    <div class="quote">
+      <blockquote data-t="derivedQuote">“The outcome is derived, not chosen. YES, DEFER and NO come out of the trust the practitioner actually built during the consultation — nobody selects the ending, and a warm consultation that earned nothing still fails.”</blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHAT THE MANAGER SEES ===================== -->
+<section class="sect" id="manager">
+  <div class="wrap">
+    <div class="eyebrow" data-t="mgrEyebrow">What the manager sees</div>
+    <h2 data-t="mgrH2">Sentences with counts, not a leaderboard</h2>
+    <p class="lead" data-t="mgrLead">The coaching view answers four questions: who is practising, where the team loses trust, what repeats, and what to coach this week. Every answer is a sentence derived from recorded consultation choices, and every sentence names its own evidence.</p>
+
+    <div class="quote">
+      <blockquote data-t="mgrQuote">“4 of 9 recorded choices at Phase 3 (Discovery) did not hold, across 3 practitioners. 2 produced a measurable fall in the trust ledger.”</blockquote>
+      <div class="attr" data-t="mgrAttr">The form the coaching view writes in — the counts come from your own clinic's recorded consultations.</div>
+    </div>
+
+    <p class="lead" style="margin-top:22px" data-t="mgrNoScores">There are no scores, no percentages of ability and no rankings of practitioners anywhere in this product. Abandoned attempts are excluded from the coaching denominator, so nobody is measured on a consultation they walked away from.</p>
+  </div>
+</section>
+
+<!-- ===================== PRICE ===================== -->
+<section class="sect pale" id="price">
+  <div class="wrap">
+    <div class="eyebrow" data-t="priceEyebrow">The Founding Pilot</div>
+    <h2 data-t="priceH2">One clinic, up to ten practitioners, everything included</h2>
+    <p class="lead" data-t="priceLead">One plan, one price, no per-seat arithmetic and no upsell inside the product.</p>
+
+    <div class="pricewrap">
+      <div class="pricecard">
+        <div class="plan" data-t="planName">Founding Pilot</div>
+        <div class="amt">€490</div>
+        <div class="per" data-t="priceUnit">One clinic · up to 10 practitioners</div>
+        <ul class="inclist" id="inclist"></ul>
+        <div class="notice" style="margin-top:20px" data-t="payNote">The Founding Pilot is invoiced to the clinic. Nothing is charged inside the product, no card details are asked for anywhere, and there is no per-seat arithmetic to do later.</div>
+      </div>
+
+      <!-- ===================== HOW IT STARTS ===================== -->
+      <div class="formbox" id="start">
+        <h3 data-t="startH">How a founding clinic starts</h3>
+        <p class="muted" data-t="startSub">Ten founding clinics, opened one at a time. There is no sign-up form here, because the first conversation is with a person.</p>
+        <ol class="startsteps">
+          <li><b data-t="startS1">A conversation</b><span data-t="startS1P">Twenty minutes about your clinic, your team and the consultations you are actually losing. If MIRROR is wrong for you, that is where it ends.</span></li>
+          <li><b data-t="startS2">Your clinic is opened</b><span data-t="startS2P">Your manager account is created for you and the €490 is invoiced to the clinic. Nothing is charged inside the product and no card details are asked for anywhere.</span></li>
+          <li><b data-t="startS3">Your first ten minutes</b><span data-t="startS3P">You sign in and walk one consultation moment yourself, before you ask anything of your team. Then you add each practitioner: a link and a message you send, and she is in her first lesson a minute later.</span></li>
+        </ol>
+        <p class="fnote" data-t="startNote">Access does not depend on anybody installing anything. It runs in the browser your team already has, on the phone or on the desk.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<!-- MIRROR is the product; Clinic Scale System endorses it. The footer is
+     ordered accordingly: the product line first and in ink, the endorsement
+     quiet on the right — the same position, weight and mark size the Academy's
+     own footer uses, so the endorsement reads the same on every surface. -->
+<footer class="lp-foot">
+  <div class="wrap in">
+    <div class="bld" data-t="footLine">MIRROR Interactive Sales Academy · One clinic, one team, one method.</div>
+    <div class="sp"></div>
+    <div class="endorseline">
+      <span class="mark" id="cslogo"></span>
+      <span class="et">
+        <b data-t="endorse1">Endorsed by Clinic Scale System</b>
+        <span data-th="endorse2">Based on the MIRROR Method from <i>The Beauty Sales Secrets</i></span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script src="/art.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* =======================================================================
+     COPY — every visible string, in both languages.
+     ======================================================================= */
+  const COPY = {
+    en: {
+      brandDesc: 'Interactive Sales Academy',
+      signIn: 'Sign in',
+
+      heroKicker: 'MIRROR Interactive Sales Academy',
+      heroH1: 'Your practitioners know the treatments. The consultation still ends in <em>“I’ll think about it.”</em>',
+      heroSub: 'MIRROR is where a practitioner practises the consultation itself — sixty interactive lessons and nine full simulated consultations in which every choice changes what the client tells you next, and the ending is derived from what was actually done.',
+      poweredBy: 'Powered by the MIRROR Method from <i>The Beauty Sales Secrets</i>.',
+      ctaPrimary: 'What MIRROR is, in sixty seconds',
+      ctaSecondary: 'How a founding clinic starts',
+
+      sxEyebrow: 'In sixty seconds',
+      sxH2: 'A client decides whether you are safe to be honest with. That decision — not your treatment menu — decides the outcome.',
+      sxLead: 'She will not say it out loud. She will say “I’ll think about it”, leave, and book somewhere else or nowhere. MIRROR trains the twenty minutes in which that decision is actually made.',
+      sxK1: 'The problem',
+      sx1H: 'She is deciding something else',
+      sx1P: 'While your practitioner describes the treatment, the client is answering a different question: can I tell this person the real reason I am here? When the answer is no she keeps it, the recommendation is aimed at the wrong thing, and the consultation ends politely and empty.',
+      sxK2: 'What your team does',
+      sx2H: 'They practise the room, not the pitch',
+      sx2P: 'Sixty interactive lessons, then whole consultations with nine clients who react. Every reply your practitioner chooses changes what the client discloses next, which objection arrives, and whether a yes is still reachable. The ending is derived from what she did — nobody selects it.',
+      sxK3: 'What you will see',
+      sx3H: 'You read the choice, not a score',
+      sx3P: 'You open any consultation and read it decision by decision: what was said, what the client did with it, and the phase where she was lost. Your coaching page names the pattern repeating across the team and what to say about it this week.',
+      sayK: 'If your business partner asks what you bought',
+      sayQ: '“A place where the team practises the consultation itself, on clients who react to what they actually say — and where I can read exactly what each of them did, and what it cost.”',
+
+      startH: 'How a founding clinic starts',
+      startSub: 'Ten founding clinics, opened one at a time. There is no sign-up form here, because the first conversation is with a person.',
+      startS1: 'A conversation',
+      startS1P: 'Twenty minutes about your clinic, your team and the consultations you are actually losing. If MIRROR is wrong for you, that is where it ends.',
+      startS2: 'Your clinic is opened',
+      startS2P: 'Your manager account is created for you and the €490 is invoiced to the clinic. Nothing is charged inside the product and no card details are asked for anywhere.',
+      startS3: 'Your first ten minutes',
+      startS3P: 'You sign in and walk one consultation moment yourself, before you ask anything of your team. Then you add each practitioner: a link and a message you send, and she is in her first lesson a minute later.',
+      startNote: 'Access does not depend on anybody installing anything. It runs in the browser your team already has, on the phone or on the desk.',
+
+      whatEyebrow: 'What this is',
+      whatH2: 'Three things, in one place, for one clinic',
+      whatLead: 'Not a video library and not a slide deck. A curriculum that is sequenced, a simulator where decisions carry consequences, and a manager view that produces evidence instead of opinions.',
+      what1H: 'A structured Academy',
+      what1P: 'Ten modules and sixty interactive lessons, sequenced from the psychology of the consultation through to mastery. Every module ends with an assignment for a real consultation, and the journal refuses a one-line answer.',
+      what2H: 'Consultations with consequences',
+      what2P: 'Nine full cases across the eight phases. Each choice writes to the client’s trust ledger: what she discloses later, which objection appears, and whether a YES is still reachable all follow from it.',
+      what3H: 'Evidence a manager can coach from',
+      what3P: 'The coaching view names who is practising, the phase where the team loses trust, and the pattern that repeats — as sentences carrying counts and consequences, never as scores or rankings.',
+
+      layersEyebrow: 'The intellectual spine',
+      layersH2: 'The two MIRROR layers, joined and never collapsed',
+      layersLead: 'MIRROR names two different things, and most training conflates them. The Academy keeps them apart, on purpose, and teaches the joins.',
+      dgHint: 'Scroll the diagram sideways to read both columns.',
+      layAtag: 'Layer one — the method',
+      layAh: 'The six steps a practitioner runs',
+      layAsrc: 'The MIRROR Method — <i>The Beauty Sales Secrets</i>',
+      layAp: 'Make Safe, Inquire, Reflect, Recommend, Overcome, Resolve & Rise. This is what a practitioner actually does in the room, in order, and it is what the lessons teach her to perform.',
+      layBtag: 'Layer two — the architecture',
+      layBh: 'The eight phases a consultation is reviewed against',
+      layBsrc: 'The MIRROR Consultation Architecture — canonical, not from the book',
+      layBp: 'Preparation to Relationship Continuation. This is the spine every simulated consultation is assessed along, phase by phase, and the frame the manager view reports in. Six does not divide into eight, so the joins are drawn rather than assumed — and the book is never credited with teaching the eight phases.',
+
+      insideEyebrow: 'What is inside',
+      insideH2: 'Built, counted and verified — not promised',
+      insideLead: 'These are the figures of the programme you are buying, counted from its own content rather than written for a brochure.',
+      tkLine: 'Six MIRROR toolkits — #1, #3, #4, #5, #6 and #8 — are executable inside the lessons and the cases, with honesty validation that reads the case you are actually in.',
+      modMeta: (l, m) => l + ' lessons · ' + m + ' min',
+
+      engineEyebrow: 'The practice engine',
+      engineH2: 'Nine clients, each difficult in a different way',
+      engineLead: 'The consultation simulator is where the Academy is practised. A practitioner runs a whole consultation with a client who reacts to what she is given — and it is the same eight-phase spine every time.',
+      ribbonH: 'The eight phases',
+      ribbonL: '1 · Preparation',
+      ribbonR: '8 · Relationship Continuation',
+      ribbonP: 'Shown at Phase 3, Discovery — the phase most consultations finish in ninety seconds and the one that decides the rest.',
+      derivedQuote: '“The outcome is derived, not chosen. YES, DEFER and NO come out of the trust the practitioner actually built during the consultation — nobody selects the ending, and a warm consultation that earned nothing still fails.”',
+
+      mgrEyebrow: 'What the manager sees',
+      mgrH2: 'Sentences with counts, not a leaderboard',
+      mgrLead: 'The coaching view answers four questions: who is practising, where the team loses trust, what repeats, and what to coach this week. Every answer is a sentence derived from recorded consultation choices, and every sentence names its own evidence.',
+      mgrQuote: '“4 of 9 recorded choices at Phase 3 (Discovery) did not hold, across 3 practitioners. 2 produced a measurable fall in the trust ledger.”',
+      mgrAttr: 'The form the coaching view writes in — the counts come from your own clinic’s recorded consultations.',
+      mgrNoScores: 'There are no scores, no percentages of ability and no rankings of practitioners anywhere in this product. Abandoned attempts are excluded from the coaching denominator, so nobody is measured on a consultation they walked away from.',
+
+      priceEyebrow: 'The Founding Pilot',
+      priceH2: 'One clinic, up to ten practitioners, everything included',
+      priceLead: 'One plan, one price, no per-seat arithmetic and no upsell inside the product.',
+      planName: 'Founding Pilot',
+      priceUnit: 'One clinic · up to 10 practitioners',
+      payNote: 'The Founding Pilot is invoiced to the clinic. Nothing is charged inside the product, no card details are asked for anywhere, and there is no per-seat arithmetic to do later.',
+
+
+
+      endorse1: 'Endorsed by Clinic Scale System',
+      endorse2: 'Based on the MIRROR Method from <i>The Beauty Sales Secrets</i>',
+      footLine: 'MIRROR Interactive Sales Academy · One clinic, one team, one method.',
+
+      stats: [
+        ['10', 'modules built'],
+        ['60', 'interactive lessons'],
+        ['659', 'minutes of teaching'],
+        ['9', 'full consultation cases']
+      ],
+      figs: [
+        ['10', 'modules'],
+        ['60', 'lessons'],
+        ['659', 'teaching minutes'],
+        ['320', 'content blocks'],
+        ['18', 'exercise types'],
+        ['9', 'consultation cases'],
+        ['8', 'phases, every case'],
+        ['EN + ES', 'at full parity']
+      ],
+      cases: [
+        { cn: 'Case 01', nm: 'Sofia', diff: 'She withholds',
+          p: 'She answers politely, agrees to the treatment plan, and keeps the motive that actually decides the consultation to herself. Never earn the disclosure and YES becomes unreachable.' },
+        { cn: 'Case 02', nm: 'Carmen', diff: 'She defends',
+          p: 'She arrives armoured, names the treatment and the dose, and is protecting one thing: she does not want to stop looking like herself. Compete with her and the room closes.' },
+        { cn: 'Case 03', nm: 'Beatriz', diff: 'She agrees with everything',
+          p: 'She agrees warmly and immediately with every word — which is exactly why her yes means nothing. Bank the easy agreement and the booking cancels three days later.' }
+      ],
+      incl: [
+        'The full Academy: 10 modules, 60 interactive lessons, 659 minutes of teaching',
+        'All nine consultation cases, eight phases each, with YES / DEFER / NO endings derived from what was actually done',
+        'Six executable MIRROR toolkits (#1, #3, #4, #5, #6, #8) with case-aware honesty validation',
+        'The manager coaching view: who is practising, where trust is lost, what repeats, what to coach this week',
+        'Field assignments and a practice journal for real consultations after every module',
+        'Complete English and Spanish, at parity, across lessons, cases, feedback and the manager view',
+        'One clinic, up to 10 practitioner accounts, invited by you'
+      ]
+    },
+
+    es: {
+      brandDesc: 'Academia Interactiva de Ventas',
+      signIn: 'Iniciar sesión',
+
+      heroKicker: 'MIRROR · Academia Interactiva de Ventas',
+      heroH1: 'Tus profesionales dominan los tratamientos. La consulta sigue terminando en <em>«Me lo voy a pensar».</em>',
+      heroSub: 'MIRROR es donde un profesional practica la consulta misma: sesenta lecciones interactivas y nueve consultas simuladas completas en las que cada decisión cambia lo que la clienta te cuenta después, y el desenlace se deriva de lo que realmente se hizo.',
+      poweredBy: 'Impulsada por el Método MIRROR de <i>The Beauty Sales Secrets</i>.',
+      ctaPrimary: 'Qué es MIRROR, en sesenta segundos',
+      ctaSecondary: 'Cómo empieza una clínica fundadora',
+
+      sxEyebrow: 'En sesenta segundos',
+      sxH2: 'La clienta decide si contigo puede ser sincera. Esa decisión, y no tu carta de tratamientos, decide el resultado.',
+      sxLead: 'No lo va a decir en voz alta. Dirá «me lo voy a pensar», se irá y reservará en otro sitio o en ninguno. MIRROR entrena los veinte minutos en los que de verdad se toma esa decisión.',
+      sxK1: 'El problema',
+      sx1H: 'Ella está decidiendo otra cosa',
+      sx1P: 'Mientras tu profesional describe el tratamiento, la clienta responde a otra pregunta: ¿le puedo contar a esta persona el motivo real por el que he venido? Cuando la respuesta es no, se lo calla, la recomendación apunta a lo que no era y la consulta termina con mucha educación y sin nada.',
+      sxK2: 'Qué hace tu equipo',
+      sx2H: 'Practican la sala, no el discurso',
+      sx2P: 'Sesenta lecciones interactivas y después consultas enteras con nueve clientas que reaccionan. Cada respuesta que elige tu profesional cambia lo que la clienta cuenta a continuación, qué objeción aparece y si el sí sigue siendo alcanzable. El desenlace se deriva de lo que hizo: nadie lo elige.',
+      sxK3: 'Qué vas a ver tú',
+      sx3H: 'Lees la decisión, no una nota',
+      sx3P: 'Abres cualquier consulta y la lees decisión a decisión: qué se dijo, qué hizo la clienta con ello y en qué fase se perdió. Tu página de formación nombra el patrón que se repite en el equipo y qué decir esta semana al respecto.',
+      sayK: 'Si tu socia te pregunta qué has comprado',
+      sayQ: '«Un sitio donde el equipo practica la consulta misma, con clientas que reaccionan a lo que dicen de verdad, y donde puedo leer exactamente qué hizo cada una y lo que le costó.»',
+
+      startH: 'Cómo empieza una clínica fundadora',
+      startSub: 'Diez clínicas fundadoras, abiertas de una en una. Aquí no hay formulario de alta, porque la primera conversación es con una persona.',
+      startS1: 'Una conversación',
+      startS1P: 'Veinte minutos sobre tu clínica, tu equipo y las consultas que estás perdiendo de verdad. Si MIRROR no te encaja, ahí se acaba.',
+      startS2: 'Se abre tu clínica',
+      startS2P: 'Te creamos la cuenta de dirección y se factura a la clínica los 490 €. Dentro del producto no se cobra nada y en ningún momento se piden datos de tarjeta.',
+      startS3: 'Tus primeros diez minutos',
+      startS3P: 'Entras y recorres tú misma un momento de consulta, antes de pedirle nada a tu equipo. Después añades a cada profesional: un enlace y un mensaje que envías tú, y un minuto después ella está en su primera lección.',
+      startNote: 'El acceso no depende de que nadie instale nada. Funciona en el navegador que tu equipo ya tiene, en el móvil o en el mostrador.',
+
+      whatEyebrow: 'Qué es esto',
+      whatH2: 'Tres cosas, en un solo sitio, para una sola clínica',
+      whatLead: 'No es una videoteca ni una presentación de diapositivas. Es un temario secuenciado, un simulador donde las decisiones tienen consecuencias y una vista de responsable que produce evidencia en lugar de opiniones.',
+      what1H: 'Una Academia estructurada',
+      what1P: 'Diez módulos y sesenta lecciones interactivas, secuenciados desde la psicología de la consulta hasta la maestría. Cada módulo termina con una tarea para una consulta real, y el diario rechaza una respuesta de una sola línea.',
+      what2H: 'Consultas con consecuencias',
+      what2P: 'Nueve casos completos a lo largo de las ocho fases. Cada decisión se escribe en el registro de confianza de la clienta: lo que revela más adelante, qué objeción aparece y si un SÍ sigue siendo alcanzable se derivan de ahí.',
+      what3H: 'Evidencia con la que entrenar al equipo',
+      what3P: 'La vista de coaching nombra quién está practicando, la fase donde el equipo pierde la confianza y el patrón que se repite: como frases con cifras y consecuencias, nunca como puntuaciones ni clasificaciones.',
+
+      layersEyebrow: 'La columna intelectual',
+      layersH2: 'Las dos capas de MIRROR, unidas y nunca fundidas',
+      layersLead: 'MIRROR nombra dos cosas distintas, y casi toda la formación las confunde. Esta versión las mantiene separadas, a propósito, y enseña las uniones.',
+      dgHint: 'Desplaza el diagrama lateralmente para leer ambas columnas.',
+      layAtag: 'Capa uno — el método',
+      layAh: 'Los seis pasos que ejecuta un profesional',
+      layAsrc: 'El Método MIRROR — <i>The Beauty Sales Secrets</i>',
+      layAp: 'Hacer Sentir Segura, Indagar, Reflejar, Recomendar, Superar, Resolver y Elevar. Esto es lo que un profesional hace realmente en la sala, en ese orden, y es lo que las lecciones le enseñan a ejecutar.',
+      layBtag: 'Capa dos — la arquitectura',
+      layBh: 'Las ocho fases con las que se revisa una consulta',
+      layBsrc: 'La Arquitectura de Consulta MIRROR — canónica, no procede del libro',
+      layBp: 'De la Preparación a la Continuidad de la relación. Esta es la columna con la que se evalúa cada consulta simulada, fase por fase, y el marco en el que informa la vista del responsable. Seis no se divide en ocho, así que las uniones se dibujan en lugar de darse por supuestas, y jamás se atribuye al libro la enseñanza de las ocho fases.',
+
+      insideEyebrow: 'Qué incluye',
+      insideH2: 'Construido, contado y verificado — no prometido',
+      insideLead: 'Estas son las cifras de la versión que estás comprando, tomadas de su propio contenido y no de un folleto.',
+      tkLine: 'Seis herramientas MIRROR — #1, #3, #4, #5, #6 y #8 — son ejecutables dentro de las lecciones y de los casos, con validación de honestidad que lee el caso en el que realmente estás.',
+      modMeta: (l, m) => l + ' lecciones · ' + m + ' min',
+
+      engineEyebrow: 'El motor de práctica',
+      engineH2: 'Nueve clientas, cada una difícil de una manera distinta',
+      engineLead: 'El simulador de consultas es donde se practica la Academia. Un profesional recorre una consulta entera con una clienta que reacciona a lo que recibe, y siempre sobre la misma columna de ocho fases.',
+      ribbonH: 'Las ocho fases',
+      ribbonL: '1 · Preparación',
+      ribbonR: '8 · Continuidad de la relación',
+      ribbonP: 'Mostrado en la Fase 3, Descubrimiento: la fase que la mayoría de las consultas termina en noventa segundos y la que decide todo lo demás.',
+      derivedQuote: '«El resultado se deriva, no se elige. SÍ, APLAZAR y NO salen de la confianza que el profesional construyó de verdad durante la consulta: nadie selecciona el desenlace, y una consulta cordial que no se ganó nada fracasa igualmente».',
+
+      mgrEyebrow: 'Qué ve el responsable',
+      mgrH2: 'Frases con cifras, no una clasificación',
+      mgrLead: 'La vista de coaching responde a cuatro preguntas: quién está practicando, dónde pierde la confianza el equipo, qué se repite y qué entrenar esta semana. Cada respuesta es una frase derivada de decisiones registradas en consulta, y cada frase nombra su propia evidencia.',
+      mgrQuote: '«4 de 9 decisiones registradas en la Fase 3 (Descubrimiento) no se sostuvieron, en 3 profesionales. 2 produjeron una caída medible en el registro de confianza».',
+      mgrAttr: 'La forma en que escribe la vista de coaching: las cifras salen de las consultas registradas en tu propia clínica.',
+      mgrNoScores: 'No hay puntuaciones, ni porcentajes de capacidad, ni clasificaciones de profesionales en ninguna parte de este producto. Los intentos abandonados quedan fuera del denominador de coaching, de modo que a nadie se le mide por una consulta que dejó a medias.',
+
+      priceEyebrow: 'El Piloto Fundador',
+      priceH2: 'Una clínica, hasta diez profesionales, todo incluido',
+      priceLead: 'Un solo plan, un solo precio, sin aritmética por asiento y sin ventas adicionales dentro del producto.',
+      planName: 'Piloto Fundador',
+      priceUnit: 'Una clínica · hasta 10 profesionales',
+      payNote: 'El Piloto Fundador se factura a la clínica. Dentro del producto no se cobra nada, en ningún momento se piden datos de tarjeta y no hay aritmética por asiento que hacer después.',
+
+
+
+      endorse1: 'Avalado por Clinic Scale System',
+      endorse2: 'Basado en el Método MIRROR de <i>The Beauty Sales Secrets</i>',
+      footLine: 'MIRROR · Academia Interactiva de Ventas · Una clínica, un equipo, un método.',
+
+      stats: [
+        ['10', 'módulos construidos'],
+        ['60', 'lecciones interactivas'],
+        ['659', 'minutos de enseñanza'],
+        ['9', 'casos de consulta completos']
+      ],
+      figs: [
+        ['10', 'módulos'],
+        ['60', 'lecciones'],
+        ['659', 'minutos de enseñanza'],
+        ['320', 'bloques de contenido'],
+        ['18', 'tipos de ejercicio'],
+        ['9', 'casos de consulta'],
+        ['8', 'fases en cada caso'],
+        ['EN + ES', 'con plena paridad']
+      ],
+      cases: [
+        { cn: 'Caso 01', nm: 'Sofia', diff: 'Se calla lo esencial',
+          p: 'Responde con educación, acepta el plan de tratamiento y se guarda el motivo que en realidad decide la consulta. Si nunca te ganas esa revelación, el SÍ se vuelve inalcanzable.' },
+        { cn: 'Caso 02', nm: 'Carmen', diff: 'Se defiende',
+          p: 'Llega blindada, nombra el tratamiento y la dosis, y protege una sola cosa: no quiere dejar de parecerse a sí misma. Compite con ella y la sala se cierra.' },
+        { cn: 'Caso 03', nm: 'Beatriz', diff: 'Está de acuerdo con todo',
+          p: 'Asiente con calidez e inmediatez a cada palabra, y justo por eso su sí no significa nada. Da por bueno ese acuerdo fácil y la cita se cancela tres días después.' }
+      ],
+      incl: [
+        'La Academia completa: 10 módulos, 60 lecciones interactivas, 659 minutos de enseñanza',
+        'Los nueve casos de consulta, de ocho fases cada uno, con desenlaces SÍ / APLAZAR / NO derivados de lo que se hizo de verdad',
+        'Seis herramientas MIRROR ejecutables (#1, #3, #4, #5, #6, #8) con validación de honestidad según el caso',
+        'La vista de coaching del responsable: quién practica, dónde se pierde la confianza, qué se repite y qué entrenar esta semana',
+        'Tareas de campo y un diario de práctica para consultas reales al final de cada módulo',
+        'Inglés y español completos, con plena paridad, en lecciones, casos, retroalimentación y vista del responsable',
+        'Una clínica, hasta 10 cuentas de profesionales, invitadas por ti'
+      ]
+    }
+  };
+
+  /* Module titles, straplines and counts come from the built curriculum
+     (server/academy/content.js). Nothing here is decorative. */
+  const MODULES = [
+    { n: 1, accent: 'sage', lessons: 6, minutes: 52,
+      en: ['The Psychology of the Consultation', 'What she is actually deciding while you are describing treatments'],
+      es: ['La psicología de la consulta', 'Qué está decidiendo ella en realidad mientras tú describes tratamientos'] },
+    { n: 2, accent: 'mercury', lessons: 6, minutes: 54,
+      en: ['Preparation & Safety', 'What must be true before the client arrives, and how safety is created in the room'],
+      es: ['Preparación y Seguridad', 'Qué debe ser cierto antes de que llegue la clienta y cómo se crea la seguridad en la sala'] },
+    { n: 3, accent: 'champagne', lessons: 7, minutes: 66,
+      en: ['Discovery', 'The phase that decides the outcome — and the one most practitioners finish in ninety seconds'],
+      es: ['Descubrimiento', 'La fase que decide el resultado — y la que la mayoría de profesionales termina en noventa segundos'] },
+    { n: 4, accent: 'sage', lessons: 5, minutes: 46,
+      en: ['Understanding & Alignment', 'Reflection that makes a client continue — and the contradiction mirror'],
+      es: ['Comprensión y Alineación', 'El reflejo que hace que una clienta continúe — y el espejo de contradicción'] },
+    { n: 5, accent: 'champagne', lessons: 6, minutes: 56,
+      en: ['Building the Recommendation', 'Education that does not oversell, and the eight-field recommendation'],
+      es: ['Construir la Recomendación', 'Educación que no sobrevende y la recomendación de ocho campos'] },
+    { n: 6, accent: 'gold', lessons: 6, minutes: 55,
+      en: ['Price, Value and Investment', 'The four price laws, and the five translations of “expensive”'],
+      es: ['Precio, Valor e Inversión', 'Las cuatro leyes del precio y las cinco traducciones de «caro»'] },
+    { n: 7, accent: 'rose', lessons: 6, minutes: 60,
+      en: ['Objections', 'Diagnose before you respond — the three hidden objections and the full library'],
+      es: ['Objeciones', 'Diagnostica antes de responder — las tres objeciones ocultas y la biblioteca completa'] },
+    { n: 8, accent: 'mercury', lessons: 6, minutes: 54,
+      en: ['Decision Support', 'Three closes, and why the outcome is derived rather than chosen'],
+      es: ['Acompañamiento de la Decisión', 'Tres cierres, y por qué el resultado se deriva en lugar de elegirse'] },
+    { n: 9, accent: 'sage', lessons: 6, minutes: 52,
+      en: ['Follow-up & Continuation', 'The contact that is care — and the sentence that stops it becoming pressure'],
+      es: ['Seguimiento y Continuidad', 'El contacto que es cuidado y la frase que impide que se convierta en presión'] },
+    { n: 10, accent: 'gold', lessons: 6, minutes: 67,
+      en: ['MIRROR Mastery', 'Identity, the pattern you repeat, and the checklist you read before she walks in'],
+      es: ['Maestría MIRROR', 'La identidad, el patrón que repites y la lista que lees antes de que ella entre'] }
+  ];
+
+  const AVATARS = ['sofia', 'carmen', 'beatriz'];
+  const TOOLKITS = [1, 3, 4, 5, 6, 8];
+
+  const $  = s => document.querySelector(s);
+  const $$ = s => Array.prototype.slice.call(document.querySelectorAll(s));
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  let lang = 'en';
+
+  function readStored() {
+    try { const v = localStorage.getItem('mirror.lang'); if (v === 'es' || v === 'en') return v; }
+    catch (e) { /* storage unavailable — English it is */ }
+    return 'en';
+  }
+  function storeLang(v) {
+    try { localStorage.setItem('mirror.lang', v); } catch (e) { /* ignore */ }
+  }
+
+  /* =======================================================================
+     RENDER
+     ======================================================================= */
+  function render(l) {
+    lang = (l === 'es') ? 'es' : 'en';
+    const t = COPY[lang];
+    document.documentElement.lang = lang;
+
+    $$('[data-t]').forEach(el => {
+      const v = t[el.getAttribute('data-t')];
+      if (typeof v === 'string') el.textContent = v;
+    });
+    $$('[data-th]').forEach(el => {
+      const v = t[el.getAttribute('data-th')];
+      if (typeof v === 'string') el.innerHTML = v;
+    });
+
+    $$('#langsw button').forEach(b => b.classList.toggle('on', b.getAttribute('data-lang') === lang));
+
+    // hero statistics
+    $('#hstats').innerHTML = t.stats.map(s =>
+      `<div><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('');
+
+    // the two-mirrors diagram, in this language
+    $('#dg-two-mirrors').innerHTML = window.ART.diagram('two-mirrors', lang);
+
+    // verified figures
+    $('#figs').innerHTML = t.figs.map(f =>
+      `<div><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join('');
+
+    // the ten modules, with their real covers and titles
+    $('#modgrid').innerHTML = MODULES.map(m => {
+      const c = m[lang];
+      return `<article class="mod">
+        <div class="cover">${window.ART.cover(m.n, m.accent)}<span class="num">${m.n}</span></div>
+        <div class="body">
+          <h3>${esc(c[0])}</h3>
+          <p class="strap">${esc(c[1])}</p>
+          <div class="meta">${esc(t.modMeta(m.lessons, m.minutes))}</div>
+        </div>
+      </article>`;
+    }).join('');
+
+    // toolkit previews
+    $('#tkg').innerHTML = TOOLKITS.map(n => window.ART.toolkitPreview(n, 6)).join('');
+
+    // the three cases
+    $('#cases').innerHTML = t.cases.map((c, i) => `<article class="case">
+      <div class="hd">${window.ART.avatar(AVATARS[i], 72)}
+        <div><div class="cn">${esc(c.cn)}</div><div class="nm">${esc(c.nm)}</div>
+          <span class="tag gold">${esc(c.diff)}</span></div></div>
+      <p>${esc(c.p)}</p>
+    </article>`).join('');
+
+    // the eight-phase ribbon, shown at Discovery
+    $('#ribbon').innerHTML = window.ART.phaseRibbon(3);
+
+    // what the €490 includes
+    $('#inclist').innerHTML = t.incl.map(li => `<li>${esc(li)}</li>`).join('');
+
+    // endorsement mark
+    const logo = window.ART.csLogo;
+    $('#cslogo').innerHTML = typeof logo === 'function' ? logo(20) : (typeof logo === 'string' ? logo : '');
+
+  }
+
+  /* =======================================================================
+     BOOT
+     ======================================================================= */
+  $$('#langsw button').forEach(b => b.addEventListener('click', () => {
+    const v = b.getAttribute('data-lang');
+    storeLang(v);
+    render(v);
+  }));
+
+  render(readStored());
+})();
+</script>
+</body>
+</html>
