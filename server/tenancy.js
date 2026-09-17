@@ -19,13 +19,29 @@
 
 const crypto = require('crypto');
 
+/** A bilingual pair; `send()` collapses it to the requested language. */
+const T = (en, es) => ({ en, es });
+
+/**
+ * The approved entitlement, and the only place it is stated.
+ *
+ * `seats` is governance: it is what a clinic is sold and what the product
+ * enforces, and every other surface — the API, the landing page, the manager's
+ * clinic view, both languages — reads it from here rather than restating it.
+ * `test/verify-entitlement.js` fails if any of them says a different number.
+ *
+ * The description is bilingual because it is buyer-facing: it was a plain
+ * English string, which meant a Spanish buyer read her entitlement in English.
+ */
 const PLANS = {
   founding_pilot: {
     key: 'founding_pilot',
     name: 'Founding Pilot',
     priceEur: 490,
-    seats: 10,
-    description: 'One clinic, up to ten practitioners, the full Academy and all nine consultation cases.'
+    seats: 5,
+    description: T(
+      'One clinic, up to five practitioners, the full Academy and all nine consultation cases.',
+      'Una clínica, hasta cinco profesionales, la Academia completa y los nueve casos de consulta.')
   }
 };
 
@@ -119,7 +135,7 @@ async function migrate(db) {
     if (seeded) {
       await db.run(`INSERT INTO clinics (id,name,plan,seats,payment_state,created_at,activated_at)
                     VALUES (?,?,?,?,?,?,?)`,
-        ['clinic_wildmagic', seeded.clinic_name, 'founding_pilot', 10, 'waived',
+        ['clinic_wildmagic', seeded.clinic_name, 'founding_pilot', PLANS.founding_pilot.seats, 'waived',
          new Date().toISOString(), new Date().toISOString()]);
     }
   }
@@ -293,7 +309,9 @@ async function seatUsage(db, clinicId) {
   const open = await db.get(
     `SELECT COUNT(*) n FROM invites WHERE clinic_id = ? AND accepted_at IS NULL AND expires_at > ?`,
     [clinicId, new Date().toISOString()]);
-  return { total: (c && c.seats) || 10, used: users.n + open.n, members: users.n, pending: open.n };
+  // The plan is the single source of truth for the seat count; a clinic row
+  // that predates a plan change falls back to it rather than to a literal.
+  return { total: (c && c.seats) || PLANS.founding_pilot.seats, used: users.n + open.n, members: users.n, pending: open.n };
 }
 
 async function listInvites(db, clinicId) {
