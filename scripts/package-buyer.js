@@ -42,11 +42,24 @@ for (const f of EXCLUDE_IN_SERVER) rm(path.join(APP, 'server', f));
 
 // Vendored runtime dependencies — express, cors, uuid. All pure JavaScript,
 // so the same folder runs on any machine without compiling anything.
-const vendor = process.env.MIRROR_VENDOR ||
-  '/tmp/claude-0/-home-claude/cf89ce56-01e7-5d2d-8e9c-17c1469de1fe/scratchpad/vend/node_modules';
+//
+// This used to fall back to an absolute path inside the sandbox that built the
+// first package. That directory exists on no other machine, so the script was
+// not portable: anybody else running it met a failure naming a path they had
+// never heard of. The fallback is now the repository's own node_modules, which
+// is where `npm ci` puts them.
+const vendor = process.env.MIRROR_VENDOR || path.join(ROOT, 'node_modules');
 if (!fs.existsSync(vendor)) {
-  console.error(`Vendored modules not found at ${vendor}. Set MIRROR_VENDOR.`);
+  console.error(`Vendored modules not found at ${vendor}.`);
+  console.error('Run `npm ci` first, or set MIRROR_VENDOR to a node_modules directory');
+  console.error('containing express, cors and uuid.');
   process.exit(1);
+}
+for (const dep of ['express', 'cors', 'uuid']) {
+  if (!fs.existsSync(path.join(vendor, dep))) {
+    console.error(`${vendor} is missing "${dep}". Run \`npm ci\`, or point MIRROR_VENDOR elsewhere.`);
+    process.exit(1);
+  }
 }
 copy(vendor, path.join(APP, 'node_modules'));
 
