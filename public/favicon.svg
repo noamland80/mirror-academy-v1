@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MIRROR">
+  <!--
+    MIRROR's own mark. The Clinic Scale System badge is a parent-brand
+    endorsement and never the product icon, so this is deliberately not that
+    mark: an M above the line, its reflection below it, on the product's own
+    espresso ground in the product's own gold.
+
+    Drawn for 16px first — at that size the eye resolves the M and the rule,
+    and the reflection reads as weight rather than as a second letter.
+  -->
+  <rect width="64" height="64" rx="14" fill="#241E19"/>
+  <g fill="none" stroke="#C9A45C" stroke-width="5.2" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M16 30V17l16 13 16-13v13"/>
+  </g>
+  <rect x="14" y="35.4" width="36" height="1.9" rx="0.95" fill="#C9A45C" opacity=".85"/>
+  <g fill="none" stroke="#C9A45C" stroke-width="5.2" stroke-linecap="square" stroke-linejoin="miter" opacity=".28">
+    <path d="M16 42.8v10.4l16-10.4 16 10.4V42.8"/>
+  </g>
+</svg>

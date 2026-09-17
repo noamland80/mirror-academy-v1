@@ -267,7 +267,7 @@ const UI = {
 
     clinicTitle: 'Your clinic', clinicSub: 'The plan, the seats on it, and the practitioners in them.',
     planTitle: 'The plan', planName: 'Founding Pilot', planPrice: '€490', priceNote: 'one-off, one clinic',
-    planIncludes: 'One clinic, up to ten practitioners, the full Academy and all nine consultation cases.',
+    planIncludes: 'One clinic, up to five practitioners, the full Academy and all nine consultation cases.',
     seatsInUse: 'seats in use', seatsRow: 'Seats in use', seatsOf: 'of', seatsFree: 'free',
     clinicOpened: 'Clinic opened', activeSince: 'Active since', paymentTitle: 'Payment',
     accountsRow: 'Accounts on the plan', openInvitesRow: 'Open invitations',
@@ -984,7 +984,7 @@ const UI = {
 
     clinicTitle: 'Tu clínica', clinicSub: 'El plan, las plazas que incluye y las profesionales que las ocupan.',
     planTitle: 'El plan', planName: 'Founding Pilot', planPrice: '490 €', priceNote: 'pago único, una clínica',
-    planIncludes: 'Una clínica, hasta diez profesionales, la Academia completa y los nueve casos de consulta.',
+    planIncludes: 'Una clínica, hasta cinco profesionales, la Academia completa y los nueve casos de consulta.',
     seatsInUse: 'plazas en uso', seatsRow: 'Plazas en uso', seatsOf: 'de', seatsFree: 'libres',
     clinicOpened: 'Clínica creada', activeSince: 'Activa desde', paymentTitle: 'Pago',
     accountsRow: 'Cuentas en el plan', openInvitesRow: 'Invitaciones abiertas',
