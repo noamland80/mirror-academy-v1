@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241E19">
+<title>MIRROR — Your clinic</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<style>
+/* ==========================================================================
+   WELCOME — where a buyer lands on her way back from Stripe.
+   Uses the app's sign-in shell (.signin / .brandside / .formside / .formcard),
+   the same one /join and /reset use, so the three doors into the product look
+   like the same building.
+
+   The page has four states and never guesses which one it is in:
+     waiting   Stripe has not confirmed yet. It polls. It says so.
+     choose    payment confirmed — she picks her password, clinic is created
+     done      clinic exists, she is signed in, next step is the Academy
+     dead      cancelled, expired, failed or refunded. Says what happened and
+               that nothing was charged.
+   ========================================================================== */
+.wl-state{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+  padding:13px 15px;font-size:13.5px;line-height:1.55;color:var(--ink-2);margin:0 0 18px}
+.wl-state b{color:var(--ink)}
+.wl-state.bad{background:rgba(178,88,72,.08);border-color:rgba(178,88,72,.28);color:#8E3B2C}
+.wl-state.good{background:rgba(122,155,110,.1);border-color:rgba(122,155,110,.32);color:#42603A}
+
+.wl-order{display:grid;gap:9px;margin:0 0 20px;padding:0 0 18px;border-bottom:1px solid var(--line-2)}
+.wl-order div{display:flex;justify-content:space-between;gap:14px;font-size:13.5px}
+.wl-order dt{color:var(--ink-3);margin:0}
+.wl-order dd{margin:0;color:var(--ink);font-weight:600;text-align:right;word-break:break-word}
+
+.wl-test{font-size:12px;font-weight:600;color:#8A6A2E;background:rgba(201,164,92,.13);
+  border:1px solid rgba(201,164,92,.34);border-radius:8px;padding:9px 11px;margin:0 0 16px}
+
+.wl-form{display:grid;gap:14px}
+.wl-form label span{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-3);margin-bottom:6px}
+.wl-form input{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:#fff;
+  border:1px solid var(--line);border-radius:9px;padding:12px 13px}
+.wl-form input:focus{outline:none;border-color:var(--champagne);box-shadow:0 0 0 3px rgba(201,164,92,.16)}
+.wl-form input[aria-invalid="true"]{border-color:#B25848}
+.wl-hint{font-size:12px;color:var(--ink-3);margin:-8px 0 0}
+.wl-btn{width:100%;font-family:inherit;cursor:pointer;padding:14px 22px;font-size:11px;
+  letter-spacing:.15em;text-transform:uppercase;font-weight:700;border-radius:999px;
+  border:1px solid var(--champagne);background:var(--champagne);color:#fff;transition:.15s}
+.wl-btn:hover{background:var(--gold);border-color:var(--gold)}
+.wl-btn[disabled]{opacity:.55;cursor:default}
+.wl-btn.line{background:transparent;color:var(--ink);border-color:var(--line)}
+.wl-btn.line:hover{background:var(--panel-2);border-color:var(--ink-4)}
+
+.wl-next{margin:0;padding:0;list-style:none;counter-reset:wn;display:grid;gap:11px}
+.wl-next li{counter-increment:wn;position:relative;padding-left:30px;font-size:13.5px;
+  line-height:1.55;color:var(--ink-2)}
+.wl-next li:before{content:counter(wn);position:absolute;left:0;top:0;width:20px;height:20px;
+  border-radius:50%;background:var(--gold-soft);color:var(--gold-deep);font-size:11px;
+  font-weight:700;display:flex;align-items:center;justify-content:center}
+.wl-verify{font-size:12.5px;line-height:1.6;color:var(--ink-3);margin:18px 0 0;
+  padding-top:16px;border-top:1px solid var(--line-2);word-break:break-all}
+.wl-verify a{color:var(--gold-deep);font-weight:600}
+.wl-err{font-size:13.5px;line-height:1.55;color:#8E3B2C;background:rgba(178,88,72,.09);
+  border:1px solid rgba(178,88,72,.28);border-radius:9px;padding:11px 13px;margin:0}
+.wl-dots:after{content:"";animation:wld 1.4s steps(4,end) infinite}
+@keyframes wld{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@media(prefers-reduced-motion:reduce){.wl-dots:after{content:"…";animation:none}}
+</style>
+</head>
+<body>
+
+<div class="signin">
+  <div class="brandside">
+    <div>
+      <span class="wm" data-wm="MIRROR">MIRROR</span>
+      <div class="desc" data-t="brandDesc">Interactive Sales Academy</div>
+    </div>
+    <div class="pitch" data-t="pitch">Your team doesn’t just learn what to say. They practise what happens next.</div>
+    <div class="sub" data-t="sub">One clinic, up to five practitioners, the full Academy and all nine consultation cases.</div>
+    <div class="endorse">
+      <div class="logo" id="wl-logo"></div>
+      <div class="et"><b data-t="endorse1">Endorsed by Clinic Scale System</b><span data-t="endorse2">Based on the MIRROR Method from The Beauty Sales Secrets</span></div>
+    </div>
+  </div>
+
+  <div class="formside">
+    <div class="formcard">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:18px">
+        <div class="langsw" id="wl-lang">
+          <button type="button" data-lang="en" class="on">EN</button>
+          <button type="button" data-lang="es">ES</button>
+        </div>
+      </div>
+      <div id="wl-body"><p class="muted" data-t="loading">Checking your payment…</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="/art.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+    c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const COPY = {
+    en: {
+      brandDesc: 'Interactive Sales Academy',
+      pitch: 'Your team doesn’t just learn what to say. They practise what happens next.',
+      sub: 'One clinic, up to five practitioners, the full Academy and all nine consultation cases.',
+      endorse1: 'Endorsed by Clinic Scale System',
+      endorse2: 'Based on the MIRROR Method from The Beauty Sales Secrets',
+      loading: 'Checking your payment…',
+
+      noOrder: 'This page needs the link Stripe sent you back to. Open it again from your payment confirmation, or start again from the front page.',
+      notFound: 'We cannot find that purchase. If you were charged, nothing is lost — reply to your Stripe receipt and it will be sorted.',
+      backHome: 'Back to the front page',
+
+      testMode: 'Test mode — this instance is connected to Stripe test keys. No real payment was taken.',
+
+      oClinic: 'Clinic',
+      oName: 'Manager',
+      oEmail: 'Email',
+      oAmount: 'Paid',
+
+      waitingH: 'Stripe is confirming your payment',
+      waitingP: 'This usually takes a few seconds. You do not need to do anything — this page will move on by itself. It is safe to leave and come back to this link.',
+      waiting: 'Waiting for confirmation',
+
+      chooseH: 'Choose your password',
+      chooseP: 'This is the password for your manager account. Nobody at MIRROR can see it, and it is the only thing standing between your clinic’s account and anybody else.',
+      pw: 'Your password',
+      pw2: 'Type it again',
+      pwHint: 'At least 10 characters. A short sentence you will remember beats a clever word you will not.',
+      create: 'Create my clinic',
+      creating: 'Creating your clinic…',
+      pwShort: 'Please use at least 10 characters.',
+      pwMismatch: 'Those two do not match.',
+      createFailed: 'Your clinic could not be created. Your payment is safe and this link still works — try once more.',
+
+      doneH: 'Your clinic is open',
+      doneP: 'You are signed in as the manager of {clinic}. Your licence covers you and up to four practitioners.',
+      next1: 'Sit down with one consultation yourself, before you ask anything of your team.',
+      next2: 'Answer seven short questions so MIRROR knows which consultations you are actually losing.',
+      next3: 'Invite your practitioners — a link each, and she is in her first case a minute later.',
+      goApp: 'Open MIRROR',
+      verifyPrompt: 'No mail provider is connected to this instance, so your confirmation email could not be sent. Confirm your address with this link — it is what lets you recover your account if you ever lose your password:',
+      verifyLink: 'Confirm my address',
+
+      deadCancelled: 'That payment was cancelled. Nothing was charged and nothing was created.',
+      startAgain: 'Start again'
+    },
+    es: {
+      brandDesc: 'Academia Interactiva de Ventas',
+      pitch: 'Tu equipo no solo aprende qué decir. Practica lo que pasa después.',
+      sub: 'Una clínica, hasta cinco profesionales, la Academia completa y los nueve casos de consulta.',
+      endorse1: 'Avalado por Clinic Scale System',
+      endorse2: 'Basado en el Método MIRROR de The Beauty Sales Secrets',
+      loading: 'Comprobando tu pago…',
+
+      noOrder: 'Esta página necesita el enlace al que Stripe te devolvió. Ábrelo otra vez desde tu confirmación de pago, o empieza de nuevo desde la portada.',
+      notFound: 'No encontramos esa compra. Si se te ha cobrado, no se ha perdido nada: responde al recibo de Stripe y lo resolvemos.',
+      backHome: 'Volver a la portada',
+
+      testMode: 'Modo de prueba — esta instancia está conectada a claves de prueba de Stripe. No se ha cobrado nada real.',
+
+      oClinic: 'Clínica',
+      oName: 'Responsable',
+      oEmail: 'Correo',
+      oAmount: 'Pagado',
+
+      waitingH: 'Stripe está confirmando tu pago',
+      waitingP: 'Normalmente tarda unos segundos. No tienes que hacer nada: esta página avanzará sola. Puedes cerrarla y volver a este enlace sin problema.',
+      waiting: 'Esperando la confirmación',
+
+      chooseH: 'Elige tu contraseña',
+      chooseP: 'Esta es la contraseña de tu cuenta de responsable. Nadie en MIRROR puede verla, y es lo único que separa la cuenta de tu clínica de cualquier otra persona.',
+      pw: 'Tu contraseña',
+      pw2: 'Escríbela otra vez',
+      pwHint: 'Mínimo 10 caracteres. Una frase corta que vayas a recordar es mejor que una palabra ingeniosa que no.',
+      create: 'Crear mi clínica',
+      creating: 'Creando tu clínica…',
+      pwShort: 'Usa al menos 10 caracteres, por favor.',
+      pwMismatch: 'Esas dos no coinciden.',
+      createFailed: 'No se ha podido crear tu clínica. Tu pago está a salvo y este enlace sigue sirviendo: inténtalo una vez más.',
+
+      doneH: 'Tu clínica está abierta',
+      doneP: 'Has entrado como responsable de {clinic}. Tu licencia te cubre a ti y a hasta cuatro profesionales.',
+      next1: 'Siéntate tú primero con una consulta, antes de pedirle nada a tu equipo.',
+      next2: 'Responde siete preguntas cortas para que MIRROR sepa qué consultas estás perdiendo de verdad.',
+      next3: 'Invita a tus profesionales: un enlace para cada una, y está en su primer caso un minuto después.',
+      goApp: 'Abrir MIRROR',
+      verifyPrompt: 'Esta instancia no tiene proveedor de correo conectado, así que no se ha podido enviar tu correo de confirmación. Confirma tu dirección con este enlace: es lo que te permitirá recuperar la cuenta si algún día pierdes la contraseña:',
+      verifyLink: 'Confirmar mi dirección',
+
+      deadCancelled: 'Ese pago se ha cancelado. No se ha cobrado nada ni se ha creado nada.',
+      startAgain: 'Empezar de nuevo'
+    }
+  };
+
+  const LS = 'mirror.lang';
+  let lang = (() => {
+    try { const v = localStorage.getItem(LS); if (v === 'en' || v === 'es') return v; } catch (e) {}
+    return (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+  })();
+
+  const orderId = new URLSearchParams(location.search).get('order');
+  let order = null;
+  let session = null;      // set once the clinic is created
+  let verifyLink = null;
+  let poll = null;
+
+  /* =======================================================================
+     RENDER
+     ======================================================================= */
+  function chrome() {
+    const t = COPY[lang];
+    document.documentElement.lang = lang;
+    $$('[data-t]').forEach(el => { const v = t[el.getAttribute('data-t')]; if (typeof v === 'string') el.textContent = v; });
+    $$('#wl-lang button').forEach(b => b.classList.toggle('on', b.getAttribute('data-lang') === lang));
+    const logo = window.ART && window.ART.csLogo;
+    if ($('#wl-logo') && logo) $('#wl-logo').innerHTML = typeof logo === 'function' ? logo(22) : String(logo);
+  }
+
+  const testBadge = () => (order && order.testMode) ? `<p class="wl-test">${esc(COPY[lang].testMode)}</p>` : '';
+
+  function orderFacts() {
+    const t = COPY[lang];
+    if (!order) return '';
+    const amount = lang === 'es' ? `${order.amountEur} €` : `€${order.amountEur}`;
+    return `<dl class="wl-order">
+      <div><dt>${esc(t.oClinic)}</dt><dd>${esc(order.clinicName)}</dd></div>
+      <div><dt>${esc(t.oName)}</dt><dd>${esc(order.managerName)}</dd></div>
+      <div><dt>${esc(t.oEmail)}</dt><dd>${esc(order.email)}</dd></div>
+      <div><dt>${esc(t.oAmount)}</dt><dd>${esc(amount)}</dd></div>
+    </dl>`;
+  }
+
+  function paint() {
+    const t = COPY[lang], body = $('#wl-body');
+
+    if (!orderId) {
+      body.innerHTML = `<p class="wl-err">${esc(t.noOrder)}</p>
+        <p style="margin-top:16px"><a class="wl-btn line" style="display:inline-block;text-decoration:none" href="/">${esc(t.backHome)}</a></p>`;
+      return;
+    }
+    if (order === 'notfound') {
+      body.innerHTML = `<p class="wl-err">${esc(t.notFound)}</p>
+        <p style="margin-top:16px"><a class="wl-btn line" style="display:inline-block;text-decoration:none" href="/">${esc(t.backHome)}</a></p>`;
+      return;
+    }
+    if (!order) { body.innerHTML = `<p class="muted">${esc(t.loading)}</p>`; return; }
+
+    // --- the clinic exists ---
+    if (session) {
+      const clinic = esc(session.clinic.name);
+      body.innerHTML = `
+        <div class="wl-state good"><b>${esc(t.doneH)}</b></div>
+        ${testBadge()}
+        <p class="muted" style="margin-bottom:18px">${t.doneP.replace('{clinic}', clinic)}</p>
+        <ol class="wl-next">
+          <li>${esc(t.next1)}</li><li>${esc(t.next2)}</li><li>${esc(t.next3)}</li>
+        </ol>
+        <p style="margin-top:22px"><a class="wl-btn" style="display:block;text-align:center;text-decoration:none" href="/app">${esc(t.goApp)}</a></p>
+        ${verifyLink ? `<p class="wl-verify">${esc(t.verifyPrompt)}<br><a href="${esc(verifyLink)}">${esc(t.verifyLink)}</a></p>` : ''}`;
+      return;
+    }
+
+    // --- paid, waiting for her to choose a password ---
+    if (order.state === 'paid' && order.setupToken) {
+      body.innerHTML = `
+        <div class="wl-state good">${esc(order.message || '')}</div>
+        ${testBadge()}
+        ${orderFacts()}
+        <h2 style="font-family:var(--serif);font-weight:400;font-size:21px;margin:0 0 8px">${esc(t.chooseH)}</h2>
+        <p class="muted" style="margin-bottom:18px">${esc(t.chooseP)}</p>
+        <form class="wl-form" id="wl-form" novalidate>
+          <label><span>${esc(t.pw)}</span><input type="password" name="pw" autocomplete="new-password" required></label>
+          <label><span>${esc(t.pw2)}</span><input type="password" name="pw2" autocomplete="new-password" required></label>
+          <p class="wl-hint">${esc(t.pwHint)}</p>
+          <button class="wl-btn" type="submit" id="wl-go">${esc(t.create)}</button>
+          <p class="wl-err" id="wl-error" hidden></p>
+        </form>`;
+      $('#wl-form').addEventListener('submit', create);
+      return;
+    }
+
+    // --- paid but already used: she has a clinic, send her to sign in ---
+    if (order.state === 'paid' && order.clinicId) {
+      body.innerHTML = `
+        <div class="wl-state good">${esc(order.message || '')}</div>
+        ${orderFacts()}
+        <p style="margin-top:6px"><a class="wl-btn" style="display:block;text-align:center;text-decoration:none" href="/app">${esc(t.goApp)}</a></p>`;
+      return;
+    }
+
+    // --- still pending: poll, and say so ---
+    if (order.state === 'pending') {
+      body.innerHTML = `
+        <div class="wl-state"><b>${esc(t.waitingH)}</b></div>
+        ${testBadge()}
+        ${orderFacts()}
+        <p class="muted">${esc(t.waitingP)}</p>
+        <p class="muted wl-dots" style="margin-top:14px;color:var(--ink-3)">${esc(t.waiting)}</p>`;
+      return;
+    }
+
+    // --- failed, expired or refunded: say what happened, and that nothing was charged ---
+    body.innerHTML = `
+      <div class="wl-state bad">${esc(order.message || '')}</div>
+      ${orderFacts()}
+      <p style="margin-top:6px"><a class="wl-btn line" style="display:block;text-align:center;text-decoration:none" href="/#start">${esc(t.startAgain)}</a></p>`;
+  }
+
+  /* =======================================================================
+     READING THE ORDER
+     The browser coming back from Stripe is not the confirmation; the webhook
+     is. So this polls, and stops as soon as the state is one that will not
+     change on its own.
+     ======================================================================= */
+  async function load() {
+    if (!orderId) return paint();
+    try {
+      const r = await fetch('/api/orders/' + encodeURIComponent(orderId), {
+        headers: { 'X-Mirror-Lang': lang }, cache: 'no-store'
+      });
+      if (r.status === 404) { order = 'notfound'; stopPolling(); return paint(); }
+      if (!r.ok) return;                       // transient; the next poll retries
+      order = await r.json();
+      if (order.state !== 'pending') stopPolling();
+      paint();
+    } catch (e) { /* offline or a blip; the next poll retries */ }
+  }
+
+  function startPolling() {
+    if (poll) return;
+    // Two seconds. Stripe's webhook normally lands inside one, and the window
+    // where she is watching this page is short.
+    poll = setInterval(load, 2000);
+    // And stop after ten minutes rather than polling this tab forever.
+    setTimeout(stopPolling, 10 * 60 * 1000);
+  }
+  function stopPolling() { if (poll) { clearInterval(poll); poll = null; } }
+
+  /* =======================================================================
+     CREATING THE CLINIC
+     ======================================================================= */
+  async function create(e) {
+    e.preventDefault();
+    const t = COPY[lang], f = e.target;
+    const pw = f.elements.pw.value, pw2 = f.elements.pw2.value;
+    const err = $('#wl-error');
+    err.hidden = true;
+    $$('#wl-form input').forEach(i => i.removeAttribute('aria-invalid'));
+
+    const fail = (msg, field) => {
+      err.textContent = msg; err.hidden = false;
+      if (field) { f.elements[field].setAttribute('aria-invalid', 'true'); f.elements[field].focus(); }
+    };
+    if (String(pw).length < 10) return fail(t.pwShort, 'pw');
+    if (pw !== pw2) return fail(t.pwMismatch, 'pw2');
+
+    const btn = $('#wl-go');
+    btn.disabled = true;
+    btn.textContent = t.creating;
+    try {
+      const r = await fetch('/api/clinics/from-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Mirror-Lang': lang },
+        body: JSON.stringify({ setupToken: order.setupToken, password: pw })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        btn.disabled = false; btn.textContent = t.create;
+        return fail(j.error || t.createFailed);
+      }
+      session = j;
+      verifyLink = (j.verification && !j.verification.delivered) ? j.verification.link : null;
+      // She is already signed in server-side; the app reads this token, so she
+      // does not type the password she just chose a second time.
+      try {
+        localStorage.setItem('mirror.token', j.token);
+        localStorage.setItem(LS, lang);
+      } catch (e2) { /* private window: she signs in on /app instead */ }
+      paint();
+    } catch (e3) {
+      btn.disabled = false; btn.textContent = t.create;
+      fail(t.createFailed);
+    }
+  }
+
+  /* =======================================================================
+     BOOT
+     ======================================================================= */
+  $$('#wl-lang button').forEach(b => b.addEventListener('click', () => {
+    lang = b.getAttribute('data-lang');
+    try { localStorage.setItem(LS, lang); } catch (e) {}
+    chrome();
+    // The order's own message is served in the requested language, so it is
+    // re-read rather than re-translated here.
+    load();
+    paint();
+  }));
+
+  chrome();
+  paint();
+  load().then(startPolling);
+})();
+</script>
+</body>
+</html>

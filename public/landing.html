@@ -206,6 +206,210 @@ a.btn.line:hover{border-color:#EFEAE3}
 .lp-foot .mark svg{width:20px;height:20px}
 .lp-foot .et{font-size:11.5px;line-height:1.5;color:var(--ink-3);min-width:0}
 .lp-foot .et b{display:block;color:var(--ink-3);font-weight:600;font-size:11.5px}
+
+/* ==========================================================================
+   HERO, TWO COLUMNS
+   The claim was living alone in the left half of a very wide dark band, which
+   is how a page ends up reading as a manifesto rather than as a clinic. The
+   photograph takes the right half from 1000px up, and sits under the claim on
+   a phone — so the first thing anybody meets, at any width, is a person.
+   ========================================================================== */
+.hero-grid{display:grid;grid-template-columns:1fr;gap:26px;align-items:center}
+@media(min-width:1000px){.hero-grid{grid-template-columns:1.04fr .96fr;gap:50px}}
+.hero-grid .hero-copy{min-width:0}
+.hero-grid .hero-shot .ph{aspect-ratio:4/5}
+@media(max-width:999px){.hero-grid .hero-shot .ph{aspect-ratio:16/10}}
+@media(min-width:1000px){.hero-l h1{max-width:19ch}}
+
+/* ==========================================================================
+   PHOTOGRAPHY SLOTS
+   A slot renders the photograph when /photography.json names one, and its own
+   art-direction brief when it does not. The reserved plate is deliberately
+   plain and legible as unfinished: a page that fakes a photograph is worse
+   than a page that admits it is waiting for one.
+   ========================================================================== */
+.ph{position:relative;overflow:hidden;border-radius:var(--r);background:var(--panel-2);
+  border:1px solid var(--line)}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+.ph .cred{position:absolute;right:8px;bottom:6px;font-size:9.5px;letter-spacing:.04em;
+  color:rgba(255,255,255,.72);text-shadow:0 1px 3px rgba(0,0,0,.6);text-decoration:none}
+.ph.empty{display:flex;align-items:flex-end;background:
+  repeating-linear-gradient(135deg,transparent,transparent 9px,rgba(36,30,25,.035) 9px,rgba(36,30,25,.035) 18px),
+  var(--panel-2)}
+.ph.empty .brief{padding:16px 16px 14px;width:100%}
+.ph.empty .brief b{display:block;font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:6px}
+.ph.empty .brief span{display:block;font-size:11.5px;line-height:1.5;color:var(--ink-3);max-width:46ch}
+.band .ph{border-color:rgba(239,234,227,.16);background:rgba(239,234,227,.04)}
+.band .ph.empty{background:
+  repeating-linear-gradient(135deg,transparent,transparent 9px,rgba(239,234,227,.035) 9px,rgba(239,234,227,.035) 18px),
+  rgba(239,234,227,.03)}
+.band .ph.empty .brief b{color:#6E6459}
+.band .ph.empty .brief span{color:#877D71}
+
+/* ==========================================================================
+   MEET CARMEN — the playable moment.
+   The section that has to do the work the rest of the page can only describe.
+   Laid out as a room, not as a card: her on the left, her words and the three
+   replies on the right, the consequence arriving underneath only once a reply
+   has been chosen.
+   ========================================================================== */
+.cm{padding:46px 0 44px}
+@media(min-width:900px){.cm{padding:74px 0 70px}}
+.cm .hd{max-width:62ch;margin-bottom:28px}
+.cm .hd h2{font-family:var(--serif);font-weight:400;color:#fff;font-size:clamp(23px,4.6vw,34px);
+  line-height:1.2;margin:0 0 12px}
+.cm .hd p{color:#BCB2A5;font-size:15.5px;line-height:1.62;margin:0}
+.cm .hd p em{font-style:normal;color:var(--gold)}
+
+.cm-room{display:grid;grid-template-columns:1fr;gap:22px;align-items:start}
+@media(min-width:960px){.cm-room{grid-template-columns:minmax(260px,330px) 1fr;gap:34px}}
+
+/* --- who she is --- */
+.cm-who .ph{aspect-ratio:1/1;margin-bottom:16px}
+.cm-name{display:flex;align-items:baseline;gap:9px;margin-bottom:4px}
+.cm-name b{font-family:var(--serif);font-weight:400;font-size:26px;color:#fff;line-height:1}
+.cm-name i{font-style:normal;font-size:13px;color:#877D71;letter-spacing:.04em}
+.cm-occ{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:16px;font-weight:600}
+.cm-story p{color:#D6CEC3;font-size:14.5px;line-height:1.66;margin:0 0 10px}
+.cm-story p:last-child{margin-bottom:0}
+.cm-story p.hand{font-family:var(--serif);font-size:15.5px;color:#EFEAE3;
+  border-left:2px solid rgba(201,164,92,.5);padding-left:14px}
+.cm-file{margin-top:20px;border-top:1px solid rgba(239,234,227,.14);padding-top:16px}
+.cm-file .fk{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#6E6459;margin-bottom:12px}
+.cm-file dl{margin:0;display:grid;gap:11px}
+.cm-file dt{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#877D71;margin-bottom:2px}
+.cm-file dd{margin:0;font-size:13.5px;line-height:1.55;color:#D6CEC3}
+
+/* --- the moment --- */
+.cm-stage{background:rgba(239,234,227,.045);border:1px solid rgba(239,234,227,.15);
+  border-radius:var(--r);padding:22px 20px}
+@media(min-width:760px){.cm-stage{padding:30px 30px 28px}}
+.cm-phase{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;
+  padding-bottom:16px;border-bottom:1px solid rgba(239,234,227,.13)}
+.cm-phase .pn{font-family:var(--serif);font-size:12px;color:var(--gold);letter-spacing:.06em}
+.cm-phase .po{font-size:12px;color:#877D71}
+.cm-set{font-size:13px;color:#877D71;font-style:italic;margin:0 0 16px}
+.cm-src{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  font-weight:700;margin-bottom:10px}
+.cm-quote{font-family:var(--serif);font-weight:400;color:#fff;font-size:clamp(18px,3.1vw,25px);
+  line-height:1.42;margin:0 0 26px}
+.cm-ask{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:#BCB2A5;margin-bottom:14px}
+
+/* --- the three replies --- */
+.cm-opts{display:grid;gap:11px}
+.cm-opt{display:block;width:100%;text-align:left;cursor:pointer;font-family:inherit;
+  background:rgba(36,30,25,.42);border:1px solid rgba(239,234,227,.17);border-radius:10px;
+  padding:15px 17px;transition:border-color .16s,background .16s}
+.cm-opt:hover{border-color:rgba(201,164,92,.62);background:rgba(36,30,25,.6)}
+.cm-opt .ol{display:block;font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin-bottom:8px}
+.cm-opt .oq{display:block;font-size:14.5px;line-height:1.6;color:#EFEAE3}
+.cm-opt[disabled]{cursor:default;opacity:.34}
+.cm-opt.picked{border-color:var(--gold);background:rgba(201,164,92,.1);opacity:1}
+.cm-opt .mine{display:none;color:#877D71;letter-spacing:.06em;text-transform:none;font-weight:400}
+.cm-opt.picked .mine{display:inline}
+
+/* --- what to notice, before choosing --- */
+.cm-notice{margin-top:22px;padding-top:18px;border-top:1px solid rgba(239,234,227,.13)}
+.cm-notice .nk{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#6E6459;margin-bottom:10px}
+.cm-notice ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.cm-notice li{font-size:13px;line-height:1.55;color:#A79C8E;padding-left:16px;position:relative}
+.cm-notice li:before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;
+  background:rgba(201,164,92,.55)}
+
+/* ==========================================================================
+   THE CONSEQUENCE — arrives only after she commits, one band at a time.
+   The stagger is the teaching: your reply, then what it signalled, then what
+   it did to Carmen, then what is now possible. Each band waits for the one
+   before it, so cause and effect are legible rather than simultaneous.
+   ========================================================================== */
+.cm-out{margin-top:22px;display:none}
+.cm-out.on{display:block}
+.rv{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}}
+
+.cm-verdict{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:16px 18px;border-radius:10px;margin-bottom:14px;
+  background:rgba(36,30,25,.5);border:1px solid rgba(239,234,227,.16)}
+.cm-verdict .vb{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  padding:5px 11px;border-radius:999px;white-space:nowrap}
+.vb.aligned{background:rgba(122,155,110,.2);color:#A8C79A;border:1px solid rgba(168,199,154,.42)}
+.vb.partial{background:rgba(201,164,92,.16);color:#D8B871;border:1px solid rgba(216,184,113,.4)}
+.vb.not{background:rgba(178,88,72,.18);color:#D79385;border:1px solid rgba(215,147,133,.38)}
+.cm-verdict .vt{font-size:13.5px;color:#D6CEC3;line-height:1.5}
+
+/* Carmen's movement, shown as her behaviour with the numbers in support. */
+.cm-moved{background:rgba(36,30,25,.5);border:1px solid rgba(239,234,227,.16);
+  border-radius:10px;padding:20px 18px;margin-bottom:14px}
+.cm-moved .mk{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#6E6459;margin-bottom:12px}
+.cm-moved .narr{font-family:var(--serif);font-size:clamp(16px,2.6vw,20px);line-height:1.46;
+  color:#fff;margin:0 0 18px}
+.cm-meters{display:grid;gap:14px}
+@media(min-width:620px){.cm-meters{grid-template-columns:1fr 1fr;gap:18px 26px}}
+.mtr .ml{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#877D71;margin-bottom:7px}
+.mtr .mv{display:flex;align-items:baseline;gap:8px;font-size:13.5px;color:#D6CEC3;margin-bottom:8px}
+.mtr .mv .from{color:#6E6459}
+.mtr .mv .arw{color:var(--gold)}
+.mtr .mv .to{color:#EFEAE3;font-weight:600}
+.mtr .track{height:4px;border-radius:2px;background:rgba(239,234,227,.13);overflow:hidden;position:relative}
+.mtr .track i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--gold);
+  width:0;transition:width .85s cubic-bezier(.22,.7,.25,1)}
+.mtr .track i.down{background:#B25848}
+@media(prefers-reduced-motion:reduce){.mtr .track i{transition:none}}
+
+/* The reading — MIRROR's own words, in the order a practitioner needs them. */
+.cm-read{background:rgba(36,30,25,.5);border:1px solid rgba(239,234,227,.16);
+  border-radius:10px;padding:20px 18px;margin-bottom:14px}
+.cm-read .mk{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#6E6459;margin-bottom:14px}
+.cm-read dl{margin:0;display:grid;gap:14px}
+.cm-read dt{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
+  font-weight:700;margin-bottom:4px}
+.cm-read dd{margin:0;font-size:14px;line-height:1.62;color:#D6CEC3}
+
+.cm-again{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+button.lbtn{font-family:inherit;cursor:pointer;padding:13px 22px;font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;font-weight:700;border-radius:999px;transition:.15s;border:1px solid transparent}
+button.lbtn.gold{background:var(--champagne);border-color:var(--champagne);color:#fff}
+button.lbtn.gold:hover{background:var(--gold);border-color:var(--gold)}
+button.lbtn.line{background:transparent;border-color:rgba(239,234,227,.34);color:#EFEAE3}
+button.lbtn.line:hover{border-color:#EFEAE3}
+.cm-again .hint{font-size:12.5px;color:#877D71}
+
+/* What she just did, named as the product. */
+.cm-close{border-top:1px solid rgba(239,234,227,.16);padding-top:20px}
+.cm-close h3{font-family:var(--serif);font-weight:400;color:#fff;font-size:clamp(17px,2.8vw,22px);
+  line-height:1.34;margin:0 0 14px;max-width:44ch}
+.cm-close ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.cm-close li{font-size:14px;line-height:1.62;color:#BCB2A5;padding-left:18px;position:relative}
+.cm-close li:before{content:"";position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--gold)}
+
+.cm-err{font-size:13.5px;color:#D79385;line-height:1.6}
+
+/* ==========================================================================
+   THE PURCHASE FORM
+   Four fields, because four is everything the product needs to open a clinic:
+   who she is, what the clinic is called, where to reach her, and where she is.
+   No card fields — Stripe's own page takes those, so none of it is typed here.
+   ========================================================================== */
+.buyform{display:grid;gap:14px;margin:18px 0 14px}
+.buyform label{display:block}
+.buyform label span{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-3);margin-bottom:6px}
+.buyform input{width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+  background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px 13px;transition:border-color .15s}
+.buyform input:focus{outline:none;border-color:var(--champagne);box-shadow:0 0 0 3px rgba(201,164,92,.16)}
+.buyform input[aria-invalid="true"]{border-color:#B25848}
+.buyform button{width:100%;margin-top:4px}
+.buyform button[disabled]{opacity:.55;cursor:default}
+.buyerr{font-size:13.5px;line-height:1.55;color:#8E3B2C;background:rgba(178,88,72,.09);
+  border:1px solid rgba(178,88,72,.28);border-radius:9px;padding:11px 13px;margin:0}
+.buynote{font-size:12px;line-height:1.55;color:var(--ink-3);margin:0}
+.buynote.testbadge{color:#8A6A2E;background:rgba(201,164,92,.13);border:1px solid rgba(201,164,92,.34);
+  border-radius:8px;padding:9px 11px;font-weight:600}
 </style>
 </head>
 <body>
@@ -229,15 +433,50 @@ a.btn.line:hover{border-color:#EFEAE3}
 <!-- ===================== HERO ===================== -->
 <section class="band">
   <div class="wrap hero-l">
+   <div class="hero-grid">
+    <div class="hero-copy">
     <div class="eyebrow" data-t="heroKicker">MIRROR Interactive Sales Academy</div>
     <h1 data-th="heroH1">Your practitioners know the treatments. The consultation still ends in <em>“I’ll think about it.”</em></h1>
     <p class="sub" data-t="heroSub">MIRROR is where a practitioner practises the consultation itself — sixty interactive lessons and nine full simulated consultations in which every choice changes what the client tells you next, and the ending is derived from what was actually done.</p>
     <p class="powered" data-th="poweredBy">Powered by the MIRROR Method from <i>The Beauty Sales Secrets</i>.</p>
     <div class="cta">
-      <a class="btn gold" href="#sixty" data-t="ctaPrimary">What MIRROR is, in sixty seconds</a>
+      <a class="btn gold" href="#meet" data-t="ctaPrimary">Sit down with Carmen</a>
       <a class="btn line" href="#start" data-t="ctaSecondary">How a founding clinic starts</a>
     </div>
+    </div>
+    <div class="hero-shot" data-photo="hero"></div>
+   </div>
     <div class="hstats" id="hstats"></div>
+  </div>
+</section>
+
+<!-- The room itself, as a breath between the claim and the moment. -->
+<section class="band" style="padding:0">
+  <div data-photo="room" data-aspect="21/9" style="max-width:1180px;margin:0 auto"></div>
+</section>
+
+<!-- ===================== MEET CARMEN =====================
+     The playable moment. Everything inside #cm-room is rendered from
+     /api/sample — the same case engine, the same three replies and the same
+     reading a paying practitioner gets. The reading for the reply a visitor
+     picks is fetched only when she picks it, so the answer is never in the
+     page source. See server/sample.js.
+     ====================================================================== -->
+<section class="band" id="meet">
+  <div class="wrap cm">
+    <div class="hd">
+      <div class="eyebrow" data-t="cmEyebrow">Before you read another page about it</div>
+      <h2 data-th="cmH2">You are about to have a consultation you have already had. <em>Sit down with Carmen.</em></h2>
+      <p data-th="cmLead">This is one real moment from one of the nine consultations in the programme — her file, her words, and the three replies your practitioner could give. Choose the one you would actually give. Then watch what it does to her.</p>
+    </div>
+
+    <div class="cm-room" id="cm-room">
+      <div class="cm-who" id="cm-who"></div>
+      <div class="cm-play">
+        <div class="cm-stage" id="cm-stage"></div>
+        <div class="cm-out" id="cm-out"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -398,13 +637,22 @@ a.btn.line:hover{border-color:#EFEAE3}
 
       <!-- ===================== HOW IT STARTS ===================== -->
       <div class="formbox" id="start">
-        <h3 data-t="startH">How a founding clinic starts</h3>
-        <p class="muted" data-t="startSub">Ten founding clinics, opened one at a time. There is no sign-up form here, because the first conversation is with a person.</p>
-        <ol class="startsteps">
-          <li><b data-t="startS1">A conversation</b><span data-t="startS1P">Twenty minutes about your clinic, your team and the consultations you are actually losing. If MIRROR is wrong for you, that is where it ends.</span></li>
-          <li><b data-t="startS2">Your clinic is opened</b><span data-t="startS2P">Your manager account is created for you and the €490 is invoiced to the clinic. Nothing is charged inside the product and no card details are asked for anywhere.</span></li>
-          <li><b data-t="startS3">Your first ten minutes</b><span data-t="startS3P">You sign in and walk one consultation moment yourself, before you ask anything of your team. Then you add each practitioner: a link and a message you send, and she is in her first lesson a minute later.</span></li>
-        </ol>
+        <h3 data-t="startH">Open your founding clinic</h3>
+        <p class="muted" data-t="startSub">One payment, one clinic, up to five practitioners. You choose your own password on the next screen and your team is in the Academy the same day.</p>
+        <form class="buyform" id="buyform" novalidate>
+          <label><span data-t="buyName">Your name</span>
+            <input name="managerName" autocomplete="name" required></label>
+          <label><span data-t="buyClinic">Clinic name</span>
+            <input name="clinicName" autocomplete="organization" required></label>
+          <label><span data-t="buyEmail">Your email</span>
+            <input name="email" type="email" autocomplete="email" inputmode="email" required></label>
+          <label><span data-t="buyCountry">Country</span>
+            <input name="country" autocomplete="country-name"></label>
+          <button class="lbtn gold" type="submit" id="buybtn" data-t="buyGo">Pay &euro;490 and open the clinic</button>
+          <p class="buyerr" id="buyerr" hidden></p>
+          <p class="buynote" data-t="buyNote">Payment is taken by Stripe. No card details are typed into MIRROR and none are stored here.</p>
+          <p class="buynote testbadge" id="buytest" hidden data-t="buyTest">Test mode &mdash; this instance is connected to Stripe test keys. No real payment is taken.</p>
+        </form>
         <p class="fnote" data-t="startNote">Access does not depend on anybody installing anything. It runs in the browser your team already has, on the phone or on the desk.</p>
       </div>
     </div>
@@ -447,8 +695,54 @@ a.btn.line:hover{border-color:#EFEAE3}
       heroH1: 'Your practitioners know the treatments. The consultation still ends in <em>“I’ll think about it.”</em>',
       heroSub: 'MIRROR is where a practitioner practises the consultation itself — sixty interactive lessons and nine full simulated consultations in which every choice changes what the client tells you next, and the ending is derived from what was actually done.',
       poweredBy: 'Powered by the MIRROR Method from <i>The Beauty Sales Secrets</i>.',
-      ctaPrimary: 'What MIRROR is, in sixty seconds',
+      ctaPrimary: 'Sit down with Carmen',
       ctaSecondary: 'How a founding clinic starts',
+
+      /* --- Meet Carmen: the playable moment --- */
+      cmEyebrow: 'Before you read another page about it',
+      cmH2: 'You are about to have a consultation you have already had. <em>Sit down with Carmen.</em>',
+      cmLead: 'This is one real moment from one of the nine consultations in the programme — her file, her words, and the three replies your practitioner could give. Choose the one you would actually give. Then watch what it does to her.',
+      cmOnFile: 'On her file, before the door opens',
+      cmNotice: 'What a practitioner is supposed to notice',
+      cmLoading: 'Opening her file…',
+      cmFail: 'Carmen could not be reached just now. Reload the page and she will be here.',
+      cmYourReply: ' ·  your reply',
+      cmReading: 'MIRROR’s reading of that reply',
+      cmMoved: 'What happened to Carmen',
+      cmPosture: 'Her posture',
+      cmWillingness: 'Willingness to proceed',
+      cmRevealed: 'She just told you something she was holding',
+      cmWithheld: 'Still holding',
+      cmAgain: 'Try a different reply',
+      cmAgainHint: 'Nothing is recorded and nothing is scored.',
+      cmStart: 'See the Founding Clinic',
+      rdSignal: 'What she signalled',
+      rdInterp: 'What it means',
+      rdDid: 'What you did',
+      rdWhy: 'Why that is the reading',
+      rdPrinciple: 'The principle',
+      rdNext: 'Carry this forward',
+      postures: { armored: 'armored', testing: 'testing you', open: 'open', guarded: 'guarded', engaged: 'engaged', withdrawn: 'withdrawn' },
+      vdAligned: 'ALIGNED', vdPartial: 'PARTIALLY ALIGNED', vdNot: 'NOT ALIGNED',
+
+      /* --- buying --- */
+      startH: 'Open your founding clinic',
+      startSub: 'One payment, one clinic, up to five practitioners. You choose your own password on the next screen and your team is in the Academy the same day.',
+      buyName: 'Your name',
+      buyClinic: 'Clinic name',
+      buyEmail: 'Your email',
+      buyCountry: 'Country',
+      buyGo: 'Pay \u20AC490 and open the clinic',
+      buyGoing: 'Opening Stripe\u2026',
+      buyNote: 'Payment is taken by Stripe. No card details are typed into MIRROR and none are stored here.',
+      buyTest: 'Test mode \u2014 this instance is connected to Stripe test keys. No real payment is taken.',
+      buyNeedName: 'Please add your name.',
+      buyNeedClinic: 'Please add the clinic\u2019s name.',
+      buyNeedEmail: 'Please add an email address MIRROR can reach you at.',
+      buyOff: 'Payment is not switched on for this instance yet. Nothing was charged.',
+      buyFailed: 'Stripe could not start the payment. Nothing was charged.',
+      buyCancelled: 'The payment was cancelled. Nothing was charged and nothing was created \u2014 you can start again whenever you like.',
+      phSlot: 'Photograph reserved',
 
       sxEyebrow: 'In sixty seconds',
       sxH2: 'A client decides whether you are safe to be honest with. That decision — not your treatment menu — decides the outcome.',
@@ -576,8 +870,54 @@ a.btn.line:hover{border-color:#EFEAE3}
       heroH1: 'Tus profesionales dominan los tratamientos. La consulta sigue terminando en <em>«Me lo voy a pensar».</em>',
       heroSub: 'MIRROR es donde un profesional practica la consulta misma: sesenta lecciones interactivas y nueve consultas simuladas completas en las que cada decisión cambia lo que la clienta te cuenta después, y el desenlace se deriva de lo que realmente se hizo.',
       poweredBy: 'Impulsada por el Método MIRROR de <i>The Beauty Sales Secrets</i>.',
-      ctaPrimary: 'Qué es MIRROR, en sesenta segundos',
+      ctaPrimary: 'Siéntate con Carmen',
       ctaSecondary: 'Cómo empieza una clínica fundadora',
+
+      /* --- Conoce a Carmen: el momento jugable --- */
+      cmEyebrow: 'Antes de leer otra página sobre esto',
+      cmH2: 'Estás a punto de tener una consulta que ya has tenido. <em>Siéntate con Carmen.</em>',
+      cmLead: 'Este es un momento real de una de las nueve consultas del programa: su ficha, sus palabras y las tres respuestas que podría dar tu profesional. Elige la que darías de verdad. Después observa qué le ocurre a ella.',
+      cmOnFile: 'En su ficha, antes de que se abra la puerta',
+      cmNotice: 'Lo que un profesional debería notar',
+      cmLoading: 'Abriendo su ficha…',
+      cmFail: 'No se ha podido acceder a Carmen ahora mismo. Recarga la página y estará aquí.',
+      cmYourReply: ' ·  tu respuesta',
+      cmReading: 'La lectura de MIRROR sobre esa respuesta',
+      cmMoved: 'Qué le pasó a Carmen',
+      cmPosture: 'Su actitud',
+      cmWillingness: 'Disposición a continuar',
+      cmRevealed: 'Acaba de contarte algo que se guardaba',
+      cmWithheld: 'Sigue guardando',
+      cmAgain: 'Probar otra respuesta',
+      cmAgainHint: 'Nada queda registrado ni se puntúa.',
+      cmStart: 'Ver la Clínica Fundadora',
+      rdSignal: 'Qué señaló ella',
+      rdInterp: 'Qué significa',
+      rdDid: 'Qué hiciste',
+      rdWhy: 'Por qué esa es la lectura',
+      rdPrinciple: 'El principio',
+      rdNext: 'Llévate esto',
+      postures: { armored: 'acorazada', testing: 'poniéndote a prueba', open: 'abierta', guarded: 'reservada', engaged: 'implicada', withdrawn: 'retraída' },
+      vdAligned: 'ALINEADO', vdPartial: 'PARCIALMENTE ALINEADO', vdNot: 'NO ALINEADO',
+
+      /* --- comprar --- */
+      startH: 'Abre tu cl\u00EDnica fundadora',
+      startSub: 'Un pago, una cl\u00EDnica, hasta cinco profesionales. Eliges tu propia contrase\u00F1a en la pantalla siguiente y tu equipo entra en la Academia el mismo d\u00EDa.',
+      buyName: 'Tu nombre',
+      buyClinic: 'Nombre de la cl\u00EDnica',
+      buyEmail: 'Tu correo',
+      buyCountry: 'Pa\u00EDs',
+      buyGo: 'Pagar 490 \u20AC y abrir la cl\u00EDnica',
+      buyGoing: 'Abriendo Stripe\u2026',
+      buyNote: 'El pago lo gestiona Stripe. En MIRROR no se escribe ning\u00FAn dato de tarjeta y aqu\u00ED no se guarda ninguno.',
+      buyTest: 'Modo de prueba \u2014 esta instancia est\u00E1 conectada a claves de prueba de Stripe. No se cobra nada real.',
+      buyNeedName: 'A\u00F1ade tu nombre, por favor.',
+      buyNeedClinic: 'A\u00F1ade el nombre de la cl\u00EDnica, por favor.',
+      buyNeedEmail: 'A\u00F1ade un correo donde MIRROR pueda localizarte.',
+      buyOff: 'El pago todav\u00EDa no est\u00E1 activado en esta instancia. No se ha cobrado nada.',
+      buyFailed: 'Stripe no ha podido iniciar el pago. No se ha cobrado nada.',
+      buyCancelled: 'El pago se ha cancelado. No se ha cobrado nada ni se ha creado nada \u2014 puedes empezar de nuevo cuando quieras.',
+      phSlot: 'Fotografía reservada',
 
       sxEyebrow: 'En sesenta segundos',
       sxH2: 'La clienta decide si contigo puede ser sincera. Esa decisión, y no tu carta de tratamientos, decide el resultado.',
@@ -816,7 +1156,339 @@ a.btn.line:hover{border-color:#EFEAE3}
     const logo = window.ART.csLogo;
     $('#cslogo').innerHTML = typeof logo === 'function' ? logo(20) : (typeof logo === 'string' ? logo : '');
 
+    // Photograph slots carry their brief in the current language.
+    PHOTO.fill();
+
+    BUY.paint();
+
+    // Carmen is served by the API in the requested language, so she is
+    // re-fetched rather than re-translated.
+    CARMEN.load(lang);
   }
+
+  /* =======================================================================
+     PHOTOGRAPHY
+     Slots are declared in /photography.json. A slot with a src renders the
+     photograph and its credit; a slot without one renders its own brief.
+     Nothing is ever substituted for a missing photograph.
+     ======================================================================= */
+  const PHOTO = (() => {
+    let manifest = null;
+
+    async function load() {
+      try {
+        const r = await fetch('/photography.json', { cache: 'no-cache' });
+        if (r.ok) manifest = (await r.json()).slots || null;
+      } catch (e) { manifest = null; }
+    }
+
+    /** The markup for one slot, given the current language for the brief label. */
+    function html(name, aspectOverride) {
+      const slot = (manifest && manifest[name]) || null;
+      const t = COPY[lang];
+      const ar = aspectOverride || (slot && slot.aspect) || '3/2';
+      if (slot && slot.src) {
+        const credit = slot.credit
+          ? `<a class="cred" href="${esc(slot.sourceUrl || '#')}" target="_blank" rel="noopener noreferrer">${esc(slot.credit)}</a>`
+          : '';
+        return `<div class="ph" style="aspect-ratio:${esc(ar)}">
+            <img src="${esc(slot.src)}" alt="${esc(slot.alt || '')}" loading="lazy" decoding="async">${credit}
+          </div>`;
+      }
+      const brief = slot ? slot.brief : '';
+      return `<div class="ph empty" style="aspect-ratio:${esc(ar)}">
+          <div class="brief"><b>${esc(t.phSlot)}</b><span>${esc(brief)}</span></div>
+        </div>`;
+    }
+
+    /** Any element carrying data-photo is filled in place. */
+    function fill() {
+      $$('[data-photo]').forEach(el => {
+        el.innerHTML = html(el.getAttribute('data-photo'), el.getAttribute('data-aspect'));
+      });
+    }
+
+    return { load, html, fill };
+  })();
+
+  /* =======================================================================
+     CARMEN — the playable moment
+     Two calls: GET /api/sample for her file, her words and the three replies;
+     POST /api/sample/reveal for the reading of the ONE reply the visitor
+     commits to. The second call is what keeps the answer out of the page.
+     ======================================================================= */
+  const CARMEN = (() => {
+    let moment = null;
+    let busy = false;
+
+    const H = { 'Accept': 'application/json' };
+    const lh = () => Object.assign({}, H, { 'X-Mirror-Lang': lang });
+
+    async function load(l) {
+      const stage = $('#cm-stage');
+      if (!stage) return;
+      stage.innerHTML = `<p class="cm-set">${esc(COPY[lang].cmLoading)}</p>`;
+      $('#cm-out').classList.remove('on');
+      $('#cm-out').innerHTML = '';
+      try {
+        const r = await fetch('/api/sample', { headers: lh() });
+        if (!r.ok) throw new Error('sample ' + r.status);
+        moment = await r.json();
+        paintWho();
+        paintStage();
+      } catch (e) {
+        moment = null;
+        $('#cm-who').innerHTML = PHOTO.html('carmen', '1/1');
+        stage.innerHTML = `<p class="cm-err">${esc(COPY[lang].cmFail)}</p>`;
+      }
+    }
+
+    function paintWho() {
+      const c = moment.client, t = COPY[lang];
+      $('#cm-who').innerHTML = `
+        ${PHOTO.html('carmen', '1/1')}
+        <div class="cm-name"><b>${esc(c.name)}</b><i>${esc(c.age)}</i></div>
+        <div class="cm-occ">${esc(c.occupation)}</div>
+        <div class="cm-story">
+          ${c.story.map((s, i) => `<p${i === 1 ? ' class="hand"' : ''}>${esc(s)}</p>`).join('')}
+        </div>
+        <div class="cm-file">
+          <div class="fk">${esc(t.cmOnFile)}</div>
+          <dl>${c.onFile.map(f => `<div><dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd></div>`).join('')}</dl>
+        </div>`;
+    }
+
+    function paintStage() {
+      const m = moment, t = COPY[lang];
+      $('#cm-stage').innerHTML = `
+        <div class="cm-phase">
+          <span class="pn">${esc(m.phase.n)} · ${esc(m.phase.name)}</span>
+          <span class="po">${esc(m.phase.objective)}</span>
+        </div>
+        <p class="cm-set">${esc(m.setting)}</p>
+        <div class="cm-src">${esc(m.signal.source)}</div>
+        <p class="cm-quote">${esc(m.signal.quote)}</p>
+        <div class="cm-ask">${esc(m.ask)}</div>
+        <div class="cm-opts">
+          ${m.options.map(o => `
+            <button class="cm-opt" type="button" data-opt="${esc(o.id)}">
+              <span class="ol">${esc(o.label)}<span class="mine">${esc(t.cmYourReply)}</span></span>
+              <span class="oq">“${esc(o.language)}”</span>
+            </button>`).join('')}
+        </div>
+        <div class="cm-notice">
+          <div class="nk">${esc(t.cmNotice)}</div>
+          <ul>${m.client.toNotice.map(n => `<li>${esc(n)}</li>`).join('')}</ul>
+        </div>`;
+      $$('#cm-stage .cm-opt').forEach(b =>
+        b.addEventListener('click', () => choose(b.getAttribute('data-opt'))));
+    }
+
+    async function choose(id) {
+      if (busy || !moment) return;
+      busy = true;
+      $$('#cm-stage .cm-opt').forEach(b => {
+        b.disabled = true;
+        b.classList.toggle('picked', b.getAttribute('data-opt') === id);
+      });
+      try {
+        const r = await fetch('/api/sample/reveal', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, lh()),
+          body: JSON.stringify({ optionId: id })
+        });
+        if (!r.ok) throw new Error('reveal ' + r.status);
+        paintReading(await r.json());
+      } catch (e) {
+        $('#cm-out').classList.add('on');
+        $('#cm-out').innerHTML = `<p class="cm-err">${esc(COPY[lang].cmFail)}</p>`;
+      }
+      busy = false;
+    }
+
+    const VCLASS = v => /^NOT ALIGNED/i.test(v) ? 'not'
+      : /^PARTIAL/i.test(v) ? 'partial' : 'aligned';
+
+    /* The engine's verdict is a fixed English token — the app resolves it
+       through its own labels (app.js verdictLabel) and so must this page, or a
+       Spanish visitor reads ALIGNED inside a Spanish sentence. */
+    const VLABEL = v => {
+      const t = COPY[lang];
+      return /^ALIGNED/i.test(v || '') ? t.vdAligned
+        : /^PARTIAL/i.test(v || '') ? t.vdPartial
+        : /^NOT ALIGNED/i.test(v || '') ? t.vdNot : String(v || '');
+    };
+
+    function posture(p) {
+      const map = COPY[lang].postures || {};
+      return map[p] || p;
+    }
+
+    function paintReading(d) {
+      const t = COPY[lang], c = d.consequence, out = $('#cm-out');
+      const wBefore = Number(c.willingnessBefore) || 0;
+      const wAfter = Number(c.willingnessAfter) || 0;
+      const down = wAfter < wBefore;
+
+      const revealed = (c.revealed || []).length
+        ? `<div class="mtr"><div class="ml">${esc(t.cmRevealed)}</div>
+             <div class="mv"><span class="to">${esc((c.revealed || []).join(' · '))}</span></div></div>` : '';
+      const withheld = (c.stillWithheld || []).length
+        ? `<div class="mtr"><div class="ml">${esc(t.cmWithheld)}</div>
+             <div class="mv"><span class="from">${esc((c.stillWithheld || []).join(' · '))}</span></div></div>` : '';
+
+      const rows = [
+        ['rdSignal', d.reading.signal], ['rdInterp', d.reading.interpretation],
+        ['rdDid', d.reading.did], ['rdWhy', d.reading.why],
+        ['rdPrinciple', d.reading.principle], ['rdNext', d.reading.next]
+      ].filter(r => r[1]);
+
+      out.innerHTML = `
+        <div class="cm-verdict rv">
+          <span class="vb ${VCLASS(d.alignment)}">${esc(VLABEL(d.alignment))}</span>
+          <span class="vt">“${esc(d.language)}”</span>
+        </div>
+
+        <div class="cm-moved rv">
+          <div class="mk">${esc(t.cmMoved)}</div>
+          ${c.narrative ? `<p class="narr">${esc(c.narrative)}</p>` : ''}
+          <div class="cm-meters">
+            <div class="mtr">
+              <div class="ml">${esc(t.cmPosture)}</div>
+              <div class="mv"><span class="from">${esc(posture(c.postureBefore))}</span>
+                <span class="arw">→</span><span class="to">${esc(posture(c.postureAfter))}</span></div>
+            </div>
+            <div class="mtr">
+              <div class="ml">${esc(t.cmWillingness)}</div>
+              <div class="mv"><span class="from">${esc(wBefore)}</span>
+                <span class="arw">→</span><span class="to">${esc(wAfter)}</span></div>
+              <div class="track"><i class="${down ? 'down' : ''}" data-w="${esc(wAfter)}"></i></div>
+            </div>
+            ${revealed}${withheld}
+          </div>
+        </div>
+
+        <div class="cm-read rv">
+          <div class="mk">${esc(t.cmReading)}</div>
+          <dl>${rows.map(r => `<div><dt>${esc(t[r[0]])}</dt><dd>${esc(r[1])}</dd></div>`).join('')}</dl>
+        </div>
+
+        <div class="cm-again rv">
+          <button class="lbtn line" type="button" id="cm-retry">${esc(t.cmAgain)}</button>
+          <span class="hint">${esc(t.cmAgainHint)}</span>
+        </div>
+
+        <div class="cm-close rv">
+          <h3>${esc(d.close.title)}</h3>
+          <ul>${d.close.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
+          <div class="cta" style="margin-top:20px">
+            <a class="btn gold" href="#start">${esc(t.cmStart)}</a>
+          </div>
+        </div>`;
+      out.classList.add('on');
+
+      $('#cm-retry').addEventListener('click', () => load(lang));
+
+      // The stagger. Each band lands after the one before it, so a visitor
+      // reads cause before effect instead of meeting the whole verdict at once.
+      const bands = $$('#cm-out .rv');
+      bands.forEach((b, i) => setTimeout(() => b.classList.add('in'), 60 + i * 260));
+      // The willingness bar fills once its band is on screen.
+      setTimeout(() => {
+        const bar = $('#cm-out .track i');
+        if (bar) bar.style.width = Math.max(2, Math.min(100, Number(bar.getAttribute('data-w')) || 0)) + '%';
+      }, 520);
+    }
+
+    return { load };
+  })();
+
+  /* =======================================================================
+     BUYING
+     Four fields to Stripe Checkout. The product never sees a card: this hands
+     off to Stripe's own hosted page and the clinic is created only after
+     Stripe's webhook confirms the payment, not when the browser comes back.
+     ======================================================================= */
+  const BUY = (() => {
+    let plan = null;
+
+    async function load() {
+      try {
+        const r = await fetch('/api/plan', { headers: { 'X-Mirror-Lang': lang } });
+        if (r.ok) plan = await r.json();
+      } catch (e) { plan = null; }
+      paint();
+    }
+
+    function paint() {
+      const badge = $('#buytest');
+      if (!badge) return;
+      // Said out loud when it is true, because a buyer on a test instance must
+      // never believe she has bought something.
+      badge.hidden = !(plan && plan.payment && plan.payment.testMode);
+    }
+
+    function fail(msg) {
+      const box = $('#buyerr');
+      box.textContent = msg;
+      box.hidden = false;
+      box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    async function submit(e) {
+      e.preventDefault();
+      const t = COPY[lang];
+      const f = e.target;
+      const val = n => String((f.elements[n] && f.elements[n].value) || '').trim();
+      $('#buyerr').hidden = true;
+      $$('#buyform input').forEach(i => i.removeAttribute('aria-invalid'));
+
+      const need = [['managerName', t.buyNeedName], ['clinicName', t.buyNeedClinic], ['email', t.buyNeedEmail]];
+      for (const [name, msg] of need) {
+        const v = val(name);
+        const bad = !v || (name === 'email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v));
+        if (bad) { f.elements[name].setAttribute('aria-invalid', 'true'); f.elements[name].focus(); return fail(msg); }
+      }
+
+      const btn = $('#buybtn');
+      btn.disabled = true;
+      const was = btn.textContent;
+      btn.textContent = t.buyGoing;
+      try {
+        const r = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Mirror-Lang': lang },
+          body: JSON.stringify({
+            managerName: val('managerName'), clinicName: val('clinicName'),
+            email: val('email'), country: val('country') || null
+          })
+        });
+        const j = await r.json().catch(() => ({}));
+        if (r.status === 503) { btn.disabled = false; btn.textContent = was; return fail(t.buyOff); }
+        if (!r.ok || !j.url) {
+          btn.disabled = false; btn.textContent = was;
+          // The server's own message is preferred when it has one: "that
+          // address already has an account" is far more useful than a generic
+          // failure, and she can act on it.
+          return fail(j.error || t.buyFailed);
+        }
+        window.location.href = j.url;
+      } catch (err) {
+        btn.disabled = false; btn.textContent = was;
+        fail(t.buyFailed);
+      }
+    }
+
+    function wire() {
+      const f = $('#buyform');
+      if (f && !f.dataset.wired) { f.dataset.wired = '1'; f.addEventListener('submit', submit); }
+      // Coming back from a cancelled Checkout, she is told plainly that
+      // nothing happened rather than being left to wonder.
+      if (/[?&]checkout=cancelled/.test(location.search)) fail(COPY[lang].buyCancelled);
+    }
+
+    return { load, wire, paint };
+  })();
 
   /* =======================================================================
      BOOT
@@ -827,7 +1499,11 @@ a.btn.line:hover{border-color:#EFEAE3}
     render(v);
   }));
 
-  render(readStored());
+  // Photography is loaded before the first paint, because Carmen's portrait is
+  // painted by CARMEN rather than by a data-photo element and would otherwise
+  // render its slot with no brief in it.
+  PHOTO.load().then(() => render(readStored()), () => render(readStored()))
+    .then(() => { BUY.wire(); return BUY.load(); });
 })();
 </script>
 </body>

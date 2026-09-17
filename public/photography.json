@@ -1,0 +1,95 @@
+{
+  "$comment": [
+    "THE PHOTOGRAPHY MANIFEST.",
+    "",
+    "Every photograph in the commercial surfaces is a named slot with its art",
+    "direction written down, so the picture is chosen against a brief rather",
+    "than because it was available. A slot with src:null renders as a reserved",
+    "plate carrying its own brief — visibly unfinished, which is the honest",
+    "state. Nothing here ever renders a fabricated image in a photograph's place.",
+    "",
+    "FILLING A SLOT: put the file in /public/img/ and set src, credit, licence",
+    "and sourceUrl. The page needs no edit. scripts/photography-fetch.js pulls",
+    "candidates for a slot from a licensed library and writes them to",
+    "/public/img/candidates/<slot>/ for review; it never fills src by itself,",
+    "because the whole point is that a person rejects the clichés.",
+    "",
+    "THE FILTER, applied to every candidate before it is accepted:",
+    "  YES  real aestheticians · real consultation rooms · realistic clients ·",
+    "       natural skin · believable ages · human expressions · hands, eye",
+    "       contact, listening · warm premium clinic interiors · European where",
+    "       possible · the photograph serves the story on the page",
+    "  NO   obvious AI faces · futuristic clinics · doctors holding tablets ·",
+    "       exaggerated luxury stock · plastic skin · fabricated before/after ·",
+    "       corporate SaaS imagery · models who add no meaning · anything",
+    "       implying a procedure MIRROR does not train"
+  ],
+  "slots": {
+    "hero": {
+      "role": "The first thing a clinic owner sees. Must read as her own consultation room, not a brochure.",
+      "brief": "A practitioner mid-consultation, listening. She is not talking, not pointing at a mirror, not holding a tablet. The client's face may be turned away or out of frame — the subject is the act of attention. Warm interior, daylight, real clinic furniture.",
+      "aspect": "4/5",
+      "priority": 1,
+      "src": null,
+      "alt": null,
+      "credit": null,
+      "licence": null,
+      "sourceUrl": null
+    },
+    "carmen": {
+      "role": "Carmen's portrait, beside her own words. The single most important image in the product.",
+      "brief": "A woman of about 51, composed and slightly guarded, seated. Natural skin with visible expression lines — the lines are the case. Not smiling for a camera. Not a beauty shot. She should look like a gallery director who reads contracts, because she is one.",
+      "aspect": "1/1",
+      "priority": 1,
+      "src": null,
+      "alt": null,
+      "credit": null,
+      "licence": null,
+      "sourceUrl": null
+    },
+    "coaching": {
+      "role": "Manager value. A clinic owner coaching one practitioner, not addressing a room.",
+      "brief": "Two women at a table, one explaining, one listening and taking it in. Notebook or printed page between them. Back-of-house clinic setting, not a boardroom. Peer-to-peer posture, no lectern energy.",
+      "aspect": "16/10",
+      "priority": 2,
+      "src": null,
+      "alt": null,
+      "credit": null,
+      "licence": null,
+      "sourceUrl": null
+    },
+    "room": {
+      "role": "The consultation environment itself, as a breath between sections.",
+      "brief": "Treatment-room or consultation-room detail with no people: two chairs at a slight angle to each other, a consultation form, a folded towel, daylight. Warm and real. Must not look like a hospital or a spa advertisement.",
+      "aspect": "21/9",
+      "priority": 2,
+      "src": null,
+      "alt": null,
+      "credit": null,
+      "licence": null,
+      "sourceUrl": null
+    },
+    "team": {
+      "role": "Five seats — the clinic team the licence covers.",
+      "brief": "Three or four clinic staff of visibly different ages together, in work clothes, in their own space. Working, not posing in a line. One of them should look like she has been doing this for twenty years.",
+      "aspect": "16/9",
+      "priority": 3,
+      "src": null,
+      "alt": null,
+      "credit": null,
+      "licence": null,
+      "sourceUrl": null
+    },
+    "reception": {
+      "role": "The front of the funnel — where the consultation begins before anyone speaks.",
+      "brief": "Clinic reception or waiting area, warm and small rather than grand. A client waiting, or the desk itself. Believable for an independent clinic, not a chain.",
+      "aspect": "3/2",
+      "priority": 3,
+      "src": null,
+      "alt": null,
+      "credit": null,
+      "licence": null,
+      "sourceUrl": null
+    }
+  }
+}

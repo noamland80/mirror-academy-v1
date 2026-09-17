@@ -209,6 +209,20 @@ const UI = {
     sub: 'Ten modules, interactive lessons and full simulated consultations, built on the MIRROR Method from The Beauty Sales Secrets.',
     tabs: { start: 'Start here', home: 'My Journey', curriculum: 'Curriculum', practice: 'Consultations', resources: 'Materials', journal: 'Field journal', progress: 'Your development', manager: 'Team coaching', clinic: 'Clinic' },
     signOut: 'Sign out',
+    obStep: 'Question {n} of {of}',
+    obNext: 'Continue', obFinish: 'Done', obSkip: 'Skip this',
+    fwStart: 'Meet her now', fwLater: 'Not right now',
+    fwGoal: 'What you said you want from this:',
+    mdTitle: 'This week at your clinic',
+    mdPractised: 'practitioners practised', mdConsults: 'consultations',
+    mdCompleted: 'completed', mdLessons: 'lessons finished',
+    mdNotYet: 'Has not practised this week',
+    mdAttention: 'What needs attention',
+    mdExercise: 'Suggested team exercise',
+    mdPractice: 'Suggested practice',
+    mdThenRead: 'Then, in the Academy',
+    mdDetail: 'Open the full coaching view',
+    mdBasis: 'Where this comes from',
     welcome: 'Welcome back', welcomeNew: 'Welcome to the Academy',
     heroSub: 'You are not here to learn a script. You are here to practise the moments where consultations are actually won and lost.',
     modules: 'modules', lessons: 'lessons', minutes: 'minutes of teaching', cases: 'full consultations',
@@ -926,6 +940,20 @@ const UI = {
     sub: 'Diez módulos, lecciones interactivas y consultas simuladas completas, sobre el Método MIRROR de The Beauty Sales Secrets.',
     tabs: { start: 'Empieza aquí', home: 'Mi camino', curriculum: 'Plan de estudios', practice: 'Consultas', resources: 'Materiales', journal: 'Diario de campo', progress: 'Tu desarrollo', manager: 'Formación del equipo', clinic: 'Clínica' },
     signOut: 'Salir',
+    obStep: 'Pregunta {n} de {of}',
+    obNext: 'Continuar', obFinish: 'Listo', obSkip: 'Saltar esto',
+    fwStart: 'Conócela ahora', fwLater: 'Ahora no',
+    fwGoal: 'Lo que dijiste que quieres conseguir:',
+    mdTitle: 'Esta semana en tu clínica',
+    mdPractised: 'profesionales han practicado', mdConsults: 'consultas',
+    mdCompleted: 'completadas', mdLessons: 'lecciones terminadas',
+    mdNotYet: 'No ha practicado esta semana',
+    mdAttention: 'Qué necesita atención',
+    mdExercise: 'Ejercicio de equipo sugerido',
+    mdPractice: 'Práctica sugerida',
+    mdThenRead: 'Después, en la Academia',
+    mdDetail: 'Abrir la vista completa de formación',
+    mdBasis: 'De dónde sale esto',
     welcome: 'Bienvenida de nuevo', welcomeNew: 'Bienvenida a la Academia',
     heroSub: 'No estás aquí para aprender un guion. Estás aquí para practicar los momentos en los que realmente se ganan y se pierden las consultas.',
     modules: 'módulos', lessons: 'lecciones', minutes: 'minutos de formación', cases: 'consultas completas',
@@ -1640,22 +1668,188 @@ async function boot() {
   if (S.user.role !== 'manager' && !S.onboard && !hasBeenWalkedIn(S.user.role)) S.onboard = { step: 0 };
   renderTabs();
 
-  // She has just accepted an invitation. She was welcomed on the way in, so
-  // she does not land on a dashboard — she lands in her first lesson.
-  if (S.arriving && S.user.role === 'practitioner') {
-    S.arriving = false;
-    markWalkedIn('practitioner');
-    S.onboard = null;
+  // WHAT SHE MEETS FIRST.
+  //
+  // This used to send a newly activated practitioner straight into Module 1,
+  // Lesson 1. It was well meant — better than a dashboard — but "Lesson 1 of
+  // 60" is still a curriculum, and a curriculum is what she postpones.
+  //
+  // So anybody who has not answered the four questions answers them now, and
+  // lands in the consultation her own answer picked. Everything else is
+  // reachable from the tabs the moment she wants it.
+  if (!S.obDone) {
     try {
-      const c = await loadCurriculum(true);
-      for (const m of c.modules) {
-        if (m.status !== 'available') continue;
-        const l = m.lessons.find(x => !x.progress || x.progress.status !== 'complete');
-        if (l) return openLesson(m.id, l.id);
+      const fw = await api('GET', '/api/first-win');
+      if (fw.ok && fw.body.needsOnboarding) {
+        S.arriving = false;
+        markWalkedIn(S.user.role);
+        S.onboard = null;
+        return renderOnboarding();
       }
-    } catch (e) { /* fall through to the ordinary first screen */ }
+      // Already onboarded, and arriving from her invitation: she is shown the
+      // case her answers named rather than a dashboard.
+      if (fw.ok && S.arriving) {
+        S.arriving = false;
+        markWalkedIn(S.user.role);
+        S.onboard = null;
+        S.firstWin = fw.body;
+        S.obDone = true;
+        return renderFirstWin();
+      }
+      S.obDone = true;
+    } catch (e) { S.obDone = true; }
   }
+  S.arriving = false;
   await render();
+}
+
+/* ==========================================================================
+   ONBOARDING, AND THE FIRST WIN
+   --------------------------------------------------------------------------
+   THE FAILURE THIS REPLACES. A practitioner accepted her invitation and was
+   dropped into Module 1, Lesson 1 — sixty lessons deep, nothing in it hers.
+   She read "Lesson 1 of 60", decided she would come back when she had an
+   hour, and did not come back.
+
+   So activation now ends in a consultation she recognises. Four questions,
+   one screen each, then her own first case. The Academy is still underneath
+   and she can reach it from the tabs the moment she wants it; it just is not
+   the first thing she meets.
+
+   One question per screen on purpose: seven fields on one page is a form, and
+   a form is the thing she abandons on a phone between clients.
+   ========================================================================== */
+
+/** Four screens. `categories` is the only one that takes more than one answer. */
+const OB_STEPS = ['hardest', 'experience', 'categories', 'goal'];
+
+async function renderOnboarding() {
+  const T = t();
+  if (!S.ob) {
+    const r = await api('GET', '/api/onboarding');
+    if (!r.ok) { S.ob = null; S.obDone = true; return render(); }
+    S.ob = { q: r.body.questions, answers: { categories: [] }, step: 0, firstName: r.body.firstName };
+  }
+  const ob = S.ob;
+  const key = OB_STEPS[ob.step];
+  const q = ob.q[key];
+  const multi = key === 'categories';
+  const chosen = multi ? (ob.answers.categories || []) : [ob.answers[key]];
+
+  $('#view').innerHTML = `
+    <section class="ob">
+      <div class="ob-step">${esc(T.obStep.replace('{n}', ob.step + 1).replace('{of}', OB_STEPS.length))}</div>
+      <div class="ob-bar"><i style="width:${Math.round(((ob.step) / OB_STEPS.length) * 100)}%"></i></div>
+      <h2>${esc(q.ask)}</h2>
+      ${q.note ? `<p class="note">${esc(q.note)}</p>` : ''}
+      <div class="ob-opts">
+        ${q.options.map(o => `
+          <button class="ob-opt ${chosen.indexOf(o.key) >= 0 ? 'on' : ''}" type="button" data-k="${esc(o.key)}">
+            <span class="lab">${esc(o.label)}</span>
+            ${o.why ? `<span class="why">${esc(o.why)}</span>` : ''}
+          </button>`).join('')}
+      </div>
+      <div class="ob-acts">
+        <button class="btn primary" type="button" id="ob-next">${esc(ob.step === OB_STEPS.length - 1 ? T.obFinish : T.obNext)}</button>
+        ${ob.step > 0 ? `<button class="btn" type="button" id="ob-back">${esc(T.back)}</button>` : ''}
+        <button class="ob-skip" type="button" id="ob-skip">${esc(T.obSkip)}</button>
+      </div>
+    </section>`;
+
+  $('#view').querySelectorAll('.ob-opt').forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    if (multi) {
+      const list = ob.answers.categories || (ob.answers.categories = []);
+      const i = list.indexOf(k);
+      if (i >= 0) list.splice(i, 1); else list.push(k);
+    } else {
+      // Single-choice answers advance on tap: an extra "next" press for a
+      // decision she has already made is friction with nothing behind it.
+      // Including the LAST one — it selected and then sat there waiting for a
+      // button, which is the one place in the flow where she would have had to
+      // go looking for how to continue.
+      ob.answers[key] = k;
+      if (ob.step < OB_STEPS.length - 1) { ob.step += 1; return renderOnboarding(); }
+      return saveOnboarding();
+    }
+    renderOnboarding();
+  });
+  $('#ob-next').onclick = () => {
+    if (ob.step < OB_STEPS.length - 1) { ob.step += 1; return renderOnboarding(); }
+    return saveOnboarding();
+  };
+  const back = $('#ob-back'); if (back) back.onclick = () => { ob.step -= 1; renderOnboarding(); };
+  // Skipping is allowed and costs her nothing: the brief and the first case
+  // both have an honest shape for "she did not say".
+  $('#ob-skip').onclick = () => saveOnboarding();
+}
+
+async function saveOnboarding() {
+  busy();
+  const a = (S.ob && S.ob.answers) || {};
+  const r = await api('POST', '/api/onboarding', {
+    experience: a.experience || null,
+    categories: a.categories || [],
+    hardest: a.hardest || null,
+    goal: a.goal || null
+  });
+  S.ob = null;
+  S.obDone = true;
+  // The legacy three-card walk-through is the OLD answer to "what does she see
+  // first". Having just answered four questions and been handed her own case,
+  // she must not then be shown a slideshow introducing the product — two
+  // onboardings back to back is the exact feeling this flow replaced.
+  markWalkedIn(S.user.role);
+  S.onboard = null;
+  S.firstWin = (r.ok && r.body.firstWin) || null;
+  return renderFirstWin();
+}
+
+/**
+ * HER FIRST WIN.
+ *
+ * Greeting, her own words quoted back, and one button into the consultation
+ * that puts her inside the situation she just named. Deliberately no count of
+ * what is left to do, no estimate of how long anything takes, and no score.
+ */
+async function renderFirstWin() {
+  const T = t();
+  if (!S.firstWin) {
+    const r = await api('GET', '/api/first-win');
+    if (!r.ok || r.body.needsOnboarding) { S.ob = null; return renderOnboarding(); }
+    S.firstWin = r.body;
+  }
+  const w = S.firstWin;
+  const title = w.scenarioTitle || '';
+  $('#view').innerHTML = `
+    <section class="fw">
+      <h1 class="hi">${esc(w.greeting)}</h1>
+      <p class="said">${esc(w.said)}</p>
+      <p class="bridge">${esc(w.bridge)}</p>
+      <p class="meet">${esc(w.meet)}</p>
+      <div class="ob-acts">
+        <button class="btn primary" type="button" id="fw-go">${esc(T.fwStart)}</button>
+        <button class="ob-skip" type="button" id="fw-later">${esc(T.fwLater)}</button>
+      </div>
+      <p class="note">${esc(w.note)}</p>
+      ${w.goal ? `<p class="goal">${esc(T.fwGoal)} ${esc(w.goal)}</p>` : ''}
+    </section>`;
+  $('#fw-go').onclick = () => {
+    // A manager cannot own an attempt: POST /api/attempts is practitioner-only,
+    // so sending her to startCase would have answered 403 on the very first
+    // button the product ever shows her. She gets the consultation moment the
+    // product hands her directly instead.
+    if (w.forManager || w.opens === 'first_moment') {
+      S.tab = 'start';
+      renderTabs();
+      S.moment = { pick: null };
+      return renderFirstMoment();
+    }
+    S.tab = 'practice';
+    renderTabs();
+    return startCase(w.scenario);
+  };
+  $('#fw-later').onclick = () => { S.firstWin = null; render(); };
 }
 
 function renderTabs() {
@@ -5810,6 +6004,103 @@ const trustWord = k => (TRUST_WORD[k] && TRUST_WORD[k][S.lang]) || String(k || '
 // An empty coaching view would be honest and useless. This is three things she
 // can do today, in order, the first of which is worth her time on its own.
 // ==========================================================================
+/* ==========================================================================
+   MONDAY MORNING
+   --------------------------------------------------------------------------
+   The first thing a clinic owner sees, above her own arc.
+
+   WHAT HAPPENED → WHAT IT MAY MEAN → WHAT TO DO WITH THE TEAM.
+
+   Not an analytics panel. The counts are there because she asked what
+   happened, and they stop as soon as the question is answered; the page then
+   spends its space on the one thing worth ten minutes and the exercise that
+   fills them. When there is not enough practice to say anything, it says that
+   and names the one action that would change it — which is a more useful
+   screen than a confident chart built on four data points.
+   ========================================================================== */
+async function mondayPanel() {
+  const T = t();
+  let b = null;
+  try {
+    const r = await api('GET', '/api/manager/monday');
+    if (r.ok) b = r.body;
+  } catch (e) { return ''; }
+  if (!b) return '';
+
+  const h = b.happened || {};
+  const w = b.thisWeek || {};
+
+  // Counts. Four at most, and each one a plain noun — no percentages, because
+  // a percentage of three people misleads a manager who is in a hurry.
+  const counts = [
+    [h.practitionersPractised, `${T.mdPractised}${h.practitionersOnTeam ? ' / ' + h.practitionersOnTeam : ''}`],
+    [h.consultations, T.mdConsults],
+    [h.consultationsCompleted, T.mdCompleted],
+    [h.lessonsCompleted, T.mdLessons]
+  ].map(([n, label]) => `<div class="mdc"><b>${esc(n == null ? '—' : n)}</b><span>${esc(label)}</span></div>`).join('');
+
+  const notYet = (h.notYetThisWeek || []).length
+    ? `<p class="mdnot"><span>${esc(T.mdNotYet)}</span> ${(h.notYetThisWeek || []).map(p => esc(p.name)).join(' · ')}</p>`
+    : '';
+
+  const attention = b.mayMean
+    ? `<div class="mdblock">
+         <div class="mdk">${esc(T.mdAttention)}</div>
+         <p class="mdobs">${esc(b.mayMean.observation)}</p>
+         ${b.mayMean.evidence ? `<p class="mdev">${esc(b.mayMean.evidence)}</p>` : ''}
+       </div>`
+    : `<div class="mdblock"><p class="mdobs quiet">${esc(w.headline || '')}</p></div>`;
+
+  const ex = w.exercise
+    ? `<div class="mdblock">
+         <div class="mdk">${esc(T.mdExercise)}</div>
+         <p class="mdex"><b>${esc(w.exercise.title)}</b> · ${esc(w.exercise.minutes)} min</p>
+         <ol class="mdsteps">${(w.exercise.steps || []).map(st => `<li>${esc(st)}</li>`).join('')}</ol>
+         ${w.thenRead ? `<p class="mdthen"><span>${esc(T.mdThenRead)}</span> ${esc(w.thenRead)}</p>` : ''}
+       </div>`
+    : '';
+
+  const practice = (w.practice || []).length
+    ? `<div class="mdblock">
+         <div class="mdk">${esc(T.mdPractice)}</div>
+         <div class="mdcases">${w.practice.map(c =>
+           `<button class="mdcase" type="button" data-md-case="${esc(c.scenario)}">${esc(c.title)}</button>`).join('')}</div>
+       </div>`
+    : '';
+
+  const action = w.action ? `<p class="mdaction">${esc(w.action)}</p>` : '';
+
+  return `
+    <section class="md">
+      <div class="mdhead">
+        <div class="mdgreet">${esc(b.greeting)}</div>
+        <h2>${esc(T.mdTitle)}</h2>
+      </div>
+      <div class="mdcounts">${counts}</div>
+      ${notYet}
+      ${attention}
+      ${action}
+      ${ex}
+      ${practice}
+      <div class="mdfoot">
+        <button class="btn" type="button" id="md-detail">${esc(T.mdDetail)}</button>
+        <p class="mdbasis">${esc(b.basis)}</p>
+      </div>
+    </section>`;
+}
+
+/** Wire the buttons inside the panel, once it is on the page. */
+function wireMondayPanel() {
+  const d = document.getElementById('md-detail');
+  if (d) d.onclick = () => { S.tab = 'manager'; renderTabs(); render(); };
+  document.querySelectorAll('[data-md-case]').forEach(b => b.onclick = () => {
+    // A manager cannot record a consultation — the case picker is a
+    // practitioner surface — so this takes her to the case list she would
+    // send her team to, rather than opening an attempt she cannot own.
+    S.tab = 'practice'; renderTabs(); render();
+  });
+}
+
 async function renderStart() {
   const T = t();
   const jr = await api('GET', '/api/journey');
@@ -5833,7 +6124,12 @@ async function renderStart() {
   ];
   const nowIndex = steps.findIndex(s => !s.done);
 
+  // Monday morning comes first: what to do with the team this week is the
+  // reason she opened the product, and her own arc is the context for it.
+  const monday = await mondayPanel();
+
   $('#view').innerHTML = `
+    ${monday}
     <section class="hero"><div class="kicker">${esc(j.clinic || S.user.clinicName)}</div>
       <h1>${esc(T.stTitle)}</h1><p>${esc(T.stLead)}</p></section>
 
@@ -5865,6 +6161,7 @@ async function renderStart() {
 
     <p class="muted stfoot">${esc(T.stWhyHere)}</p>`;
 
+  wireMondayPanel();
   wireArcNext(j);
   document.querySelectorAll('[data-st]').forEach(b => b.onclick = () => {
     const k = b.dataset.st;

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#241E19">
+<title>MIRROR — Confirm your address</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<style>
+/* ==========================================================================
+   VERIFY — one click, one sentence, one way onward.
+   She opens this from her mail, often on a phone, often months after she was
+   last in the product. So it does one thing and then points at the door.
+
+   The token is spent by a POST, not by loading the page: a mail client that
+   pre-fetches links would otherwise burn her verification before she ever
+   saw it, and she would have no way to get another one.
+   ========================================================================== */
+.vf-box{max-width:520px;margin:0 auto;padding:56px 22px 70px}
+.vf-mark{display:flex;align-items:baseline;gap:10px;margin-bottom:32px}
+.vf-mark .wm{font-family:var(--serif);font-size:20px;letter-spacing:.3em;color:var(--espresso)}
+.vf-mark small{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.vf-box h1{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.24;margin:0 0 12px}
+.vf-box p{font-size:14.5px;line-height:1.62;color:var(--ink-2);margin:0 0 16px}
+.vf-btn{display:inline-block;font-family:inherit;cursor:pointer;padding:14px 26px;font-size:11px;
+  letter-spacing:.15em;text-transform:uppercase;font-weight:700;border-radius:999px;
+  border:1px solid var(--champagne);background:var(--champagne);color:#fff;text-decoration:none;transition:.15s}
+.vf-btn:hover{background:var(--gold);border-color:var(--gold)}
+.vf-btn[disabled]{opacity:.55;cursor:default}
+.vf-btn.line{background:transparent;color:var(--ink);border-color:var(--line)}
+.vf-note{font-size:12.5px;color:var(--ink-3)}
+.vf-bad{font-size:14px;line-height:1.6;color:#8E3B2C;background:rgba(178,88,72,.09);
+  border:1px solid rgba(178,88,72,.28);border-radius:9px;padding:13px 15px}
+.vf-good{font-size:14px;line-height:1.6;color:#42603A;background:rgba(122,155,110,.1);
+  border:1px solid rgba(122,155,110,.32);border-radius:9px;padding:13px 15px}
+.vf-lang{display:flex;justify-content:flex-end;margin-bottom:22px}
+</style>
+</head>
+<body>
+<div class="vf-box">
+  <div class="vf-lang">
+    <div class="langsw" id="vf-lang">
+      <button type="button" data-lang="en" class="on">EN</button>
+      <button type="button" data-lang="es">ES</button>
+    </div>
+  </div>
+  <div class="vf-mark"><span class="wm">MIRROR</span><small data-t="brandDesc">Interactive Sales Academy</small></div>
+  <div id="vf-body"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+    c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const COPY = {
+    en: {
+      brandDesc: 'Interactive Sales Academy',
+      askH: 'Confirm your address',
+      askP: 'This is what lets MIRROR get you back into your account if you ever lose your password. One click and it is done.',
+      go: 'Confirm my address',
+      going: 'Confirming…',
+      okH: 'Confirmed',
+      okP: 'Thank you — {email} is confirmed. If you ever lose your password, a reset link will reach you here.',
+      openApp: 'Open MIRROR',
+      noToken: 'This page needs the link from your email. Open it again from the message MIRROR sent you.',
+      failed: 'That link could not be used.',
+      askAgain: 'Sign in and MIRROR will offer you a fresh link.',
+      signIn: 'Sign in'
+    },
+    es: {
+      brandDesc: 'Academia Interactiva de Ventas',
+      askH: 'Confirma tu dirección',
+      askP: 'Esto es lo que permite que MIRROR te devuelva el acceso a tu cuenta si algún día pierdes la contraseña. Un clic y ya está.',
+      go: 'Confirmar mi dirección',
+      going: 'Confirmando…',
+      okH: 'Confirmada',
+      okP: 'Gracias: {email} está confirmada. Si algún día pierdes la contraseña, el enlace de recuperación te llegará aquí.',
+      openApp: 'Abrir MIRROR',
+      noToken: 'Esta página necesita el enlace de tu correo. Ábrelo otra vez desde el mensaje que te envió MIRROR.',
+      failed: 'No se ha podido usar ese enlace.',
+      askAgain: 'Inicia sesión y MIRROR te ofrecerá un enlace nuevo.',
+      signIn: 'Iniciar sesión'
+    }
+  };
+
+  const LS = 'mirror.lang';
+  let lang = (() => {
+    try { const v = localStorage.getItem(LS); if (v === 'en' || v === 'es') return v; } catch (e) {}
+    return (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+  })();
+
+  const token = new URLSearchParams(location.search).get('token');
+  let state = token ? 'ask' : 'notoken';
+  let email = null, problem = null;
+
+  function paint() {
+    const t = COPY[lang];
+    document.documentElement.lang = lang;
+    $$('[data-t]').forEach(el => { const v = t[el.getAttribute('data-t')]; if (typeof v === 'string') el.textContent = v; });
+    $$('#vf-lang button').forEach(b => b.classList.toggle('on', b.getAttribute('data-lang') === lang));
+
+    const body = $('#vf-body');
+    if (state === 'notoken') {
+      body.innerHTML = `<p class="vf-bad">${esc(t.noToken)}</p>`;
+      return;
+    }
+    if (state === 'ok') {
+      body.innerHTML = `<h1>${esc(t.okH)}</h1>
+        <p class="vf-good">${t.okP.replace('{email}', esc(email || ''))}</p>
+        <p style="margin-top:22px"><a class="vf-btn" href="/app">${esc(t.openApp)}</a></p>`;
+      return;
+    }
+    if (state === 'failed') {
+      body.innerHTML = `<h1>${esc(t.failed)}</h1>
+        <p class="vf-bad">${esc(problem || '')}</p>
+        <p class="vf-note" style="margin-top:14px">${esc(t.askAgain)}</p>
+        <p style="margin-top:18px"><a class="vf-btn line" href="/app">${esc(t.signIn)}</a></p>`;
+      return;
+    }
+    body.innerHTML = `<h1>${esc(t.askH)}</h1>
+      <p>${esc(t.askP)}</p>
+      <p style="margin-top:22px"><button class="vf-btn" type="button" id="vf-go">${esc(t.go)}</button></p>`;
+    $('#vf-go').addEventListener('click', confirm);
+  }
+
+  async function confirm() {
+    const t = COPY[lang], btn = $('#vf-go');
+    btn.disabled = true; btn.textContent = t.going;
+    try {
+      const r = await fetch('/api/email-verifications/' + encodeURIComponent(token) + '/use', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Mirror-Lang': lang },
+        body: '{}'
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) { state = 'ok'; email = j.email; }
+      else { state = 'failed'; problem = j.error || t.failed; }
+    } catch (e) { state = 'failed'; problem = t.failed; }
+    paint();
+  }
+
+  $$('#vf-lang button').forEach(b => b.addEventListener('click', () => {
+    lang = b.getAttribute('data-lang');
+    try { localStorage.setItem(LS, lang); } catch (e) {}
+    paint();
+  }));
+
+  paint();
+})();
+</script>
+</body>
+</html>
