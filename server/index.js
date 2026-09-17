@@ -25,7 +25,14 @@ const academy = require('./academy/content');
 const coach = require('./academy/coach');
 const tenancy = require('./tenancy');
 const coachingLog = require('./academy/coachingLog');
+const monday = require('./academy/monday');
 const commercial = require('./commercial');
+const sample = require('./sample');
+const rl = require('./ratelimit');
+const payments = require('./payments');
+const audit = require('./audit');
+const onboarding = require('./onboarding');
+const mailer = require('./mailer');
 
 /** The case an attempt belongs to. */
 const S = a => scenarios.get(a.scenario);
@@ -53,19 +60,66 @@ app.set('trust proxy', true);
 const db = new Database();
 
 app.use(cors());
-app.use(express.json({ limit: '2mb' }));
+// The raw bytes are kept because Stripe signs the body it sent, not the object
+// it parses into. Re-serialising a parsed webhook changes key order and
+// whitespace, and the signature then never matches — so the bytes are captured
+// here rather than mounting a second body parser for one route.
+app.use(express.json({
+  limit: '2mb',
+  verify: (req, res, buf) => { req.rawBody = buf; }
+}));
 const PUBLIC = path.join(__dirname, '..', 'public');
 app.use(express.static(PUBLIC, { index: false }));
 
 // ---------------------------------------------------------------------------
 // auth middleware
 // ---------------------------------------------------------------------------
+/**
+ * WHETHER AN ACCOUNT MAY BE USED AT ALL.
+ *
+ * Two things can stop it, and they are different things that must be told
+ * apart because the remedies are different people's:
+ *
+ *   the account was withdrawn   her manager removed her. She talks to her
+ *                               manager, who can put her back.
+ *   the clinic is not active    the clinic was refunded, lapsed or suspended.
+ *                               Nobody in it can sign in, including the
+ *                               manager, and it is the operator who restores it.
+ *
+ * Checked at the door that mints a session AND on every request, because a
+ * session minted an hour ago must stop working the moment either becomes true —
+ * revocation that only applies at the next login is not revocation.
+ */
+async function accessRefusal(user) {
+  if (user.revoked_at) {
+    return { status: 403, code: 'ACCOUNT_REVOKED', error: T(
+      'This account has been withdrawn by your clinic manager.',
+      'Tu responsable de clínica ha retirado esta cuenta.') };
+  }
+  const clinic = await tenancy.getClinic(db, user.clinic_id);
+  // A clinic row can be absent in the packaged single-clinic edition, where
+  // the seeded demo tenant predates the table. Absent is not suspended.
+  if (clinic && !tenancy.ACTIVE_PAYMENT_STATES.includes(clinic.payment_state)) {
+    return { status: 402, code: 'CLINIC_INACTIVE', clinicState: clinic.payment_state, error: T(
+      'This clinic\'s access is not active. Nothing has been deleted — your consultations are all still here.',
+      'El acceso de esta clínica no está activo. No se ha borrado nada: tus consultas siguen aquí.') };
+  }
+  return null;
+}
+
 async function auth(req, res, next) {
   try {
     const h = req.headers.authorization || '';
     const token = h.startsWith('Bearer ') ? h.slice(7) : null;
     const user = await db.resolveSession(token);
     if (!user) return res.status(401).json({ error: 'Not authenticated' });
+    const refused = await accessRefusal(user);
+    if (refused) {
+      // The session is destroyed rather than merely refused, so a revoked
+      // login does not keep a live token sitting in somebody's browser.
+      await db.destroySession(token);
+      return send(req, res, { error: refused.error, code: refused.code }, refused.status);
+    }
     req.user = user;
     req.token = token;
     next();
@@ -76,7 +130,13 @@ function requireRole(role) {
     ? next()
     : res.status(403).json({ error: `Requires ${role} role` });
 }
-const publicUser = u => ({ id: u.id, name: u.name, email: u.email, role: u.role, clinicId: u.clinic_id, clinicName: u.clinic_name });
+const publicUser = u => ({
+  id: u.id, name: u.name, email: u.email, role: u.role,
+  clinicId: u.clinic_id, clinicName: u.clinic_name,
+  // Whether a reset can actually reach her. The app shows a quiet prompt when
+  // it cannot, rather than discovering it on the day she needs it.
+  emailVerified: !!u.email_verified_at
+});
 
 // ---------------------------------------------------------------------------
 // build + framework
@@ -100,11 +160,22 @@ app.get('/api/framework', (req, res) => {
 // ---------------------------------------------------------------------------
 // auth
 // ---------------------------------------------------------------------------
-app.post('/api/auth/login', async (req, res) => {
+// Keyed by address AND ip, so one clinic behind one office router is not locked
+// out because one practitioner mistyped her password four times.
+app.post('/api/auth/login',
+  rl.limit(rl.limiters.login, req => `${String(((req.body || {}).email) || '').toLowerCase()}|${req.ip}`),
+  async (req, res) => {
   try {
     const { email, password } = req.body || {};
     const user = await db.authenticate(email, password);
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    // The password was right, so this is a real person and she is owed the
+    // real reason rather than "invalid credentials".
+    const refused = await accessRefusal(user);
+    if (refused) return send(req, res, { error: refused.error, code: refused.code }, refused.status);
+    // Someone who got in should not still be carrying the strikes it took her,
+    // so her window is cleared on success.
+    rl.limiters.login.forget(`${String(email || '').toLowerCase()}|${req.ip}`);
     const token = await db.createSession(user.id);
     res.json({ token, user: publicUser(user) });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -334,7 +405,22 @@ app.get('/api/attempts', auth, requireRole('practitioner'), async (req, res) => 
 
 app.post('/api/attempts', auth, requireRole('practitioner'), async (req, res) => {
   try {
-    const scenarioId = (req.body && req.body.scenarioId) || 'sofia-melasma';
+    // A NAME THAT IS NOT A CASE IS AN ERROR, NOT A DEFAULT.
+    //
+    // This read `req.body.scenarioId || 'sofia-melasma'`, so anything the
+    // caller got wrong — a misspelling, the wrong field name, a case id from a
+    // future build — quietly opened Sofia instead. That is the worst kind of
+    // fallback: the request succeeds, the practitioner is put in a consultation
+    // nobody asked for, and nothing anywhere says so. It cost me a test that
+    // claimed to walk two different cases and walked the same one twice.
+    //
+    // Absent still means Sofia, because the app has always been allowed to ask
+    // for "a case" and the picker depends on it. Present-but-unknown is a 404.
+    const asked = req.body && (req.body.scenarioId || req.body.scenario);
+    const scenarioId = asked || 'sofia-melasma';
+    if (!scenarios.get(scenarioId)) {
+      return res.status(404).json({ error: `No such consultation: ${String(scenarioId).slice(0, 40)}` });
+    }
     if (!req.body || !req.body.forceNew) {
       const existing = await db.findInProgress(req.user.id, scenarioId);
       if (existing) return send(req, res, Object.assign({ resumed: true }, attemptResponse(existing)));
@@ -668,6 +754,34 @@ app.get('/api/manager/coaching', auth, requireRole('manager'), async (req, res) 
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+/**
+ * MONDAY MORNING. The same evidence as /api/manager/coaching, composed as
+ * what happened → what it may mean → what to do with the team this week.
+ * The detailed view stays; this is what she opens first.
+ */
+app.get('/api/manager/monday', auth, requireRole('manager'), async (req, res) => {
+  try {
+    const [attempts, progressRows, reflectionRows, practitioners] = await Promise.all([
+      db.listAttemptsForClinic(req.user.clinic_id),
+      db.listClinicLessonProgress(req.user.clinic_id),
+      db.listClinicReflections(req.user.clinic_id),
+      db.listPractitioners(req.user.clinic_id)
+    ]);
+    const view = coach.managerView({
+      attempts, progressRows, reflectionRows, practitioners,
+      clinicName: req.user.clinic_name, scenarios: scenarios.list()
+    });
+    const effects = await coachingLog.effects(
+      db, req.user.clinic_id, attempts, practitioners, coach.PATTERNS);
+    send(req, res, monday.brief({
+      clinicName: req.user.clinic_name,
+      firstName: (req.user.name || '').trim().split(/\s+/)[0] || null,
+      attempts, progressRows, reflectionRows, practitioners,
+      view, coachingEffects: effects, scenarios: scenarios.list()
+    }));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 /** Field assignments across the clinic — the record of the method leaving the screen. */
 app.get('/api/manager/assignments', auth, requireRole('manager'), async (req, res) => {
   try {
@@ -688,6 +802,29 @@ app.get('/api/manager/assignments', auth, requireRole('manager'), async (req, re
 });
 
 // ---------------------------------------------------------------------------
+// THE PUBLIC SAMPLE — the only unauthenticated door onto product content.
+//
+// A visitor meets Carmen and plays one reply. She gets her words, the room and
+// three replies; the reading for the one she picks arrives only after she picks
+// it, so the answer is never sitting in the page source. Rate-limited, because
+// this is the one place content is served without an account.
+//
+// No lesson body, no toolkit, no second case, no principle catalogue passes
+// through here. See server/sample.js for why each of those is withheld.
+// ---------------------------------------------------------------------------
+app.get('/api/sample', rl.limit(rl.limiters.sample), (req, res) => {
+  send(req, res, sample.sampleMoment());
+});
+
+app.post('/api/sample/reveal', rl.limit(rl.limiters.sample), (req, res) => {
+  const id = (req.body || {}).optionId;
+  const reading = sample.sampleReveal(id);
+  // An unknown id is a 404 and nothing else: no list of valid ids, no hint.
+  if (!reading) return res.status(404).json({ error: 'Unknown reply' });
+  send(req, res, reading);
+});
+
+// ---------------------------------------------------------------------------
 // COMMERCIAL FLOW — plan, clinic provisioning, practitioner invites
 //
 // No invented automation: nothing here sends an email or captures a card, and
@@ -702,8 +839,18 @@ app.get('/api/plan', (req, res) => {
     payment: {
       currency: 'EUR',
       amount: p.priceEur,
-      note: { en: 'The Founding Pilot is invoiced to the clinic. Nothing is charged inside the product and no card details are ever asked for here.',
-              es: 'El Pilot Fundador se factura a la clínica. Dentro del producto no se cobra nada y aquí nunca se piden datos de tarjeta.' }
+      // This used to say the Founding Pilot was invoiced to the clinic and that
+      // nothing was ever charged inside the product. That was true while MIRROR
+      // shipped as a folder and a conversation; it stopped being true the moment
+      // there was a Checkout button, and a payment note describing the previous
+      // product is a lie in the one place a buyer is most entitled to the truth.
+      available: payments.configured(),
+      testMode: payments.configured() && payments.isTestMode(),
+      note: payments.configured()
+        ? T('Paid once, by card, through Stripe. No card details are typed into MIRROR and none are stored here.',
+            'Un solo pago, con tarjeta, a través de Stripe. En MIRROR no se escribe ningún dato de tarjeta y aquí no se guarda ninguno.')
+        : T('Payment is not switched on for this instance. A founding clinic is opened by hand, after a conversation.',
+            'El pago no está activado en esta instancia. Una clínica fundadora se abre a mano, después de una conversación.')
     }
   });
 });
@@ -739,7 +886,12 @@ app.post('/api/admin/clinics', async (req, res) => {
     }
     const created = await tenancy.createPilotClinic(db, {
       clinicName, managerName, managerEmail, country, password: password || undefined,
-      paymentState: paymentState || 'pending',
+      // `waived`, not `pending`. An operator opening a clinic by hand IS the
+      // waiver, and a clinic created in `pending` is one whose manager cannot
+      // sign in — which the operator discovers only when she tells him, in a
+      // state he has no reason to suspect. He can still say `pending`
+      // explicitly when he means it; he just no longer gets it by omission.
+      paymentState: paymentState || 'waived',
       paymentReference: paymentReference || 'INV-' + Date.now().toString(36).toUpperCase()
     });
     res.status(201).json({
@@ -816,13 +968,41 @@ app.post('/api/invites', auth, requireRole('manager'), async (req, res) => {
   try {
     const inv = await tenancy.createInvite(db, req.user, req.body || {});
     const handover = inviteHandover(req, inv, req.user);
+    await audit.record(db, 'invite_issued', {
+      clinicId: req.user.clinic_id, actorId: req.user.id, ip: req.ip,
+      detail: { email: inv.email, name: inv.name, invitedBy: req.user.id }
+    });
+    // When a mail provider is configured the invitation is also sent; when it
+    // is not, the manager's own handover message is still the delivery, exactly
+    // as before. Either way she is told which happened.
+    const mail = await mailer.send(db, {
+      kind: 'invitation', to: inv.email, clinicId: req.user.clinic_id,
+      subject: langOf(req) === 'es'
+        ? `${req.user.clinic_name} te ha dado acceso a MIRROR`
+        : `${req.user.clinic_name} has given you access to MIRROR`,
+      // `message` is the bilingual pair the manager would paste; the email
+      // takes the half that matches the language she is working in.
+      text: (handover.message && handover.message[langOf(req)]) || handover.link,
+      link: handover.link
+    });
     send(req, res, Object.assign({
       invite: inv,
-      // The manager sends this herself. Nothing is emailed from here, so what
-      // she is handed has to be good enough to paste once and be done.
+      emailed: mail.delivered,
+      // The manager sends this herself when nothing could be emailed. What she
+      // is handed has to be good enough to paste once and be done.
       seats: await tenancy.seatUsage(db, req.user.clinic_id)
     }, handover), 201);
-  } catch (e) { res.status(409).json({ error: e.message }); }
+  } catch (e) {
+    if (/seats on this plan are in use/i.test(e.message)) {
+      const seats = await tenancy.seatUsage(db, req.user.clinic_id);
+      await audit.record(db, 'seat_refused', {
+        clinicId: req.user.clinic_id, actorId: req.user.id, ip: req.ip,
+        detail: { email: String((req.body || {}).email || '').toLowerCase(),
+                  seats: seats.total, invitedBy: req.user.id }
+      });
+    }
+    res.status(409).json({ error: e.message });
+  }
 });
 
 /**
@@ -994,13 +1174,404 @@ app.get('/api/journey', auth, async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// The buyer opens the product and sees the product. The commercial page is
-// still served, at /pilot, but it is never what a launcher lands on.
-app.get('/', (req, res) => res.sendFile(path.join(PUBLIC, 'index.html')));
+// THE BUYER JOURNEY
+//
+//   POST /api/checkout            she pays               → Stripe Checkout URL
+//   POST /api/stripe/webhook      Stripe confirms        → order paid
+//   GET  /api/orders/:id          her return page reads the order
+//   POST /api/clinics/from-order  she chooses a password → clinic + manager
+//
+// The browser returning from Checkout is NOT the confirmation. Stripe's
+// webhook is. A buyer whose browser dies on the way back is still provisioned,
+// and a browser that arrives with a success URL for an unpaid order gets
+// nothing. Both orders of arrival end in the same place.
+// ---------------------------------------------------------------------------
+
+/** The address this instance is reachable at, as the buyer's browser sees it. */
+function originOf(req) {
+  if (process.env.MIRROR_PUBLIC_URL) return String(process.env.MIRROR_PUBLIC_URL).replace(/\/+$/, '');
+  return `${req.protocol}://${req.get('host')}`;
+}
+
+app.post('/api/checkout', rl.limit(rl.limiters.signup), async (req, res) => {
+  try {
+    if (!payments.configured()) {
+      return res.status(503).json({
+        error: langOf(req) === 'es'
+          ? 'El pago todavía no está disponible en esta instancia.'
+          : 'Payment is not available on this instance yet.',
+        code: 'PAYMENT_NOT_CONFIGURED'
+      });
+    }
+    const plan = tenancy.PLANS.founding_pilot;
+    const { email, clinicName, managerName, country } = req.body || {};
+    const started = await payments.startCheckout(db, {
+      email, clinicName, managerName, country,
+      plan: plan.key, priceEur: plan.priceEur,
+      lang: langOf(req), origin: originOf(req)
+    });
+    await audit.record(db, 'checkout_started', {
+      ip: req.ip,
+      detail: { email: String(email || '').toLowerCase(), clinicName, plan: plan.key,
+                amountEur: plan.priceEur, reference: started.orderId }
+    });
+    res.json({ url: started.url, orderId: started.orderId, testMode: started.testMode });
+  } catch (e) {
+    const known = e.code === 'ACCOUNT_EXISTS' ? 409 : 400;
+    res.status(known).json({ error: e.message, code: e.code || null });
+  }
+});
+
+/**
+ * Stripe's webhook.
+ *
+ * Signature over the raw bytes, then the event id is CLAIMED before anything
+ * is acted on. A duplicate delivery — which Stripe makes on every timeout, so
+ * it is the normal case and not an attack — loses the claim and provisions
+ * nothing.
+ *
+ * Always answers 200 once the signature is good, even for an event type this
+ * product ignores: a non-2xx tells Stripe to retry forever.
+ */
+app.post('/api/stripe/webhook', async (req, res) => {
+  let event;
+  try {
+    payments.verifySignature(req.rawBody, req.get('stripe-signature'),
+      process.env.STRIPE_WEBHOOK_SECRET);
+    event = JSON.parse(req.rawBody.toString('utf8'));
+  } catch (e) {
+    // A bad signature is the one case that must NOT be 200: it is either a
+    // misconfiguration the operator needs to see, or someone trying to
+    // provision a clinic for free.
+    return res.status(400).json({ error: 'Signature verification failed' });
+  }
+
+  const fresh = await payments.claimEvent(db, event.id, event.type);
+  if (!fresh) {
+    await audit.record(db, 'payment_duplicate_ignored',
+      { detail: { eventId: event.id, reference: (event.data && event.data.object &&
+          (event.data.object.client_reference_id || (event.data.object.metadata || {}).order)) || null } });
+    return res.json({ received: true, duplicate: true });
+  }
+
+  try {
+    const outcome = await handleStripeEvent(event, req);
+    await payments.finishEvent(db, event.id, outcome);
+    res.json({ received: true, outcome });
+  } catch (e) {
+    await payments.finishEvent(db, event.id, 'error: ' + e.message);
+    // The event is claimed, so Stripe retrying will not double-provision; but
+    // the operator needs to know this one failed, so it is not hidden behind a
+    // cheerful 200.
+    res.status(500).json({ error: e.message });
+  }
+});
+
+async function handleStripeEvent(event, req) {
+  const obj = (event.data && event.data.object) || {};
+  const orderId = obj.client_reference_id || (obj.metadata || {}).order || null;
+
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      if (obj.payment_status !== 'paid') return 'session completed but not paid';
+      const order = orderId ? await payments.getOrder(db, orderId)
+                            : await payments.getOrderBySession(db, obj.id);
+      if (!order) return 'no matching order';
+      const { alreadyPaid } = await payments.markPaid(db, order, {
+        paymentIntent: obj.payment_intent,
+        amountEur: typeof obj.amount_total === 'number' ? Math.round(obj.amount_total / 100) : undefined
+      });
+      if (alreadyPaid) return 'order was already paid';
+      await audit.record(db, 'payment_confirmed', {
+        detail: { reference: order.id, amountEur: Math.round((obj.amount_total || 0) / 100),
+                  currency: (obj.currency || 'eur').toUpperCase(), plan: order.plan }
+      });
+      return 'order marked paid';
+    }
+
+    case 'checkout.session.expired': {
+      const order = orderId ? await payments.getOrder(db, orderId) : null;
+      if (order && order.state === 'pending') {
+        await payments.setOrderState(db, order.id, 'expired');
+        await audit.record(db, 'checkout_expired', { detail: { reference: order.id } });
+      }
+      return 'order expired';
+    }
+
+    case 'payment_intent.payment_failed': {
+      const order = orderId ? await payments.getOrder(db, orderId) : null;
+      if (order && order.state === 'pending') {
+        await payments.setOrderState(db, order.id, 'failed');
+        await audit.record(db, 'payment_failed', {
+          detail: { reference: order.id,
+                    reason: (obj.last_payment_error && obj.last_payment_error.message) || 'declined' }
+        });
+      }
+      return 'order marked failed';
+    }
+
+    case 'charge.refunded': {
+      const order = orderId ? await payments.getOrder(db, orderId) : null;
+      if (!order) return 'no matching order';
+      await payments.setOrderState(db, order.id, 'refunded');
+      await audit.record(db, 'payment_refunded', {
+        clinicId: order.clinic_id || null,
+        detail: { reference: order.id, amountEur: Math.round((obj.amount_refunded || 0) / 100) }
+      });
+      // The clinic is suspended, not deleted. Her team's consultations stay.
+      if (order.clinic_id) {
+        await db.run(`UPDATE clinics SET payment_state = ? WHERE id = ?`, ['refunded', order.clinic_id]);
+        await db.run(`DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE clinic_id = ?)`,
+          [order.clinic_id]);
+        await audit.record(db, 'clinic_suspended',
+          { clinicId: order.clinic_id, detail: { clinicId: order.clinic_id, reason: 'refunded' } });
+      }
+      return 'refunded and access suspended';
+    }
+
+    default:
+      return 'ignored: ' + event.type;
+  }
+}
+
+/** Her return page. Polls until the webhook lands. Never reveals Stripe ids. */
+app.get('/api/orders/:id', rl.limit(rl.limiters.orderRead), async (req, res) => {
+  const order = await payments.getOrder(db, req.params.id);
+  if (!order) return res.status(404).json({ error: 'No such order' });
+  const pub = payments.publicOrder(order);
+  send(req, res, Object.assign(pub, { message: payments.STATE_COPY[order.state] || null }));
+});
+
+/**
+ * She chooses her password, and the clinic comes into existence.
+ *
+ * The setup token is single-use and only exists on a PAID order. It is
+ * consumed by writing the clinic id onto the order in the same step, so two
+ * browser tabs cannot create two clinics from one purchase.
+ */
+app.post('/api/clinics/from-order', rl.limit(rl.limiters.signup), async (req, res) => {
+  try {
+    const { setupToken, password } = req.body || {};
+    const order = setupToken ? await payments.getOrderBySetupToken(db, setupToken) : null;
+    if (!order) return res.status(404).json({ error: 'That setup link is not valid' });
+    if (order.state !== 'paid') return res.status(409).json({ error: 'That purchase is not confirmed' });
+    if (order.clinic_id) return res.status(409).json({ error: 'That clinic has already been created', code: 'ALREADY_CREATED' });
+    if (!password || String(password).length < 10) {
+      return res.status(400).json({
+        error: langOf(req) === 'es'
+          ? 'La contraseña debe tener al menos 10 caracteres.'
+          : 'A password must be at least 10 characters.'
+      });
+    }
+
+    const made = await tenancy.createPilotClinic(db, {
+      clinicName: order.clinic_name,
+      managerName: order.manager_name,
+      managerEmail: order.email,
+      country: order.country,
+      plan: order.plan,
+      paymentState: 'paid',
+      paymentReference: order.id,
+      password: String(password)
+    });
+
+    // Consume the token by claiming the order for this clinic.
+    await db.run(`UPDATE orders SET clinic_id = ?, setup_token = NULL, updated_at = ? WHERE id = ?`,
+      [made.clinic.id, new Date().toISOString(), order.id]);
+
+    const ent = await tenancy.entitlement(db, made.clinic.id);
+    await audit.record(db, 'clinic_provisioned', {
+      clinicId: made.clinic.id, ip: req.ip,
+      detail: { clinicId: made.clinic.id, clinicName: made.clinic.name, plan: ent.plan,
+                seats: ent.seats, reference: order.id }
+    });
+    await audit.record(db, 'manager_activated', {
+      clinicId: made.clinic.id, actorId: made.manager.id, ip: req.ip,
+      detail: { userId: made.manager.id, email: made.manager.email }
+    });
+
+    // Verify her address, so a reset can reach her later.
+    const v = await tenancy.createEmailVerification(db, made.manager);
+    const link = `${originOf(req)}/verify?token=${v.token}`;
+    const mail = await mailer.send(db, {
+      kind: 'email_verification', to: made.manager.email, clinicId: made.clinic.id,
+      subject: order.lang === 'es' ? 'Confirma tu dirección — MIRROR' : 'Confirm your address — MIRROR',
+      text: order.lang === 'es'
+        ? `Hola ${made.manager.name},\n\nConfirma tu dirección para poder recuperar tu cuenta si alguna vez pierdes la contraseña:\n\n${link}\n\nEl enlace caduca en siete días.`
+        : `Hello ${made.manager.name},\n\nConfirm your address so your account can be recovered if you ever lose your password:\n\n${link}\n\nThe link expires in seven days.`,
+      link
+    });
+    await audit.record(db, 'email_verification_issued', {
+      clinicId: made.clinic.id, actorId: made.manager.id,
+      detail: { userId: made.manager.id, email: made.manager.email }
+    });
+
+    // She is signed in immediately: she has just chosen this password and
+    // making her type it again on a login screen is friction with no purpose.
+    const token = await db.createSession(made.manager.id);
+    send(req, res, {
+      token,
+      user: publicUser(await db.getUserById(made.manager.id)),
+      clinic: { id: made.clinic.id, name: made.clinic.name, plan: ent.plan, seats: ent.seats },
+      verification: {
+        // The link is returned ONLY when no mail provider could send it, so she
+        // is never left with an unverifiable address and no way to fix it.
+        delivered: mail.delivered,
+        link: mail.delivered ? null : link
+      }
+    }, 201);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+/** Confirm an address. Public by necessity — she opens it from her mail. */
+app.post('/api/email-verifications/:token/use', rl.limit(rl.limiters.reset), async (req, res) => {
+  try {
+    const user = await tenancy.useEmailVerification(db, req.params.token);
+    await audit.record(db, 'email_verified', {
+      clinicId: user.clinic_id, actorId: user.id, ip: req.ip,
+      detail: { userId: user.id, email: user.email }
+    });
+    send(req, res, { verified: true, email: user.email, name: user.name });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+/** Ask for another verification link. Only for the address you are signed in as. */
+app.post('/api/email-verifications', auth, rl.limit(rl.limiters.reset), async (req, res) => {
+  try {
+    if (req.user.email_verified_at) return send(req, res, { alreadyVerified: true });
+    const v = await tenancy.createEmailVerification(db, req.user);
+    const link = `${originOf(req)}/verify?token=${v.token}`;
+    const mail = await mailer.send(db, {
+      kind: 'email_verification', to: req.user.email, clinicId: req.user.clinic_id,
+      subject: langOf(req) === 'es' ? 'Confirma tu dirección — MIRROR' : 'Confirm your address — MIRROR',
+      text: `${link}`, link
+    });
+    await audit.record(db, 'email_verification_issued', {
+      clinicId: req.user.clinic_id, actorId: req.user.id,
+      detail: { userId: req.user.id, email: req.user.email }
+    });
+    send(req, res, { delivered: mail.delivered, link: mail.delivered ? null : link });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+// ---------------------------------------------------------------------------
+// ONBOARDING — seven questions, then a consultation she recognises
+// ---------------------------------------------------------------------------
+app.get('/api/onboarding', auth, async (req, res) => {
+  try {
+    const profile = await onboarding.get(db, req.user.id);
+    send(req, res, {
+      questions: onboarding.questions(req.user.role),
+      profile,
+      clinic: req.user.clinic_name,
+      firstName: (req.user.name || '').trim().split(/\s+/)[0] || req.user.name,
+      complete: !!profile
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/onboarding', auth, async (req, res) => {
+  try {
+    const saved = await onboarding.save(db, req.user, req.body || {});
+    await audit.record(db, 'onboarding_completed', {
+      clinicId: req.user.clinic_id, actorId: req.user.id,
+      detail: { userId: req.user.id, role: req.user.role }
+    });
+    const profile = await onboarding.get(db, req.user.id);
+    const win = onboarding.firstWin({
+      user: req.user, profile,
+      scenarioTitle: (scenarios.get(
+        (onboarding.HARD_SITUATIONS.find(h => h.key === profile.hardest) || {}).scenario
+        || 'carmen-injectables') || {}).title || null
+    });
+    send(req, res, { saved, firstWin: win }, 201);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+/** Where she is sent next, whether she has just onboarded or come back. */
+app.get('/api/first-win', auth, async (req, res) => {
+  try {
+    const profile = await onboarding.get(db, req.user.id);
+    if (!profile) return send(req, res, { needsOnboarding: true });
+    const scenarioId = (onboarding.HARD_SITUATIONS.find(h => h.key === profile.hardest) || {}).scenario
+      || 'carmen-injectables';
+    const sc = scenarios.get(scenarioId) || {};
+    send(req, res, Object.assign(
+      onboarding.firstWin({ user: req.user, profile, scenarioTitle: sc.title || null }),
+      { needsOnboarding: false }));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ---------------------------------------------------------------------------
+// SEATS — withdrawing an invitation, an account, and putting one back
+// ---------------------------------------------------------------------------
+app.post('/api/invites/:token/revoke', auth, async (req, res) => {
+  try {
+    const gone = await tenancy.revokeInvite(db, req.user, req.params.token);
+    await audit.record(db, 'invite_revoked', {
+      clinicId: req.user.clinic_id, actorId: req.user.id, ip: req.ip,
+      detail: { email: gone.email, revokedBy: req.user.id }
+    });
+    send(req, res, { revoked: true, email: gone.email,
+      seats: await tenancy.seatUsage(db, req.user.clinic_id) });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.post('/api/team/:userId/revoke', auth, async (req, res) => {
+  try {
+    const gone = await tenancy.revokeAccount(db, req.user, req.params.userId);
+    await audit.record(db, 'account_revoked', {
+      clinicId: req.user.clinic_id, actorId: req.user.id, ip: req.ip,
+      detail: { userId: gone.userId, by: req.user.id, reason: String((req.body || {}).reason || 'left the clinic') }
+    });
+    send(req, res, { revoked: true, name: gone.name,
+      seats: await tenancy.seatUsage(db, req.user.clinic_id) });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.post('/api/team/:userId/restore', auth, async (req, res) => {
+  try {
+    const back = await tenancy.restoreAccount(db, req.user, req.params.userId);
+    await audit.record(db, 'clinic_restored',
+      { clinicId: req.user.clinic_id, actorId: req.user.id, detail: { clinicId: req.user.clinic_id } });
+    send(req, res, { restored: true, name: back.name,
+      seats: await tenancy.seatUsage(db, req.user.clinic_id) });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+/** The clinic's own account history. A manager may read her clinic's, only. */
+app.get('/api/clinic/audit', auth, async (req, res) => {
+  if (req.user.role !== 'manager') return res.status(403).json({ error: 'Managers only' });
+  send(req, res, { events: await audit.forClinic(db, req.user.clinic_id, 200) });
+});
+
+// ---------------------------------------------------------------------------
+// WHAT THE ROOT SERVES, AND WHY IT CHANGED.
+//
+// While MIRROR shipped as a folder a buyer double-clicks, the root was the
+// product: the launcher opens a browser, and a person who has already paid
+// should meet her Academy, not a page selling her something she owns. Hosted,
+// the root is the opposite — it is the address a stranger types, and the first
+// thing she must meet is Carmen, not a login box she cannot get past.
+//
+// So hosted: `/` is the commercial page and `/app` is the product. `/pilot`
+// stays as an alias because it is in links that already exist. The launcher in
+// the packaged edition opens `/app` directly, so nothing regresses for a buyer
+// running MIRROR on her own machine.
+app.get('/', (req, res) => res.sendFile(path.join(PUBLIC, 'landing.html')));
 app.get('/app', (req, res) => res.sendFile(path.join(PUBLIC, 'index.html')));
 app.get('/pilot', (req, res) => res.sendFile(path.join(PUBLIC, 'landing.html')));
 app.get('/join', (req, res) => res.sendFile(path.join(PUBLIC, 'join.html')));
 app.get('/reset', (req, res) => res.sendFile(path.join(PUBLIC, 'reset.html')));
+// Where a buyer lands on the way back from Stripe, and where she confirms her
+// address. Both are their own pages rather than states of the landing page: she
+// arrives at them by link, often on a different device from the one she bought on.
+app.get('/welcome', (req, res) => res.sendFile(path.join(PUBLIC, 'welcome.html')));
+app.get('/verify', (req, res) => res.sendFile(path.join(PUBLIC, 'verify.html')));
 
 const PORT = process.env.PORT || 5000;
 
@@ -1017,6 +1588,10 @@ function bootstrap() {
     booted = db.initialize()
       .then(() => tenancy.migrate(db))
       .then(() => coachingLog.migrate(db))
+      .then(() => payments.migrate(db))
+      .then(() => audit.migrate(db))
+      .then(() => mailer.migrate(db))
+      .then(() => onboarding.migrate(db))
       .then(() => db);
   }
   return booted;

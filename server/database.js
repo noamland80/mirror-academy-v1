@@ -129,11 +129,41 @@ class Database {
         '(which includes one), or the sqlite3 package installed.'));
     }
 
+    /**
+     * COLUMNS ADDED TO `users` AFTER IT SHIPPED.
+     *
+     * These live here, beside the CREATE TABLE they extend, and not in
+     * tenancy's migration — which is where they were first written, and which
+     * was wrong. `listPractitioners` reads `revoked_at`, so a caller that
+     * brought up the database without also running tenancy's migration got a
+     * "no such column" error at query time. Two tests did exactly that, which
+     * is how it was found; a customer would have found it as a 500.
+     *
+     * The rule this encodes: the module that owns a table owns every column in
+     * it. SQLite has no ADD COLUMN IF NOT EXISTS, so each is attempted and a
+     * duplicate-column error is the success case on every boot after the first.
+     */
+    const COLUMNS = [
+      // Whether a reset can actually reach her. An address nobody has proved
+      // reaches a human is an account that cannot be recovered.
+      `ALTER TABLE users ADD COLUMN email_verified_at TEXT`,
+      // A withdrawn colleague keeps her rows — the consultations she recorded
+      // are the clinic's record of its own practice — and cannot sign in.
+      `ALTER TABLE users ADD COLUMN revoked_at TEXT`,
+      `ALTER TABLE users ADD COLUMN revoked_by TEXT`
+    ];
+
+    const addColumns = () => Promise.all(COLUMNS.map(ddl =>
+      this.run(ddl).catch(e => {
+        if (/duplicate column/i.test(String(e && e.message))) return null;
+        throw e;
+      })));
+
     if (DRIVER.kind === 'node:sqlite') {
       this.db = new DRIVER.DatabaseSync(this.path);
       this.sync = true;
       for (const stmt of SCHEMA) this.db.exec(stmt);
-      return Promise.resolve(this);
+      return addColumns().then(() => this);
     }
 
     return new Promise((resolve, reject) => {
@@ -141,7 +171,9 @@ class Database {
         if (err) return reject(err);
         this.db.serialize(() => {
           SCHEMA.forEach((stmt, i) => {
-            this.db.run(stmt, i === SCHEMA.length - 1 ? (e => e ? reject(e) : resolve(this)) : undefined);
+            this.db.run(stmt, i === SCHEMA.length - 1
+              ? (e => e ? reject(e) : addColumns().then(() => resolve(this), reject))
+              : undefined);
           });
         });
       });
@@ -201,8 +233,33 @@ class Database {
   }
   getUserByEmail(email) { return this.get(`SELECT * FROM users WHERE email = ?`, [String(email || '').toLowerCase()]); }
   getUserById(id) { return this.get(`SELECT * FROM users WHERE id = ?`, [id]); }
-  listPractitioners(clinicId) { return this.all(`SELECT id,name,email FROM users WHERE clinic_id = ? AND role='practitioner'`, [clinicId]); }
+  /**
+   * The people a manager is coaching. A revoked colleague is excluded: she is
+   * not on the team any more, and her rows stay only so the consultations she
+   * recorded are not orphaned. The seats screen uses the other one, because
+   * there a manager needs to see who she could restore.
+   */
+  listPractitioners(clinicId) {
+    return this.all(
+      `SELECT id,name,email FROM users
+       WHERE clinic_id = ? AND role='practitioner' AND revoked_at IS NULL`, [clinicId]);
+  }
+  listPractitionersIncludingRevoked(clinicId) {
+    return this.all(
+      `SELECT id,name,email,email_verified_at,revoked_at FROM users
+       WHERE clinic_id = ? AND role='practitioner'
+       ORDER BY revoked_at IS NOT NULL, name`, [clinicId]);
+  }
 
+  /**
+   * A password check, and nothing else.
+   *
+   * Deliberately NOT where revocation or billing state is enforced. Those are
+   * decisions about whether an account may be USED, and they belong at the one
+   * door that mints a session, so a single place decides and the person can be
+   * told which of the two it was. Checking the password first also stops this
+   * becoming an oracle for which addresses are still active.
+   */
   async authenticate(email, password) {
     const u = await this.getUserByEmail(email);
     if (!u) return null;

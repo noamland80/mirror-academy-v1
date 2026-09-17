@@ -23,6 +23,20 @@
  *                      variable, must be at least 16 characters, and must not
  *                      be one of the burned strings. A violation aborts boot.
  *                      There is no flag to relax this.
+ *   MIRROR_MODE=production — NOTHING IS SEEDED AT ALL.
+ *
+ * `production` exists because `hosted` was not enough. Hosted still creates
+ * the Wild Magic demo clinic and its three accounts — with safe passwords, but
+ * they are still there, in the tenant list, in the clinic count, and in front
+ * of anybody reviewing the instance. An instance that real clinics buy into
+ * must contain nothing but real clinics: the first tenant on it should be the
+ * first customer, created by the buyer journey, and every clinic after that
+ * the same way.
+ *
+ * So production seeds no clinic, no accounts and no passwords, and it still
+ * runs the burned-credential proof — which on an empty database is trivially
+ * satisfied and stays meaningful if the database is ever restored from an
+ * older backup that did contain them.
  *
  * `assertNoBurnedCredentials(db)` runs at startup in hosted mode and proves the
  * rule against the live database rather than asserting it in a comment: it
@@ -40,7 +54,9 @@ const BURNED_PASSWORDS = Object.freeze([
 ]);
 
 const MODE = () => (process.env.MIRROR_MODE || 'demo').toLowerCase();
-const isHosted = () => MODE() === 'hosted';
+/** Production is hosted plus "and seed nothing", so it satisfies both tests. */
+const isProduction = () => MODE() === 'production';
+const isHosted = () => MODE() === 'hosted' || isProduction();
 
 const SEED_ACCOUNTS = [
   { id: 'usr_prac_01', email: 'practitioner@wildmagic.es',  name: 'Sophia García', role: 'practitioner', env: 'MIRROR_SEED_PW_PRAC1', demo: 'Mirror2026!prac'  },
@@ -97,6 +113,19 @@ async function assertNoBurnedCredentials(db) {
 }
 
 module.exports = async function seed(db) {
+  if (isProduction()) {
+    // Not "skip if they exist" — never create them. The proof still runs, so a
+    // database restored from an older backup that carries those accounts is
+    // still checked rather than trusted.
+    const proof = await assertNoBurnedCredentials(db);
+    const clinics = await db.get(`SELECT COUNT(*) n FROM clinics`).catch(() => ({ n: 0 }));
+    const users = await db.get(`SELECT COUNT(*) n FROM users`).catch(() => ({ n: 0 }));
+    console.log(`  MIRROR_MODE=production: nothing seeded. ` +
+                `${clinics.n} clinic(s), ${users.n} account(s) on this database. ` +
+                `${proof.checked} burned-credential probes rejected.`);
+    return { clinic: null, mode: MODE(), accounts: [], seeded: false };
+  }
+
   for (const account of SEED_ACCOUNTS) {
     const existing = await db.getUserByEmail(account.email);
     if (existing) continue;
@@ -112,7 +141,8 @@ module.exports = async function seed(db) {
     console.log(`  credential guard: ${proof.checked} burned-credential probes rejected (mode=hosted)`);
   }
 
-  return { clinic: CLINIC, mode: MODE(), accounts: SEED_ACCOUNTS.map(a => ({ email: a.email, role: a.role })) };
+  return { clinic: CLINIC, mode: MODE(), seeded: true,
+           accounts: SEED_ACCOUNTS.map(a => ({ email: a.email, role: a.role })) };
 };
 
 module.exports.CLINIC = CLINIC;
@@ -120,6 +150,9 @@ module.exports.SEED_ACCOUNTS = SEED_ACCOUNTS;
 module.exports.BURNED_PASSWORDS = BURNED_PASSWORDS;
 module.exports.assertNoBurnedCredentials = assertNoBurnedCredentials;
 module.exports.passwordFor = passwordFor;
+module.exports.MODE = MODE;
+module.exports.isProduction = isProduction;
+module.exports.isHosted = isHosted;
 
 // Back-compat for the demo seeder and QA harnesses, which sign in as these
 // accounts. In hosted mode no password is exposed here by construction.
