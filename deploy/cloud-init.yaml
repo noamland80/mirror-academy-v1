@@ -26,11 +26,24 @@
 # file is visible in the provider's console and in the instance metadata, so a
 # key in here is a key in a web UI forever.
 #
-# PLACEHOLDERS the provisioner substitutes before submitting:
-#   __DOMAIN__       the hostname, e.g. mirror.example.com
-#   __REPO__         the git URL to deploy from
-#   __REF__          the tag or branch to check out
-#   __ADMIN_EMAIL__  where Let's Encrypt sends expiry warnings
+# NOTHING IN THIS FILE HAS TO BE FILLED IN.
+#
+# The hostname used to be a placeholder, which created a chicken-and-egg: the
+# name depends on the IP address, and the IP address does not exist until the
+# server has been created with this file already pasted into it. So the server
+# works its own name out on first boot instead — it reads its public IPv4 from
+# the cloud metadata service and builds `<ip-with-dashes>.sslip.io`, which
+# resolves to exactly that address. Caddy then gets a real Let's Encrypt
+# certificate for a real name, with no domain bought and no DNS record added.
+#
+# A branded domain later is one A record, one line in the Caddyfile and one in
+# mirror.env, and a reload. Nothing in the product knows what it is called.
+#
+# The three values baked in below do NOT depend on the server, so they are
+# already filled in and there is nothing to edit:
+#   repository   github.com/noamland80/mirror-academy-v1
+#   tag          mirror-commercial-rc-20260917
+#   admin email  where Let's Encrypt sends certificate-expiry warnings
 # =============================================================================
 
 package_update: true
@@ -57,14 +70,16 @@ write_files:
   # Caddy. Two lines of configuration is the whole of TLS, HTTP/2, redirects
   # and renewal. The health check is exempted from the access log so a monitor
   # polling every minute does not bury everything else.
-  - path: /etc/caddy/Caddyfile
+  # Written as a TEMPLATE. `MIRROR_HOST` is replaced at first boot with the
+  # name derived from this server's own public IPv4 (see runcmd below).
+  - path: /etc/caddy/Caddyfile.template
     permissions: '0644'
     content: |
       {
-        email __ADMIN_EMAIL__
+        email landmannoam@gmail.com
       }
 
-      __DOMAIN__ {
+      MIRROR_HOST {
         encode zstd gzip
 
         # Security headers. No CSP yet: the product loads Google Fonts and its
@@ -149,7 +164,10 @@ write_files:
       MIRROR_DB=/var/lib/mirror/mirror.db
       MIRROR_BACKUP_DIR=/var/lib/mirror/backups
       MIRROR_BACKUP_KEEP=14
-      MIRROR_PUBLIC_URL=https://__DOMAIN__
+      # Replaced at first boot with https://<this server's name>. Used for the
+      # Stripe success URL and for the verification and invitation links, so it
+      # must be the address a buyer's browser can actually reach.
+      MIRROR_PUBLIC_URL=https://MIRROR_HOST
       # --- filled in by the owner, once, and never committed anywhere ---
       # MIRROR_ADMIN_TOKEN=
       # STRIPE_SECRET_KEY=
@@ -157,6 +175,39 @@ write_files:
       # MAIL_PROVIDER=
       # MAIL_API_KEY=
       # MAIL_FROM=
+
+  # ---------------------------------------------------------------------------
+  # THE SERVER'S OWN NAME.
+  #
+  # Run once, before Caddy starts. Tries the provider metadata service first
+  # (Hetzner, and the same path shape works on several others), then falls back
+  # to asking an external service, then to the first non-loopback address on the
+  # box. If all three fail it refuses to guess: a wrong name means Caddy asks
+  # Let's Encrypt for a certificate it cannot possibly be given, and repeated
+  # failures there are rate-limited for a week.
+  - path: /opt/mirror/hostname.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+      IP=""
+      IP="$(curl -fsS --max-time 5 http://169.254.169.254/hetzner/v1/metadata/public-ipv4 2>/dev/null || true)"
+      [ -z "$IP" ] && IP="$(curl -fsS --max-time 5 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || true)"
+      [ -z "$IP" ] && IP="$(curl -fsS --max-time 5 https://api.ipify.org 2>/dev/null || true)"
+      [ -z "$IP" ] && IP="$(ip -4 -o addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -1 || true)"
+
+      if ! printf '%s' "$IP" | grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$'; then
+        echo "Could not determine this server's public IPv4 address. Refusing to guess a hostname." >&2
+        exit 1
+      fi
+
+      HOST="$(printf '%s' "$IP" | tr '.' '-').sslip.io"
+      echo "MIRROR hostname: $HOST  (IPv4 $IP)"
+
+      sed "s/MIRROR_HOST/$HOST/g" /etc/caddy/Caddyfile.template > /etc/caddy/Caddyfile
+      sed -i "s|https://MIRROR_HOST|https://$HOST|" /etc/mirror/mirror.env
+      printf '%s\n' "$HOST" > /var/lib/mirror/hostname
+      chown mirror:mirror /var/lib/mirror/hostname
 
   # ---------------------------------------------------------------------------
   # LOG ROTATION.
@@ -285,7 +336,7 @@ write_files:
       #!/bin/bash
       # MIRROR deploy / update / rollback. Usage: /opt/mirror/deploy.sh [git-ref] [--no-record]
       set -euo pipefail
-      REF="${1:-__REF__}"
+      REF="${1:-mirror-commercial-rc-20260917}"
       RECORD=1
       [ "${2:-}" = "--no-record" ] && RECORD=0
       APP=/opt/mirror/app
@@ -294,7 +345,7 @@ write_files:
       install -d -o mirror -g mirror /var/lib/mirror /var/lib/mirror/backups
 
       if [ ! -d "$APP/.git" ]; then
-        git clone --depth 50 "__REPO__" "$APP"
+        git clone --depth 50 "https://github.com/noamland80/mirror-academy-v1.git" "$APP"
       fi
       cd "$APP"
 
@@ -368,9 +419,10 @@ runcmd:
   - [ bash, -lc, "install -d -o mirror -g mirror /var/lib/mirror /var/lib/mirror/backups /opt/mirror" ]
   - [ bash, -lc, "install -d -o caddy -g caddy /var/log/caddy" ]
   - [ bash, -lc, "systemctl restart systemd-journald" ]
+  - [ bash, -lc, "/opt/mirror/hostname.sh" ]
   - [ bash, -lc, "ufw default deny incoming && ufw default allow outgoing && ufw allow 22 && ufw allow 80 && ufw allow 443 && ufw --force enable" ]
   - [ bash, -lc, "/opt/mirror/deploy.sh || echo 'MIRROR first deploy failed — see journalctl -u mirror' " ]
   - [ bash, -lc, "systemctl enable --now mirror mirror-backup.timer mirror-restore-drill.timer" ]
   - [ bash, -lc, "systemctl reload caddy || systemctl restart caddy" ]
 
-final_message: "MIRROR provisioning finished after $UPTIME seconds. Paste the Stripe keys into /etc/mirror/mirror.env and run: systemctl restart mirror"
+final_message: "MIRROR provisioning finished after $UPTIME seconds. Its address is in /var/lib/mirror/hostname. Paste the Stripe keys into /etc/mirror/mirror.env and run: systemctl restart mirror"
