@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRROR Consultation Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+:root{
+  --navy:#241E19; --navy-2:#2E2620; --navy-3:#3A3029;
+  --ink:#241E19; --ink-2:#5C544C; --ink-3:#94897D;
+  --line:#E5DED4; --line-2:#EFEAE2; --bg:#F5F1EC; --panel:#fff;
+  --gold:#A07E3C; --gold-deep:#7E6229; --gold-soft:#F4EDDE;
+  --blue:#7E6229; --blue-soft:#F4EDDE;
+  --ok:#47725D; --ok-soft:#E6EEE9;
+  --warn:#8a5a12; --warn-soft:#F8F1E2;
+  --bad:#A34D53; --bad-soft:#F6E7E7;
+  --mercury:linear-gradient(90deg,#C8CCD1 0%,#E9E2D4 42%,#B99C56 100%);
+  --r:14px;
+  --serif:"Marcellus",Georgia,"Times New Roman",serif;
+  --sans:"Mulish",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0 0 .4em;line-height:1.22;font-weight:600}
+h1{font-size:26px} h2{font-size:19px;font-family:var(--serif);font-weight:400} h3{font-size:15px}
+h4{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+p{margin:0 0 .85em}
+button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#fff;padding:10px 16px;color:var(--ink);transition:.14s}
+button:hover:not(:disabled){border-color:#c3ccd8}
+button.primary{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:550}
+button.primary:hover:not(:disabled){background:var(--navy-2)}
+button.gold{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:550}
+button.lg{padding:14px 26px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;border-radius:999px}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,textarea,select{font-family:inherit;font-size:14px;width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--blue-soft);border-color:var(--blue)}
+textarea{min-height:82px;resize:vertical}
+label{display:block;font-size:13px;font-weight:550;margin:0 0 6px;color:var(--ink-2)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.hidden{display:none!important}
+.muted{color:var(--ink-3);font-size:13.5px}
+
+.signin{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr}
+@media(max-width:860px){.signin{grid-template-columns:1fr}.brandside{display:none}}
+.brandside{background:linear-gradient(165deg,#241E19 0%,#2E2620 55%,#3A3029 100%);color:#EFEAE3;padding:56px 54px;display:flex;flex-direction:column}
+.wm{font-family:var(--serif);font-size:44px;letter-spacing:.14em;position:relative;display:inline-block;line-height:1;color:#EFEAE3}
+.wm::after{content:"MIRROR";position:absolute;left:0;top:100%;transform:scaleY(-1);
+  background:linear-gradient(to bottom,rgba(239,234,227,.30),transparent 62%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;pointer-events:none}
+.brandside .mark small{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:#B99C56;margin-top:40px}
+.brandside .pitch{margin-top:auto;font-family:var(--serif);font-size:23px;line-height:1.4;max-width:22ch}
+.brandside .sub{color:#BCB2A5;font-size:14px;margin-top:18px;max-width:36ch}
+.endorse{margin-top:34px;padding-top:22px;border-top:1px solid rgba(239,234,227,.14);display:flex;align-items:center;gap:14px}
+.endorse img{width:52px;height:auto;border-radius:8px;display:block}
+.endorse .et{font-size:11.5px;line-height:1.55;color:#877D71}
+.endorse .et b{color:#BCB2A5;font-weight:600}
+.formside{display:flex;align-items:center;justify-content:center;padding:40px 32px;background:var(--panel)}
+.formcard{width:100%;max-width:390px}
+.roletabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:22px 0 26px}
+.roletab{padding:14px 10px;border:1px solid var(--line);border-radius:10px;text-align:center;cursor:pointer;background:#fff}
+.roletab .rt{font-weight:600;font-size:14px}
+.roletab .rd{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.roletab.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.roletab.on .rd{color:#b9c8da}
+.field{margin-bottom:15px}
+.err{background:var(--bad-soft);color:var(--bad);border-radius:9px;padding:11px 14px;font-size:13.5px;margin-bottom:14px}
+
+header.top{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+.top-in{display:flex;align-items:center;gap:14px;min-height:60px;flex-wrap:wrap;padding:8px 0}
+.top-in .mark{font-family:var(--serif);font-size:19px;letter-spacing:.14em;color:var(--navy)}
+.top-in .mark small{font-family:var(--sans);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-left:10px}
+.sp{flex:1}
+.whoami{font-size:13px;color:var(--ink-3);text-align:right;line-height:1.3}
+.whoami b{display:block;color:var(--ink);font-weight:600;font-size:13.5px}
+main{padding:26px 0 80px}
+
+.hero{background:linear-gradient(160deg,#241E19 0%,#2E2620 100%);color:#EFEAE3;border-radius:18px;padding:32px 34px;margin-bottom:20px;box-shadow:0 22px 55px -30px rgba(36,30,25,.4)}
+.hero h1{font-family:var(--serif);font-size:29px;margin-bottom:8px;font-weight:400;letter-spacing:.02em}
+.hero p{color:#BCB2A5;max-width:62ch}
+.spine{display:flex;gap:6px;margin-top:22px;flex-wrap:wrap}
+.sp-step{flex:1 1 92px;min-width:92px;border-top:3px solid rgba(239,234,227,.14);padding-top:8px}
+.sp-step .n{font-size:9.5px;letter-spacing:.1em;color:#877D71;font-weight:700}
+.sp-step .t{font-size:11.5px;color:#BCB2A5;margin-top:1px}
+.sp-step.done{border-top-color:#8FBCA5}.sp-step.done .t{color:#EFEAE3}
+.sp-step.now{border-top-color:#C9A45C}.sp-step.now .t{color:#fff;font-weight:650}
+.engines{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;padding-top:18px;border-top:1px solid rgba(239,234,227,.12)}
+.eng{background:rgba(239,234,227,.06);border:1px solid rgba(239,234,227,.13);border-radius:8px;padding:7px 12px;font-size:11.5px;color:#BCB2A5}
+.eng b{color:#EFEAE3;font-weight:600}
+
+.grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+.grid>*{min-width:0}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin-bottom:18px}
+.card.tight{padding:17px 18px}
+
+.phasebar{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;margin-bottom:18px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.phasebar .pn{font-family:var(--serif);font-size:23px;color:var(--navy);line-height:1}
+.phasebar .pl{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.phasebar .obj{font-size:13.5px;color:var(--ink-2);flex:1;min-width:220px}
+.dots{display:flex;gap:5px}
+.dot{width:26px;height:5px;border-radius:3px;background:var(--line)}
+.dot.done{background:var(--blue)}.dot.now{background:var(--gold)}
+
+.moment{background:linear-gradient(155deg,#FFFFFF,#FBF7EF);border:1px solid #E5DED4;border-radius:var(--r);padding:24px 26px;margin-bottom:18px;box-shadow:0 18px 45px -32px rgba(36,30,25,.25)}
+.moment .lbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
+.persona{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 14px 6px 8px;font-size:12.5px;font-weight:600;margin-bottom:12px}
+.persona .dot2{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.persona.open{background:var(--ok-soft);color:var(--ok)}.persona.open .dot2{background:var(--ok)}
+.persona.mid{background:var(--gold-soft);color:var(--gold-deep)}.persona.mid .dot2{background:var(--gold)}
+.persona.guard{background:var(--bad-soft);color:var(--bad)}.persona.guard .dot2{background:var(--bad)}
+.moment blockquote{margin:0;font-family:var(--serif);font-size:21px;line-height:1.45;color:var(--ink)}
+.moment .ctx{font-size:13.5px;color:var(--ink-2);margin-top:12px}
+.moment ul{margin:10px 0 0;padding-left:20px;font-size:13.5px;color:var(--ink-2)}
+
+.steplab{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.stepnum{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.opt{border:1px solid var(--line);border-radius:11px;padding:15px 17px;margin-bottom:10px;cursor:pointer;background:#fff}
+.opt:hover{border-color:var(--blue);background:#fcfdff}
+.opt.sel{border-color:var(--navy);box-shadow:0 0 0 3px var(--blue-soft)}
+.opt .lab{font-weight:600;margin-bottom:6px;font-size:14.5px}
+.opt .say{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.opt .note{display:inline-block;margin-top:9px;font-size:11px;background:var(--warn-soft);color:var(--warn);padding:3px 9px;border-radius:20px}
+.chip{border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:13px;cursor:pointer;background:#fff}
+.chip:hover{border-color:var(--blue)}
+.chip.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+
+.reaction{background:var(--gold-soft);border:1px solid #E5D9BC;border-radius:var(--r);padding:22px 24px;margin-bottom:18px}
+.reaction .lbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
+.reaction blockquote{margin:0;font-family:var(--serif);font-size:19px;line-height:1.45}
+.trustline{height:6px;border-radius:3px;background:var(--line-2);overflow:hidden;margin-top:14px}
+.trustline i{display:block;height:100%;border-radius:3px;background:var(--mercury);width:0;transition:width 1.1s cubic-bezier(.25,.6,.25,1)}
+.shift{display:inline-block;font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:999px;margin:8px 6px 0 0}
+.shift.up{background:var(--ok-soft);color:var(--ok)}
+.shift.down{background:var(--bad-soft);color:var(--bad)}
+.shift.neutral{background:var(--line-2);color:var(--ink-2)}
+.fb .blk{padding:14px 0;border-bottom:1px solid var(--line-2)}
+.fb .blk:last-child{border:0;padding-bottom:0}
+.fb .k{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:5px}
+.fb .v{font-size:14.5px;line-height:1.55}
+.verdict{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.07em;padding:4px 11px;border-radius:20px}
+.v-A{background:var(--ok-soft);color:var(--ok)}.v-P{background:var(--warn-soft);color:var(--warn)}.v-N{background:var(--bad-soft);color:var(--bad)}
+.changes{list-style:none;margin:8px 0 0;padding:0}
+.changes li{padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.changes li:last-child{border:0}
+
+.st{margin-bottom:14px}
+.st .lab{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.bar{height:7px;background:var(--line-2);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px;transition:width .5s}
+.trustrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.trustrow:last-child{border:0}
+.pip{display:flex;gap:3px}
+.pip i{width:7px;height:7px;border-radius:50%;background:var(--line);display:block}
+.pip i.f{background:var(--ok)}.pip i.n{background:var(--bad)}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--line-2);color:var(--ink-2);margin:0 5px 5px 0}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.no{background:var(--bad-soft);color:var(--bad)}
+.tag.gold{background:var(--gold-soft);color:var(--gold)}
+
+.tk{border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:var(--r);padding:20px 22px;background:#fffefb;margin-bottom:18px}
+.tk .hd{display:flex;align-items:center;gap:11px;margin-bottom:6px;flex-wrap:wrap}
+.tk .num{background:var(--gold);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px}
+.tkf{margin-bottom:15px}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-bottom:9px;font-size:14px}
+.chk input{width:auto;margin-top:4px}
+.issues{background:var(--bad-soft);border:1px solid #f0d6d6;border-radius:10px;padding:13px 16px;margin-bottom:14px}
+.issues b{color:var(--bad)}
+.issues ul{margin:7px 0 0;padding-left:18px;font-size:13.5px;color:var(--bad)}
+
+.outcome{border-radius:var(--r);padding:26px 28px;border:1px solid;margin-bottom:18px}
+.o-YES{background:var(--ok-soft);border-color:#c5e2d4}
+.o-DEFER{background:var(--warn-soft);border-color:#eedfbe}
+.o-NO{background:var(--bad-soft);border-color:#f0d6d6}
+.outcome .big{font-family:var(--serif);font-size:34px;letter-spacing:.02em;line-height:1.1}
+.outcome .said{font-family:var(--serif);font-size:19px;margin-top:12px;line-height:1.45}
+.jstep{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line-2)}
+.jstep:last-child{border:0}
+.jn{width:34px;height:34px;border-radius:50%;background:var(--line-2);color:var(--ink-2);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.jn.a{background:var(--ok-soft);color:var(--ok)}.jn.p{background:var(--warn-soft);color:var(--warn)}.jn.n{background:var(--bad-soft);color:var(--bad)}
+.jt{font-weight:600;font-size:14px}
+.jc{font-size:13.5px;color:var(--ink-2);margin-top:2px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:9px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line-2);vertical-align:top;overflow-wrap:anywhere}
+tr.click:hover{background:var(--blue-soft);cursor:pointer}
+.empty{text-align:center;padding:46px 20px;color:var(--ink-3)}
+.empty .ei{font-size:34px;margin-bottom:12px;opacity:.4}
+details{border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;background:#fff}
+summary{cursor:pointer;font-weight:550;font-size:14px}
+.divider{height:1px;background:var(--line-2);margin:20px 0;border:0}
+@media(max-width:640px){
+  .wrap{padding:0 16px}
+  .card{padding:18px 16px}
+  .hero{padding:24px 18px;border-radius:13px}
+  .hero h1{font-size:24px}
+  .phasebar{padding:14px 16px;gap:12px}
+  .dots{display:none}
+  .moment{padding:19px 17px}
+  .moment blockquote{font-size:18px}
+  .outcome{padding:20px 17px}
+  .outcome .big{font-size:27px}
+  table{font-size:12.5px}
+  th,td{padding:8px 7px}
+  .tk{padding:17px 15px}
+  button.lg{width:100%;padding:14px 18px}
+  .top-in{min-height:52px}
+  .brandside{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="signin" class="signin">
+  <div class="brandside">
+    <div class="mark"><span class="wm">MIRROR</span><small>Consultation Training System</small></div>
+    <div class="pitch">The same consultation, played two ways, does not end the same way.</div>
+    <div class="sub">Practise the MIRROR Method from <i>The Beauty Sales Secrets</i> — with a client who responds to what you actually do, and see exactly where trust was won or lost.</div>
+    <div class="endorse">
+      <img src="data:image/png;base64,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" alt="Clinic Scale System">
+      <div class="et"><b>MIRROR · Consultation Training System</b><br>
+      Based on the MIRROR Method from <i>The Beauty Sales Secrets</i><br>
+      by Clinic Scale System</div>
+    </div>
+  </div>
+  <div class="formside">
+    <div class="formcard">
+      <h1 style="font-family:var(--serif)">Sign in</h1>
+      <p class="muted">Choose how you are signing in today.</p>
+      <div class="roletabs">
+        <div class="roletab on" id="tab-practitioner" onclick="setRole('practitioner')">
+          <div class="rt">Practitioner</div><div class="rd">Practise consultations</div></div>
+        <div class="roletab" id="tab-manager" onclick="setRole('manager')">
+          <div class="rt">Manager</div><div class="rd">Review your team</div></div>
+      </div>
+      <div id="loginErr"></div>
+      <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username" placeholder="you@yourclinic.com"></div>
+      <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+      <button class="primary lg" style="width:100%" onclick="doLogin()">Sign in</button>
+      <p class="muted" style="margin-top:18px;font-size:12.5px">Your clinic administrator issues your sign-in details.</p>
+      <p class="muted" style="margin-top:26px;font-size:11px;letter-spacing:.04em;border-top:1px solid var(--line-2);padding-top:14px">Based on the MIRROR Method from <i>The Beauty Sales Secrets</i> · by Clinic Scale System</p>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="top"><div class="wrap top-in">
+    <span class="mark">MIRROR<small>Consultation Training</small></span>
+    <span class="sp"></span>
+    <span class="whoami" id="whoami"></span>
+    <button onclick="doLogout()">Sign out</button>
+  </div></header>
+  <main class="wrap"><div id="view"></div></main>
+</div>
+
+<script>
+let TOKEN=localStorage.getItem('mirror_token')||null, ME=null, ATT=null, VIEW=null;
+let ROLE='practitioner', PICK=null, READ=null, ORI=null;
+
+const PHASES=['Preparation','Connection','Discovery','Understanding','Education','Recommendation','Decision Support','Relationship Continuation'];
+const STAGES=['Safety','Attention','Understanding','Credibility','Alignment','Reliability','Confirmation'];
+const PLAIN={safety:'Feels safe to speak',attention:'Feels listened to',understanding:'Feels understood',credibility:'Trusts your expertise',alignment:'Sees the plan as hers',reliability:'Believes you will follow through',confirmation:'Trust confirmed by experience'};
+const PHKEY={preparation:1,connection:2,discovery:3,understanding:4,education:5,recommendation:6,decisionSupport:7,continuation:8};
+
+async function api(p,o={}){
+  const h=Object.assign({'Content-Type':'application/json'},o.headers||{});
+  if(TOKEN) h.Authorization='Bearer '+TOKEN;
+  let r;
+  try{ r=await fetch(p,Object.assign({},o,{headers:h})); }
+  catch(e){ throw new Error('offline'); }
+  let b=null; try{ b=await r.json(); }catch(e){}
+  if(r.status===401 && p!=='/api/auth/login'){ sessionEnded(); throw new Error('session'); }
+  return {ok:r.ok,status:r.status,body:b};
+}
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el=id=>document.getElementById(id);
+const phaseNum=k=>PHKEY[k]||1;
+const relPlain=r=>({ACTIVE:'Active client',CONSIDERING:'Considering',CONSULTED:'Consulted — closed',PAUSED:'Paused',REFERRED_DISCHARGED:'Referred on',PROSPECTIVE:'—'})[r]||'—';
+const revPlain=k=>({hidden_motivation:'Why this matters to her now',budget_ceiling:'What she can spend',prior_experience_detail:'What happened to her friend'})[k]||k;
+
+function setRole(r){ROLE=r;el('tab-practitioner').classList.toggle('on',r==='practitioner');el('tab-manager').classList.toggle('on',r==='manager');}
+function sessionEnded(){
+  TOKEN=null;ME=null;ATT=null;localStorage.removeItem('mirror_token');
+  el('app').classList.add('hidden');el('signin').classList.remove('hidden');
+  el('loginErr').innerHTML='<div class="err">Your session ended. Please sign in again — your practice is saved.</div>';
+}
+async function doLogin(){
+  const email=el('email').value.trim(), password=el('password').value;
+  el('loginErr').innerHTML='';
+  if(!email||!password){el('loginErr').innerHTML='<div class="err">Please enter your email and password.</div>';return;}
+  let r;
+  try{ r=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email,password})}); }
+  catch(e){ el('loginErr').innerHTML='<div class="err">MIRROR is not responding. Close this window and start MIRROR again.</div>'; return; }
+  if(!r.ok){el('loginErr').innerHTML='<div class="err">That email and password did not match. Please check and try again.</div>';return;}
+  if(ROLE!==r.body.user.role){el('loginErr').innerHTML='<div class="err">That account signs in as a '+esc(r.body.user.role)+'. Choose '+esc(r.body.user.role)+' above, then sign in.</div>';return;}
+  TOKEN=r.body.token;localStorage.setItem('mirror_token',TOKEN);ME=r.body.user;
+  await boot();
+}
+async function doLogout(){try{await api('/api/auth/logout',{method:'POST'});}catch(e){}
+  TOKEN=null;ME=null;localStorage.removeItem('mirror_token');
+  el('app').classList.add('hidden');el('signin').classList.remove('hidden');el('loginErr').innerHTML='';}
+
+async function boot(){
+  const me=await api('/api/auth/me'); if(!me.ok){sessionEnded();return;}
+  ME=me.body.user;
+  el('signin').classList.add('hidden');el('app').classList.remove('hidden');
+  el('whoami').innerHTML='<b>'+esc(ME.name)+'</b>'+esc(ME.clinicName);
+  ME.role==='manager'?managerHome():journey();
+}
+
+/* ===================== PRACTITIONER JOURNEY ===================== */
+async function journey(){
+  const [o,l]=await Promise.all([api('/api/orientation'),api('/api/attempts')]);
+  ORI=o.body;
+  const list=l.body.attempts||[];
+  const open=list.find(a=>a.status==='in_progress');
+  const done=list.filter(a=>a.status==='completed');
+  const cur=open?phaseNum(open.currentPhase):0;
+  const objective=open?('Continue at Phase '+cur+' — '+PHASES[cur-1])
+    :(done.length?'Practise again and change one early decision':'Complete your first consultation with Sofia');
+
+  el('view').innerHTML=`
+  <div class="hero">
+    <h1>My MIRROR Journey</h1>
+    <p>One consultation case, eight phases, and a client who responds to what you actually do. ${done.length?('You have completed '+done.length+' consultation'+(done.length>1?'s':'')+'.'):'Nothing here is a quiz — it is a rehearsal.'}</p>
+    <div class="spine">${PHASES.map((p,i)=>`<div class="sp-step ${cur>i+1?'done':cur===i+1?'now':''}"><div class="n">PHASE ${i+1}</div><div class="t">${p}</div></div>`).join('')}</div>
+    <div class="engines">${(ORI.engines||[]).map(e=>`<div class="eng"><b>${esc(e.name)}</b> · ${esc(e.role)}</div>`).join('')}</div>
+  </div>
+  <div class="grid"><div>
+    <div class="card">
+      <h4>Your next step</h4>
+      <h2 style="margin-top:6px">${esc(objective)}</h2>
+      <p class="muted">${open?'Your consultation is saved exactly where you left it.':'You will meet Sofia, read what she signals, choose how to respond, and watch what your choice does to her trust.'}</p>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        ${open?`<button class="primary lg" onclick="openAttempt('${open.id}')">Continue consultation</button><button onclick="startNew()">Start fresh</button>`
+              :`<button class="primary lg" onclick="startNew()">Start the consultation</button>`}
+      </div>
+    </div>
+    <div class="card">
+      <h2>Your practice history</h2>
+      ${done.length?`<table><thead><tr><th>Completed</th><th>Sofia decided</th><th>Relationship</th><th></th></tr></thead><tbody>
+        ${done.map(a=>`<tr class="click" onclick="debrief('${a.id}')"><td>${new Date(a.completedAt||a.startedAt).toLocaleDateString()}</td>
+        <td><span class="tag ${a.outcome==='YES'?'ok':a.outcome==='NO'?'no':'gold'}">${esc(a.outcome||'—')}</span></td>
+        <td>${esc(relPlain(a.relationshipState))}</td><td><button>View debrief</button></td></tr>`).join('')}
+        </tbody></table>`
+      :`<div class="empty"><div class="ei">◍</div><p><b>No completed consultations yet.</b><br>Your first one will appear here with a full debrief.</p></div>`}
+    </div>
+  </div><div>
+    <div class="card tight">
+      <h4>Your development</h4>
+      <div style="margin-top:10px">
+        <div class="trustrow"><span>Consultations completed</span><b>${done.length}</b></div>
+        <div class="trustrow"><span>Endings you have seen</span><span>${['YES','DEFER','NO'].map(x=>{const seen=done.some(a=>a.outcome===x);
+          return `<span class="tag ${seen?(x==='YES'?'ok':x==='NO'?'no':'gold'):''}" style="${seen?'':'opacity:.45'}">${x==='YES'?'a yes':x==='DEFER'?'a maybe':'a no'}</span>`;}).join('')}</span></div>
+      </div>
+      ${done.length?(()=>{const un=['YES','DEFER','NO'].filter(x=>!done.some(a=>a.outcome===x));
+        return un.length?`<p class="muted" style="font-size:12.5px;margin-top:10px">There is a version of this consultation you have not seen yet. Different early choices reach a different ending.</p>`:`<p class="muted" style="font-size:12.5px;margin-top:10px">You have seen every way this consultation can end. Now practise making the strong path feel natural.</p>`;})():''}
+    </div>
+    <div class="card tight">
+      <h4>The client you will meet</h4>
+      <p style="font-family:var(--serif);font-size:17px;margin:8px 0 2px">${esc(ORI.scenario.client.name)}</p>
+      <p class="muted">${esc(ORI.scenario.client.presenting)}</p>
+      <hr class="divider">
+      <h4>What you are practising</h4>
+      <p class="muted" style="margin-top:8px">Reading what a client signals, responding so that trust builds rather than pressure, and handling the moment she hesitates.</p>
+      <hr class="divider">
+      <h4>The seven stages of trust</h4>
+      <div style="margin-top:8px">${STAGES.map((s,i)=>`<div class="trustrow"><span>${i+1}. ${esc(s)}</span></div>`).join('')}</div>
+      <hr class="divider">
+      <details style="border:0;padding:8px 0 0;background:none">
+        <summary style="font-size:13px;color:var(--gold-deep)">About the MIRROR Method</summary>
+        <p class="muted" style="font-size:12.5px;margin-top:10px">This practice is built on the MIRROR Method introduced in <i>The Beauty Sales Secrets</i> — the same phases, trust stages and standards, learned here by doing rather than reading. Your retained clinic materials carry the full framework.</p>
+      </details>
+    </div>
+  </div></div>`;
+}
+
+async function startNew(){const r=await api('/api/attempts',{method:'POST',body:JSON.stringify({forceNew:true})});
+  if(!r.ok)return alert(r.body.error);ATT=r.body.attempt;VIEW=r.body.view;PICK=READ=null;runner();window.scrollTo(0,0);}
+async function openAttempt(id){const r=await api('/api/attempts/'+id);if(!r.ok)return alert(r.body.error);
+  ATT=r.body.attempt;VIEW=r.body.view;PICK=READ=null;
+  if(ATT.status==='completed')return debrief(id);
+  if(ATT.currentPhase==='continuation'&&ATT.decisionOutcome)return continuation();
+  runner();window.scrollTo(0,0);}
+
+/* ===================== CASE RUNNER ===================== */
+function runner(){
+  const v=VIEW,c=v.content,sig=c.clientSignal,n=v.navigation.phase.n;
+  const decided=v.progress.decisionMade;
+  el('view').innerHTML=`
+  <div class="phasebar">
+    <div><div class="pl">Phase ${n} of 8</div><div class="pn">${esc(v.navigation.phase.name)}</div></div>
+    <div class="obj">${esc(v.navigation.phase.objective)}<br><span class="muted">${esc(v.navigation.engine.name)}${c.toolkit?' · Toolkit #'+c.toolkit:''}</span></div>
+    <div class="dots">${PHASES.map((p,i)=>`<div class="dot ${i+1<n?'done':i+1===n?'now':''}" title="${esc(p)}"></div>`).join('')}</div>
+  </div>
+  <div class="grid"><div>
+    <div class="moment">
+      <div class="lbl">${esc(sig.source)}</div>
+      ${n>1?personaChip(v.clientState):''}
+      <blockquote>${esc(sig.quote)}</blockquote>
+      ${sig.detail?`<ul>${sig.detail.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`:''}
+      <div class="ctx">${esc(sig.subtext)}</div>
+    </div>
+    ${c.decision&&!decided?`
+      <div class="card">
+        <div class="steplab"><div class="stepnum">1</div><h3 style="margin:0">Read the signal</h3></div>
+        <p class="muted">Which stage of trust is she working on right now? Your reading is saved so you can compare it with MIRROR's.</p>
+        <div class="chips">${STAGES.map((s,i)=>`<div class="chip" id="rd-${i}" onclick="setRead(${i})">${i+1}. ${esc(s)}</div>`).join('')}</div>
+      </div>
+      <div class="card" id="step2" style="opacity:.45;pointer-events:none">
+        <div class="steplab"><div class="stepnum">2</div><h3 style="margin:0">Choose how you respond</h3></div>
+        ${c.decision.options.map(o=>`<div class="opt" id="o-${o.id}" onclick="setPick('${o.id}')">
+          <div class="lab">${esc(o.label)}</div><div class="say">“${esc(o.language)}”</div>
+          ${o.degraded?'<span class="note">Weaker than it could be — she never told you what this line needs</span>':''}</div>`).join('')}
+        <button class="primary lg" id="go" disabled onclick="commit()">Say this to Sofia</button>
+        <span class="muted" style="margin-left:12px">You cannot take a response back — as in a real room.</span>
+      </div>`:''}
+    <div id="after"></div>
+    <div id="tkslot"></div>
+    <div id="nextslot" class="card">${
+      v.progress.canAdvance
+      ? `<button class="primary lg" onclick="advance()">${n===7?'See Sofia’s decision':'Continue to Phase '+(n+1)+' — '+esc(PHASES[n])}</button>`
+      : `<p class="muted" style="margin:0">${decided?esc(v.progress.gate.reason||'Complete the form above to continue.'):'Read the signal, then choose your response.'}</p>`}
+    </div>
+  </div><div>${statePanel(v.clientState,v.trustReadout)}</div></div>`;
+  el('tkslot').innerHTML='';
+  if(c.toolkit) renderToolkit(c.toolkit);
+  if(c.secondaryToolkit) renderToolkit(c.secondaryToolkit,true);
+}
+function setRead(i){READ=STAGES[i];STAGES.forEach((_,j)=>el('rd-'+j).classList.toggle('sel',i===j));
+  const s2=el('step2');if(s2){s2.style.opacity='1';s2.style.pointerEvents='auto';}
+  if(el('go'))el('go').disabled=!(READ&&PICK);}
+function setPick(id){PICK=id;document.querySelectorAll('.opt').forEach(e=>e.classList.remove('sel'));
+  el('o-'+id).classList.add('sel');el('go').disabled=!(READ&&PICK);}
+
+function moodOf(p){return /open/i.test(p)?'open':/guard|withdraw/i.test(p)?'guard':'mid';}
+function moodWord(p){return ({reserved:'reserved — still deciding about you',polite:'polite — the hardest posture to read',opening:'opening up',open:'open with you',guarded:'guarded — she felt dismissed',withdrawn:'withdrawing'})[p]||p;}
+function personaChip(cs){return `<span class="persona ${moodOf(cs.posture)}"><span class="dot2"></span>Sofia · ${esc(cs.posture)}</span>`;}
+function statePanel(cs,tr){
+  return `<div class="card tight">
+    <h4>How Sofia is responding to you</h4>
+    <p class="muted" style="font-size:12px;margin:6px 0 14px">This changes with every choice, and later phases read it.</p>
+    <div class="st"><div class="lab"><b>Willingness to go ahead</b><span>${cs.willingness}%</span></div>
+      <div class="bar"><i style="width:${cs.willingness}%;background:var(--mercury)"></i></div></div>
+    <div class="st"><div class="lab"><b>How she is holding herself</b></div>
+      <span class="persona ${moodOf(cs.posture)}" style="margin:2px 0 0"><span class="dot2"></span>${esc(moodWord(cs.posture))}</span></div>
+    <hr class="divider">
+    <h4>Trust</h4>
+    <div style="margin-top:8px">${tr.map(t=>`<div class="trustrow"><span>${esc(PLAIN[t.key]||t.name)}</span>
+      <span class="pip">${[0,1,2].map(i=>`<i class="${t.value>i?'f':''}${t.value<0&&i===0?' n':''}"></i>`).join('')}</span></div>`).join('')}</div>
+    <hr class="divider">
+    <h4>What she has told you</h4>
+    <div style="margin-top:8px">${cs.revealed.length?cs.revealed.map(r=>`<span class="tag ok">${esc(revPlain(r))}</span>`).join(''):'<span class="muted">Nothing beyond the surface yet</span>'}</div>
+    ${cs.withheld.length?`<h4 style="margin-top:14px">Still holding back</h4><div style="margin-top:8px">${cs.withheld.map(r=>`<span class="tag no">${esc(revPlain(r))}</span>`).join('')}</div>`:''}
+  </div>`;
+}
+
+async function commit(){
+  el('go').disabled=true;
+  const before=(VIEW&&VIEW.clientState)?VIEW.clientState.willingness:null;
+  const r=await api('/api/attempts/'+ATT.id+'/decision',{method:'POST',body:JSON.stringify({optionId:PICK,readStage:READ})});
+  if(!r.ok){alert((r.body&&r.body.error)||'Could not record that.');return;}
+  VIEW=r.body.view;
+  const fb=r.body.feedback,was=READ;
+  PICK=READ=null;
+  const a=await api('/api/attempts/'+ATT.id);ATT=a.body.attempt;
+  runner();
+  el('after').innerHTML=reactionHTML(fb,was,before,VIEW.clientState.willingness);
+  const tl=document.querySelector('#after .trustline i');
+  if(tl){requestAnimationFrame(()=>{setTimeout(()=>{tl.style.width=VIEW.clientState.willingness+'%';},120);});}
+  el('after').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function humanize(t){
+  return String(t)
+    .replace(/hidden_motivation/g,'why this matters to her now')
+    .replace(/budget_ceiling/g,'what she can spend')
+    .replace(/prior_experience_detail/g,'what happened to her friend')
+    .replace(/\(now (\d+)\/100\)/g,'(now $1%)')
+    .replace(/(\d+)\/100/g,'$1%')
+    .replace(/MATERIAL: /g,'')
+    .replace(/Willingness to proceed/gi,'Willingness')
+    .replace(/Posture: (\w+)/g,(m,p)=>'She is now '+p);
+}
+function shiftChip(t){
+  const s=humanize(t);
+  const down=/(-\d|−\d|falls|drops|lost|withdraw|guard|hidden|stays hidden|weaker|hesita|closes)/i.test(s);
+  const up=/(\+\d|rises|opens|reveal|gains|builds|stronger|volunteers|relax)/i.test(s);
+  return `<span class="shift ${up&&!down?'up':down?'down':'neutral'}">${esc(s)}</span>`;
+}
+function reactionHTML(f,was,before,after){
+  const vc=f.alignmentVerdict.startsWith('ALIGNED')?'v-A':f.alignmentVerdict.startsWith('PARTIALLY')?'v-P':'v-N';
+  const chips=(f.observableConsequence.ledgerChanges||[]).map(shiftChip).join('');
+  const delta=(before!=null&&after!=null)?(after-before):0;
+  return `
+  <div class="reaction">
+    <div class="lbl">Sofia, in the room</div>
+    <blockquote>${esc(humanize(f.observableConsequence.narrative))}</blockquote>
+    ${after!=null?`<div class="trustline"><i style="width:${before!=null?before:0}%"></i></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:5px">
+      <span>Her willingness to go ahead</span><span>${delta>0?'rising':delta<0?'falling':'holding'} · ${after}%</span></div>`:''}
+    ${chips?`<div>${chips}</div>`:''}
+  </div>
+  <div class="card fb">
+    <h2 style="margin-bottom:4px">The MIRROR read</h2>
+    <div class="blk"><div class="k">What you noticed</div><div class="v">You read her as <b>${esc(was||'—')}</b>. ${esc(f.signalDetected)}<br><span class="muted">${esc(f.mirrorInterpretation)}</span></div></div>
+    <div class="blk"><div class="k">What you did</div><div class="v"><span class="verdict ${vc}">${esc(f.alignmentVerdict)}</span> ${esc(f.learnerDid)}</div></div>
+    <div class="blk"><div class="k">What changed</div><div class="v">
+      ${f.observableConsequence.degradedNote?`<b>${esc(f.observableConsequence.degradedNote)}</b><br>`:''}
+      ${chips||'<span class="muted">Nothing moved — yet. She is watching what you do next.</span>'}</div></div>
+    <div class="blk"><div class="k">The MIRROR lesson</div><div class="v">${esc(f.canonicalPrinciple)}<br><span class="muted">${esc(f.alignmentReason)}</span></div></div>
+    <div class="blk"><div class="k">Try next</div><div class="v">${esc(f.nextPracticePriority)}</div></div>
+  </div>`;
+}
+
+/* ===================== TOOLKIT ===================== */
+async function renderToolkit(n,append){
+  const r=await api('/api/toolkits/'+n); if(!r.ok)return;
+  const tk=r.body, done=(ATT.artifacts||[]).find(a=>a.n===n&&a.valid);
+  const html=`<div class="tk">
+    <div class="hd"><span class="num">TOOLKIT #${tk.n}</span><h3 style="margin:0">${esc(tk.name)}</h3>${done?'<span class="tag ok">complete</span>':''}</div>
+    <p class="muted">${esc(tk.intro)}</p>
+    <div id="tkerr-${tk.n}"></div>
+    ${(tk.fields||[]).map(f=>fieldHTML(n,f)).join('')}
+    <button class="gold" onclick="submitTk(${n})">Save and use this</button>
+  </div>`;
+  el('tkslot').insertAdjacentHTML('beforeend',html);
+}
+function fieldHTML(n,f){
+  const id='f-'+n+'-'+f.name;
+  if(f.type==='checklist') return `<div class="tkf"><label>${esc(f.label)}</label>${f.items.map(i=>`<div class="chk"><input type="checkbox" id="${id}-${i.key}"><label for="${id}-${i.key}" style="margin:0;font-weight:400">${esc(i.label)}</label></div>`).join('')}</div>`;
+  if(f.type==='select') return `<div class="tkf"><label>${esc(f.label)}</label><select id="${id}"><option value="">Choose…</option>${f.options.map(o=>`<option>${esc(o)}</option>`).join('')}</select></div>`;
+  if(f.type==='text') return `<div class="tkf"><label>${esc(f.label)}</label><input id="${id}" type="text"></div>`;
+  return `<div class="tkf"><label>${esc(f.label)}</label><textarea id="${id}"></textarea></div>`;
+}
+async function submitTk(n){
+  const tk=(await api('/api/toolkits/'+n)).body, data={};
+  (tk.fields||[]).forEach(f=>{const id='f-'+n+'-'+f.name;
+    if(f.type==='checklist'){data[f.name]={};f.items.forEach(i=>{const e=el(id+'-'+i.key);data[f.name][i.key]=!!(e&&e.checked);});}
+    else{const e=el(id);data[f.name]=e?e.value:'';}});
+  const r=await api('/api/attempts/'+ATT.id+'/toolkit/'+n,{method:'POST',body:JSON.stringify(data)});
+  if(r.body&&r.body.valid===false){
+    const box=el('tkerr-'+n);
+    box.innerHTML=`<div class="issues"><b>Not yet — this needs to hold up before Sofia moves on:</b><ul>${r.body.issues.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></div>`;
+    box.scrollIntoView({behavior:'smooth',block:'center'});return;
+  }
+  const keep=el('after').innerHTML;
+  const a=await api('/api/attempts/'+ATT.id);ATT=a.body.attempt;VIEW=a.body.view;
+  runner(); el('after').innerHTML=keep;
+  el('nextslot').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ===================== ADVANCE / PHASE 8 ===================== */
+async function advance(){
+  const r=await api('/api/attempts/'+ATT.id+'/advance',{method:'POST',body:JSON.stringify({})});
+  if(!r.ok){alert(r.body.reason||r.body.error);return;}
+  const a=await api('/api/attempts/'+ATT.id);ATT=a.body.attempt;VIEW=a.body.view;PICK=READ=null;
+  if(r.body.decisionOutcome){continuation(r.body.decisionOutcome,r.body.continuationProposal);window.scrollTo(0,0);return;}
+  runner();window.scrollTo(0,0);
+}
+
+async function continuation(outcome,proposal){
+  if(!outcome||!proposal){
+    const r=await api('/api/attempts/'+ATT.id+'/continuation');
+    if(!r.ok)return alert(r.body.error);
+    outcome=r.body.decisionOutcome;proposal=r.body.proposal;
+    if(r.body.executed)return debrief(ATT.id);
+  }
+  const o=outcome.outcome,p=proposal;
+  el('view').innerHTML=`
+  <div class="phasebar">
+    <div><div class="pl">Phase 8 of 8</div><div class="pn">Relationship Continuation</div></div>
+    <div class="obj">What happens after she leaves is not automatic.<br><span class="muted">Continuation Engine · Toolkit #8</span></div>
+    <div class="dots">${PHASES.map((x,i)=>`<div class="dot ${i<7?'done':'now'}"></div>`).join('')}</div>
+  </div>
+  <div class="grid"><div>
+    <div class="outcome o-${o}">
+      <h4 style="opacity:.75">Sofia's decision</h4>
+      <div class="big">${o==='YES'?'She said yes':o==='DEFER'?'She wants time to think':'She said no'}</div>
+      <div class="said">“${esc(outcome.clientLanguage)}”</div>
+      <hr class="divider">
+      <h4>Why this ending is real</h4>
+      <p style="font-size:14px;margin:8px 0 6px">${o==='YES'?'She said yes because trust was actually in place — not because she was pushed.':o==='DEFER'?'She is not saying no — something she needs is not yet in place.':'The consultation lost her earlier, and this ending is the honest result.'}</p>
+      <ul class="muted" style="margin:4px 0 0;padding-left:18px;font-size:12.5px">${outcome.rationale.map(x=>`<li>${esc(humanize(x))}</li>`).join('')}</ul>
+    </div>
+    <div class="tk">
+      <div class="hd"><span class="num">TOOLKIT #8</span><h3 style="margin:0">Your follow-up plan</h3></div>
+      <p class="muted">${esc(p.instruction)}</p>
+      <div id="c8err"></div>
+      ${p.closureOptions?`<div class="tkf"><label>How this relationship closes</label><select id="closureDisposition">${p.closureOptions.map(c=>`<option value="${esc(c.key)}">${esc(c.label)} — ${esc(c.when)}</option>`).join('')}</select></div>`:''}
+      <table><thead><tr><th style="width:84px">When</th><th style="width:20%">Timing</th><th>Purpose</th><th style="width:16%">How</th><th style="width:18%">Who</th></tr></thead><tbody>
+      ${p.rows.map((r,i)=>`<tr><td><b>${esc(r.interval)}</b></td>
+        <td><input id="r-${i}-timing" placeholder="before 6pm"></td>
+        <td><input id="r-${i}-purpose" value="${esc(r.purpose)}"></td>
+        <td><input id="r-${i}-channel" placeholder="email"></td>
+        <td><input id="r-${i}-owner" placeholder="you"></td></tr>`).join('')}
+      </tbody></table>
+      ${p.prompts.agreedFollowUpDate?`<div class="tkf" style="margin-top:14px"><label>${esc(p.prompts.agreedFollowUpDate)}</label><input id="agreedFollowUpDate"></div>`:''}
+      ${p.prompts.closureNote?`<div class="tkf" style="margin-top:14px"><label>${esc(p.prompts.closureNote)}</label><textarea id="closureNote"></textarea></div>`:''}
+      <div class="tkf" style="margin-top:14px"><label>${esc(p.prompts.stopCondition)}</label><textarea id="stopCondition"></textarea></div>
+      <p class="muted">${esc(p.prompts.notes)}</p>
+      <button class="primary lg" onclick="finish(${p.rows.length})">Complete the consultation</button>
+    </div>
+  </div><div><div class="card tight">
+    <h4>What this outcome allows</h4>
+    <p class="muted" style="margin-top:10px">${esc(outcome.toolkitAttachment.note)}</p>
+  </div></div></div>`;
+}
+async function finish(rc){
+  const rows=[],trs=document.querySelectorAll('tbody tr');
+  for(let i=0;i<rc;i++){rows.push({interval:trs[i].querySelector('b').textContent,
+    timing:(el('r-'+i+'-timing')||{}).value||'',purpose:(el('r-'+i+'-purpose')||{}).value||'',
+    channel:(el('r-'+i+'-channel')||{}).value||'',owner:(el('r-'+i+'-owner')||{}).value||''});}
+  const payload={rows,stopCondition:(el('stopCondition')||{}).value||'',
+    agreedFollowUpDate:(el('agreedFollowUpDate')||{}).value||undefined,
+    closureNote:(el('closureNote')||{}).value||undefined,
+    closureDisposition:(el('closureDisposition')||{}).value||undefined};
+  const r=await api('/api/attempts/'+ATT.id+'/continuation',{method:'POST',body:JSON.stringify(payload)});
+  if(r.status===422){el('c8err').innerHTML=`<div class="issues"><b>Not yet — this plan needs:</b><ul>${r.body.issues.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></div>`;
+    el('c8err').scrollIntoView({behavior:'smooth',block:'center'});return;}
+  if(!r.ok)return alert(r.body.error);
+  debrief(ATT.id);window.scrollTo(0,0);
+}
+
+/* ===================== DEBRIEF ===================== */
+async function debrief(id,mgr){
+  const r=await api((mgr?'/api/manager/attempts/':'/api/attempts/')+id+(mgr?'':'/evidence'));
+  if(!r.ok)return alert(r.body.error);
+  const e=r.body,o=e.decisionOutcome;
+  const fbByPhase={};(e.feedback||[]).filter(f=>f.kind==='decision').forEach(f=>fbByPhase[f.phase]=f.feedback);
+  el('view').innerHTML=`
+  <div class="hero"><h1>Consultation debrief</h1>
+    <p>${esc(e.practitioner)} · ${new Date(e.startedAt).toLocaleDateString()}</p></div>
+  ${o?`<div class="outcome o-${o.outcome}">
+    <h4 style="opacity:.75">How it ended</h4>
+    <div class="big">${o.outcome==='YES'?'She said yes':o.outcome==='DEFER'?'She wanted time':'She said no'}</div>
+    ${e.continuation?`<p style="margin-top:12px">Relationship now: <b>${esc(relPlain(e.continuation.relationshipTransition.to))}</b></p>`:''}</div>`:''}
+  <div class="grid"><div>
+    <div class="card"><h2>Your consultation, decision by decision</h2>
+      ${(e.decisions||[]).map(d=>{const f=fbByPhase[d.phase];const v=f?f.alignmentVerdict:'';
+        const cls=v.startsWith('ALIGNED')?'a':v.startsWith('PARTIALLY')?'p':v?'n':'';
+        return `<div class="jstep"><div class="jn ${cls}">${phaseNum(d.phase)}</div><div>
+          <div class="jt">${esc(PHASES[phaseNum(d.phase)-1])} — ${esc(d.label)}</div>
+          <div class="jc">${d.readStage?'You read her as <b>'+esc(d.readStage)+'</b>. ':''}${f?esc(humanize(f.observableConsequence.narrative)):''}</div>
+        </div></div>`;}).join('')}
+    </div>
+    <div class="card"><h2>What you demonstrated</h2>
+      ${(e.competencyObservations||[]).length?`<table><thead><tr><th>Area</th><th>Reading</th><th>Based on</th></tr></thead><tbody>
+      ${e.competencyObservations.map(x=>`<tr><td><b>${esc(x.dimension)}</b></td>
+        <td><span class="tag ${(x.reading==='STRENGTH'||x.reading==='ESTABLISHED')?'ok':x.reading==='AT RISK'?'no':'gold'}">${esc(x.reading)}</span></td>
+        <td class="muted">${esc(x.evidence)}</td></tr>`).join('')}</tbody></table>`:'<p class="muted">No observations recorded.</p>'}
+      <p class="muted" style="margin-top:12px">These are observations of what happened, not a score.</p>
+    </div>
+    <div class="card"><h2>Your toolkit work</h2>
+      ${(e.toolkitArtifacts||[]).map(a=>`<details><summary>Toolkit #${a.n} — ${esc(a.name)} ${a.valid?'<span class="tag ok">complete</span>':'<span class="tag no">incomplete</span>'}</summary>
+      <table><tbody>${Object.entries(a.data||{}).map(([k,v])=>`<tr><td style="width:34%"><b>${esc(k)}</b></td><td>${esc(typeof v==='object'?JSON.stringify(v):v)}</td></tr>`).join('')}</tbody></table></details>`).join('')||'<p class="muted">None recorded.</p>'}
+    </div>
+    ${e.continuation?`<div class="card"><h2>What you committed to next</h2>
+      <table><thead><tr><th>When</th><th>Timing</th><th>Purpose</th><th>How</th><th>Who</th></tr></thead><tbody>
+      ${e.continuation.plan.rows.map(r=>`<tr><td><b>${esc(r.interval)}</b></td><td>${esc(r.timing)}</td><td>${esc(r.purpose)}</td><td>${esc(r.channel)}</td><td>${esc(r.owner)}</td></tr>`).join('')}</tbody></table>
+      <p style="margin-top:10px"><b>This stops when:</b> ${esc(e.continuation.plan.stopCondition)}</p></div>`:''}
+    ${!mgr?(()=>{
+      const turning=(e.feedback||[]).filter(f=>f.kind==='decision').find(f=>f.feedback&&!/^ALIGNED/.test(f.feedback.alignmentVerdict));
+      const tp=turning?PHASES[phaseNum(turning.phase)-1]:null;
+      if(o&&o.outcome!=='YES'&&tp)return `<div class="card" style="background:var(--gold-soft);border-color:#E5D9BC">
+        <h2 style="margin-bottom:6px">The turning point</h2>
+        <p style="margin:0 0 4px">This consultation changed direction at <b>${esc(tp)}</b> — one decision, and Sofia ${o.outcome==='NO'?'never came back from it':'held back the rest of the way'}.</p>
+        <p class="muted">Play it again and take that moment differently. Everything after it changes.</p>
+        <button class="primary lg" style="margin-top:10px" onclick="startNew()">Replay the turning point</button></div>`;
+      if(o&&o.outcome==='YES')return `<div class="card" style="background:var(--gold-soft);border-color:#E5D9BC">
+        <h2 style="margin-bottom:6px">You have seen it go right</h2>
+        <p class="muted" style="margin:0">Now see what you were protecting. Play it again and reassure where you explored — watch what Sofia stops telling you.</p>
+        <button class="lg" style="margin-top:12px" onclick="startNew()">Try the other path</button></div>`;
+      return '';})():''}
+    <div class="card"><button class="primary" onclick="${mgr?'managerHome()':'journey()'}">← Back</button>
+      ${mgr?'':'<button style="margin-left:8px" onclick="startNew()">Practise again — change one early choice</button>'}</div>
+  </div><div>${statePanel(e.clientStateFinal,e.trustReadout)}</div></div>`;
+  window.scrollTo(0,0);
+}
+
+/* ===================== MANAGER ===================== */
+async function managerHome(){
+  const r=await api('/api/manager/attempts');
+  const list=r.body.attempts||[];
+  const byP={};list.forEach(a=>{(byP[a.practitionerName]=byP[a.practitionerName]||[]).push(a);});
+  const key=n=>'coach-'+n.replace(/\W/g,'');
+  el('view').innerHTML=`
+  <div class="hero"><h1>${esc(r.body.clinic)}</h1>
+    <p>Everything below is your team's actual recorded practice — the decisions they made, what those did to the client, and what they wrote in their own words.</p></div>
+  ${list.length?Object.entries(byP).map(([name,rows])=>{
+    const done=rows.filter(a=>a.outcome);
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <h2 style="margin:0">${esc(name)}</h2>
+        <span class="muted">${rows.length} consultation${rows.length>1?'s':''} · ${done.length} completed</span></div>
+      <table style="margin-top:14px"><thead><tr><th>Started</th><th>Reached</th><th>Toolkits used</th><th>Outcome</th><th>Follow-up</th><th></th></tr></thead><tbody>
+      ${rows.map(a=>`<tr class="click" onclick="debrief('${a.id}',true)">
+        <td>${new Date(a.startedAt).toLocaleDateString()}</td>
+        <td>${esc(a.phaseReached)}</td>
+        <td>${(a.toolkitsValid||[]).map(n=>`<span class="tag">#${n}</span>`).join('')||'<span class="muted">—</span>'}</td>
+        <td>${a.outcome?`<span class="tag ${a.outcome==='YES'?'ok':a.outcome==='NO'?'no':'gold'}">${esc(a.outcome)}</span>`:'<span class="muted">in progress</span>'}</td>
+        <td>${a.continuationPlanned?'<span class="tag ok">planned</span>':'<span class="muted">—</span>'}</td>
+        <td><button>Open</button></td></tr>`).join('')}</tbody></table>
+      <div id="${key(name)}" class="muted" style="margin-top:12px">Reading recorded evidence…</div>
+    </div>`;}).join('')
+  :`<div class="card"><div class="empty"><div class="ei">◍</div><p><b>No practice recorded yet.</b><br>When your practitioners complete consultations, their decisions and evidence appear here.</p></div></div>`}`;
+
+  for(const [name,rows] of Object.entries(byP)){
+    const counts={},brokeAt={},completed=rows.filter(x=>x.outcome);
+    for(const a of completed){
+      const ev=await api('/api/manager/attempts/'+a.id);
+      (ev.body.competencyObservations||[]).filter(o=>o.reading==='DEVELOPMENT AREA'||o.reading==='AT RISK')
+        .forEach(o=>counts[o.dimension]=(counts[o.dimension]||0)+1);
+      const mis=(ev.body.feedback||[]).filter(f=>f.kind==='decision')
+        .find(f=>f.feedback&&!/^ALIGNED/.test(f.feedback.alignmentVerdict));
+      if(mis){const pn=phaseNum(mis.phase);brokeAt[pn]=(brokeAt[pn]||0)+1;}
+    }
+    const rep=Object.entries(counts).filter(([,c])=>c>=2).sort((a,b)=>b[1]-a[1]);
+    const brk=Object.entries(brokeAt).filter(([,c])=>c>=2).sort((a,b)=>b[1]-a[1]);
+    const box=el(key(name)); if(!box)continue;
+    const first=name.split(' ')[0];
+    if(!completed.length){box.innerHTML='<span class="muted">No completed consultations yet.</span>';continue;}
+    const parts=[];
+    if(brk.length){const [pn,c]=brk[0];parts.push(`In ${c} of ${completed.length} completed consultations, trust first broke at <b>Phase ${pn} — ${esc(PHASES[pn-1])}</b>.`);}
+    else{const one=Object.entries(brokeAt)[0];if(one)parts.push(`Trust first broke at <b>Phase ${one[0]} — ${esc(PHASES[one[0]-1])}</b> in one consultation — watch whether it repeats.`);}
+    if(rep.length){const [d,c]=rep[0];parts.push(`The recurring pattern is <b>${esc(d.toLowerCase())}</b> (${c}×).`);
+      parts.push(`<span class="tag gold" style="margin-top:6px">Coach next</span> Sit with ${esc(first)} on ${esc(d.toLowerCase())} before their next case${brk.length?` — that is where Phase ${brk[0][0]} keeps going wrong`:''}.`);}
+    else{const em=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+      if(em)parts.push(`Emerging development area: <b>${esc(em[0].toLowerCase())}</b>. <span class="tag gold" style="margin-top:6px">Coach next</span> Worth a conversation with ${esc(first)} before their next case.`);}
+    box.innerHTML=parts.length?`<span style="color:var(--ink)">${parts.join(' ')}</span>`
+      :'<span class="muted">Nothing to coach yet — their completed consultations held trust all the way through.</span>';
+  }
+  window.scrollTo(0,0);
+}
+
+if(TOKEN) boot().catch(()=>sessionEnded());
+el('password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
