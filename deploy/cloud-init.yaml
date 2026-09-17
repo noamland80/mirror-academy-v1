@@ -1,0 +1,376 @@
+#cloud-config
+# =============================================================================
+# MIRROR — one-shot provisioning for a small VPS.
+#
+# HOW THIS IS MEANT TO BE USED. It is passed as the server's "user data" when
+# the server is created, so the machine builds itself on first boot and nobody
+# types anything into a terminal. Hetzner, DigitalOcean, Scaleway and Vultr all
+# accept this file in the "cloud-init / user data" box of their create-server
+# form, and all of them accept it through their HTTPS API, which is how MIRROR
+# provisions itself once the owner's API token exists.
+#
+# WHAT IT BUILDS.
+#   · Node 22 from NodeSource (the runtime the product needs for node:sqlite)
+#   · Caddy as the reverse proxy, which obtains and renews the TLS certificate
+#     from Let's Encrypt on its own — no certbot, no cron, no renewal to forget
+#   · a dedicated unprivileged `mirror` user that owns nothing but the app
+#   · the app under /opt/mirror, its database under /var/lib/mirror
+#   · a systemd service that restarts on failure and starts on boot
+#   · a nightly backup timer, and a weekly RESTORE REHEARSAL, because a backup
+#     nobody has restored is not a backup
+#   · ufw allowing only 22, 80 and 443
+#
+# WHAT IT DOES NOT DO. It does not put a single secret in this file. The env
+# file is created empty and root-only; the owner pastes his Stripe keys into it
+# once, or MIRROR writes them there over SSH at his instruction. A cloud-init
+# file is visible in the provider's console and in the instance metadata, so a
+# key in here is a key in a web UI forever.
+#
+# PLACEHOLDERS the provisioner substitutes before submitting:
+#   __DOMAIN__       the hostname, e.g. mirror.example.com
+#   __REPO__         the git URL to deploy from
+#   __REF__          the tag or branch to check out
+#   __ADMIN_EMAIL__  where Let's Encrypt sends expiry warnings
+# =============================================================================
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - git
+  - ufw
+  - debian-keyring
+  - debian-archive-keyring
+  - apt-transport-https
+  - ca-certificates
+
+users:
+  - name: mirror
+    system: true
+    shell: /usr/sbin/nologin
+    home: /opt/mirror
+    lock_passwd: true
+
+write_files:
+  # ---------------------------------------------------------------------------
+  # Caddy. Two lines of configuration is the whole of TLS, HTTP/2, redirects
+  # and renewal. The health check is exempted from the access log so a monitor
+  # polling every minute does not bury everything else.
+  - path: /etc/caddy/Caddyfile
+    permissions: '0644'
+    content: |
+      {
+        email __ADMIN_EMAIL__
+      }
+
+      __DOMAIN__ {
+        encode zstd gzip
+
+        # Security headers. No CSP yet: the product loads Google Fonts and its
+        # own inline scripts, and a policy written without testing it against
+        # every page is a policy that breaks a page nobody checked.
+        header {
+          Strict-Transport-Security "max-age=31536000; includeSubDomains"
+          X-Content-Type-Options "nosniff"
+          X-Frame-Options "SAMEORIGIN"
+          Referrer-Policy "strict-origin-when-cross-origin"
+          -Server
+        }
+
+        # Stripe's webhook must reach the app with its body byte-for-byte
+        # unchanged, or the signature will not verify. Caddy proxies bodies
+        # untouched; this comment exists so nobody adds a rewrite here later.
+        reverse_proxy 127.0.0.1:8080
+
+        log {
+          output file /var/log/caddy/mirror.log {
+            roll_size 50MiB
+            roll_keep 10
+            roll_keep_for 720h
+          }
+          format json
+        }
+      }
+
+  # ---------------------------------------------------------------------------
+  # The service. Hardened with the systemd options that cost nothing: the app
+  # needs one writable directory and no privileges at all.
+  - path: /etc/systemd/system/mirror.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=MIRROR Consultation Training System
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      User=mirror
+      Group=mirror
+      WorkingDirectory=/opt/mirror/app
+      EnvironmentFile=/etc/mirror/mirror.env
+      ExecStart=/usr/bin/node server/index.js
+      Restart=always
+      RestartSec=3
+      # Crash-looping on a bad config should not hammer the machine for ever.
+      StartLimitIntervalSec=300
+      StartLimitBurst=10
+
+      NoNewPrivileges=true
+      PrivateTmp=true
+      ProtectSystem=strict
+      ProtectHome=true
+      ReadWritePaths=/var/lib/mirror
+      ProtectKernelTunables=true
+      ProtectKernelModules=true
+      ProtectControlGroups=true
+      RestrictSUIDSGID=true
+      LockPersonality=true
+      MemoryDenyWriteExecute=true
+
+      [Install]
+      WantedBy=multi-user.target
+
+  # ---------------------------------------------------------------------------
+  # The environment file. Created empty and root-only. Everything secret lives
+  # here and nowhere else — not in the repository, not in cloud-init, not in a
+  # backup.
+  - path: /etc/mirror/mirror.env
+    permissions: '0600'
+    owner: root:root
+    content: |
+      NODE_ENV=production
+      # production, not hosted: hosted still seeds the Wild Magic demo clinic
+      # with safe passwords. An instance real clinics buy into contains nothing
+      # but real clinics. See server/seed.js.
+      MIRROR_MODE=production
+      PORT=8080
+      MIRROR_DB=/var/lib/mirror/mirror.db
+      MIRROR_BACKUP_DIR=/var/lib/mirror/backups
+      MIRROR_BACKUP_KEEP=14
+      MIRROR_PUBLIC_URL=https://__DOMAIN__
+      # --- filled in by the owner, once, and never committed anywhere ---
+      # MIRROR_ADMIN_TOKEN=
+      # STRIPE_SECRET_KEY=
+      # STRIPE_WEBHOOK_SECRET=
+      # MAIL_PROVIDER=
+      # MAIL_API_KEY=
+      # MAIL_FROM=
+
+  # ---------------------------------------------------------------------------
+  # LOG ROTATION.
+  #
+  # Caddy writes one JSON line per request to /var/log/caddy/mirror.log. On a
+  # 40 GB disk that file is the most likely thing to fill it, and a full disk
+  # takes MIRROR down — SQLite cannot write, and the failure looks like a
+  # database fault rather than a housekeeping one. So both log sinks are capped.
+  #
+  # Caddy's own log rolling is configured in the Caddyfile (roll_size /
+  # roll_keep); logrotate is here as the belt to that brace, for anything else
+  # that lands in that directory.
+  - path: /etc/logrotate.d/mirror-caddy
+    permissions: '0644'
+    content: |
+      /var/log/caddy/*.log {
+        daily
+        rotate 14
+        maxsize 50M
+        compress
+        delaycompress
+        missingok
+        notifempty
+        create 0640 caddy caddy
+        sharedscripts
+        postrotate
+          systemctl reload caddy >/dev/null 2>&1 || true
+        endscript
+      }
+
+  # journald holds the application's own output. Uncapped it grows until the
+  # disk does, so it is given a hard ceiling and a retention window.
+  - path: /etc/systemd/journald.conf.d/mirror.conf
+    permissions: '0644'
+    content: |
+      [Journal]
+      SystemMaxUse=500M
+      SystemMaxFileSize=50M
+      MaxRetentionSec=1month
+
+  # ---------------------------------------------------------------------------
+  # Nightly backup, and a weekly proof that a backup restores.
+  - path: /etc/systemd/system/mirror-backup.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=MIRROR nightly backup
+      [Service]
+      Type=oneshot
+      User=mirror
+      EnvironmentFile=/etc/mirror/mirror.env
+      WorkingDirectory=/opt/mirror/app
+      ExecStart=/usr/bin/node scripts/backup.js
+
+  - path: /etc/systemd/system/mirror-backup.timer
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=MIRROR nightly backup
+      [Timer]
+      OnCalendar=*-*-* 03:20:00
+      RandomizedDelaySec=600
+      Persistent=true
+      [Install]
+      WantedBy=timers.target
+
+  - path: /etc/systemd/system/mirror-restore-drill.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=MIRROR weekly restore rehearsal — proves the newest backup is restorable
+      [Service]
+      Type=oneshot
+      User=mirror
+      EnvironmentFile=/etc/mirror/mirror.env
+      WorkingDirectory=/opt/mirror/app
+      # --check touches nothing. A non-zero exit is a failed unit, which is
+      # visible in `systemctl --failed` and in any monitor watching it.
+      ExecStart=/bin/sh -c 'node scripts/restore.js --check "$(ls -1t /var/lib/mirror/backups/*.db | head -1)"'
+
+  - path: /etc/systemd/system/mirror-restore-drill.timer
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=MIRROR weekly restore rehearsal
+      [Timer]
+      OnCalendar=Sun *-*-* 04:10:00
+      Persistent=true
+      [Install]
+      WantedBy=timers.target
+
+  # ---------------------------------------------------------------------------
+  # ROLLBACK.
+  #
+  # Going back to the previous release must be one command that cannot think
+  # about it. `deploy.sh` records the ref it replaced before it changes
+  # anything, so this needs no argument and no judgement at 2am.
+  #
+  # It does NOT touch the database. A schema here only ever adds tables and
+  # columns, so an older build ignores what it does not know about; rolling the
+  # DATA back is `restore.js`, which is a separate and much bigger decision.
+  - path: /opt/mirror/rollback.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # MIRROR rollback. Usage: /opt/mirror/rollback.sh [ref]
+      set -euo pipefail
+      PREV_FILE=/var/lib/mirror/previous-ref
+      REF="${1:-}"
+      if [ -z "$REF" ]; then
+        [ -f "$PREV_FILE" ] || { echo "No previous release recorded at $PREV_FILE. Pass a ref explicitly."; exit 2; }
+        REF="$(cat "$PREV_FILE")"
+      fi
+      echo "Rolling back to $REF"
+      # Deploy the old ref through the ordinary path, so it is installed and
+      # tested exactly as a forward release would be.
+      /opt/mirror/deploy.sh "$REF" --no-record
+      echo "MIRROR rolled back to $REF. The database was not touched."
+
+  # ---------------------------------------------------------------------------
+  # Deploy and update. The same script does both, so the first install and the
+  # hundredth update take the identical path.
+  - path: /opt/mirror/deploy.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # MIRROR deploy / update / rollback. Usage: /opt/mirror/deploy.sh [git-ref] [--no-record]
+      set -euo pipefail
+      REF="${1:-__REF__}"
+      RECORD=1
+      [ "${2:-}" = "--no-record" ] && RECORD=0
+      APP=/opt/mirror/app
+      PREV_FILE=/var/lib/mirror/previous-ref
+
+      install -d -o mirror -g mirror /var/lib/mirror /var/lib/mirror/backups
+
+      if [ ! -d "$APP/.git" ]; then
+        git clone --depth 50 "__REPO__" "$APP"
+      fi
+      cd "$APP"
+
+      # What is running right now, recorded BEFORE anything changes, so a
+      # rollback has somewhere to go back to even if this deploy dies halfway.
+      CURRENT="$(git describe --tags --exact-match 2>/dev/null || git rev-parse HEAD 2>/dev/null || echo '')"
+
+      # A backup before every deploy. Cheap, and the one moment a database is
+      # most likely to be wanted back is just after a release.
+      if [ -f /var/lib/mirror/mirror.db ]; then
+        sudo -u mirror env MIRROR_DB=/var/lib/mirror/mirror.db \
+          MIRROR_BACKUP_DIR=/var/lib/mirror/backups node scripts/backup.js || \
+          echo 'pre-deploy backup failed — continuing, the database is unchanged'
+      fi
+
+      git fetch --tags --depth 50 origin
+      git checkout -f "$REF"
+
+      npm ci --omit=dev --omit=optional --no-audit --no-fund
+
+      # THE GATE. The tests run before the service is pointed at the new code,
+      # and a failure leaves the OLD service running and puts the working tree
+      # back where it was — so a bad release is a non-event rather than an
+      # outage plus a confusing half-deployed checkout.
+      if ! npm test; then
+        echo 'TESTS FAILED — this release will not be started.'
+        if [ -n "$CURRENT" ]; then
+          git checkout -f "$CURRENT"
+          npm ci --omit=dev --omit=optional --no-audit --no-fund || true
+          echo "Working tree returned to $CURRENT. The running service was never restarted."
+        fi
+        exit 1
+      fi
+
+      chown -R mirror:mirror "$APP"
+
+      systemctl daemon-reload
+      systemctl restart mirror
+      sleep 2
+      # Prove it answers before declaring success. If it does not, go straight
+      # back: a deploy that installed cleanly and then will not serve is
+      # exactly the case a rollback exists for.
+      if ! curl -fsS --max-time 10 http://127.0.0.1:8080/api/health >/dev/null; then
+        echo 'NEW RELEASE DOES NOT ANSWER — rolling back.'
+        if [ -n "$CURRENT" ]; then
+          git checkout -f "$CURRENT"
+          npm ci --omit=dev --omit=optional --no-audit --no-fund || true
+          systemctl restart mirror
+          sleep 2
+          curl -fsS --max-time 10 http://127.0.0.1:8080/api/health >/dev/null && \
+            echo "Rolled back to $CURRENT and serving."
+        fi
+        exit 1
+      fi
+
+      # Only a release that installed, passed its tests and answered becomes
+      # the thing a rollback returns to.
+      if [ "$RECORD" = "1" ] && [ -n "$CURRENT" ] && [ "$CURRENT" != "$REF" ]; then
+        echo "$CURRENT" > "$PREV_FILE"
+        chown mirror:mirror "$PREV_FILE"
+      fi
+
+      echo "MIRROR is running $REF"
+
+runcmd:
+  - [ bash, -lc, "curl -fsSL https://deb.nodesource.com/setup_22.x | bash -" ]
+  - [ bash, -lc, "apt-get install -y nodejs" ]
+  - [ bash, -lc, "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg" ]
+  - [ bash, -lc, "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' > /etc/apt/sources.list.d/caddy-stable.list" ]
+  - [ bash, -lc, "apt-get update && apt-get install -y caddy" ]
+  - [ bash, -lc, "install -d -o mirror -g mirror /var/lib/mirror /var/lib/mirror/backups /opt/mirror" ]
+  - [ bash, -lc, "install -d -o caddy -g caddy /var/log/caddy" ]
+  - [ bash, -lc, "systemctl restart systemd-journald" ]
+  - [ bash, -lc, "ufw default deny incoming && ufw default allow outgoing && ufw allow 22 && ufw allow 80 && ufw allow 443 && ufw --force enable" ]
+  - [ bash, -lc, "/opt/mirror/deploy.sh || echo 'MIRROR first deploy failed — see journalctl -u mirror' " ]
+  - [ bash, -lc, "systemctl enable --now mirror mirror-backup.timer mirror-restore-drill.timer" ]
+  - [ bash, -lc, "systemctl reload caddy || systemctl restart caddy" ]
+
+final_message: "MIRROR provisioning finished after $UPTIME seconds. Paste the Stripe keys into /etc/mirror/mirror.env and run: systemctl restart mirror"
