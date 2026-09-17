@@ -5,12 +5,14 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "test": "node test/verify-academy.js && node test/verify-bilingual.js && node test/verify-book-citations.js && node test/verify-case-04-05.js && node test/verify-case-06-07.js && node test/verify-case-08-09.js && node test/verify-claims-are-true.js && node test/verify-coaching-effect.js && node test/verify-coaching-returns.js && node test/verify-commercial-journey.js && node test/verify-content.js && node test/verify-credentials.js && node test/verify-entitlement.js && node test/verify-hosted-readiness.js && node test/verify-no-english-comparisons.js && node test/verify-nothing-invented.js && node test/verify-password-reset.js && node test/verify-product-v2.js && node test/verify-sofia-branching.js && node test/verify-spanish-is-spanish.js && node test/verify-treatments.js",
+    "test": "node test/verify-academy.js && node test/verify-bilingual.js && node test/verify-book-citations.js && node test/verify-buyer-journey.js && node test/verify-case-04-05.js && node test/verify-case-06-07.js && node test/verify-case-08-09.js && node test/verify-claims-are-true.js && node test/verify-coaching-effect.js && node test/verify-coaching-returns.js && node test/verify-commercial-journey.js && node test/verify-content.js && node test/verify-credentials.js && node test/verify-entitlement.js && node test/verify-entitlement-authority.js && node test/verify-hosted-readiness.js && node test/verify-monday.js && node test/verify-no-english-comparisons.js && node test/verify-nothing-invented.js && node test/verify-operations.js && node test/verify-password-reset.js && node test/verify-product-v2.js && node test/verify-public-sample.js && node test/verify-sofia-branching.js && node test/verify-spanish-is-spanish.js && node test/verify-treatments.js",
     "test:engine": "node test/verify-product-v2.js",
     "test:academy": "node test/verify-academy.js",
     "seed:demo": "node server/seed-demo.js",
     "test:journey": "node test/verify-commercial-journey.js",
-    "test:spanish": "node test/verify-spanish-is-spanish.js"
+    "test:spanish": "node test/verify-spanish-is-spanish.js",
+    "backup": "node scripts/backup.js",
+    "restore": "node scripts/restore.js"
   },
   "engines": {
     "node": ">=18"

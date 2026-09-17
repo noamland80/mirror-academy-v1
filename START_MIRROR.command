@@ -85,7 +85,8 @@ if [ "$READY" -ne 1 ]; then
 fi
 
 # ---------- 5. Open ----------
-open "http://localhost:$PORT/"
+# /app is the product; the root is the commercial page.
+open "http://localhost:$PORT/app"
 
 echo "   ${GRN}${BOLD}MIRROR is open in your browser.${OFF}"
 echo ""

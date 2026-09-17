@@ -160,7 +160,9 @@ if [ -z "$READY" ]; then
   fail "MIRROR started but did not finish opening.\n\nWhat it reported: ${DETAIL:-nothing}\n\nTrying again usually works. If it does not, send this window to Noam."
 fi
 
-URL="http://127.0.0.1:$PORT/"
+# /app is the product. The root is the commercial page, which a buyer who
+# already owns MIRROR has no reason to land on.
+URL="http://127.0.0.1:$PORT/app"
 say "MIRROR is open in your browser."
 printf '\n'
 rule
