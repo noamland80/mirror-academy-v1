@@ -32,8 +32,8 @@
   "credentialPolicy": "The three demo passwords published in the public repository are burned. MIRROR_MODE=hosted refuses them, requires env-supplied replacements of at least 16 characters, and re-proves at startup that no burned credential authenticates against the live database.",
   "audit": "See ACADEMY_DEPTH_AUDIT.md — 15-lesson stratified depth audit across six seeds, three learner journeys, and the findings fixed as a result.",
   "runtime": "Node 22.5+ needs nothing installed (uses node:sqlite). Older Node fetches one component on first run. express/cors/uuid are vendored into the package; there is no build step.",
-  "learningLoop": "60/60 lessons close the loop. 60 retry moments, each naming which of six axes moves: disclosure 15, clientResponse 12, continuation 10, recommendation 9, trust 7, objection 7. translate and drill blocks are explicitly NOT counted as retries — a reveal is not a second attempt.",
-  "bookProvenance": "Citations are verified against the author’s own EPUB by test/verify-book-citations.js, including that every client story is attributed to the chapter it actually appears in. The book text is not shipped in the product.",
+  "learningLoop": "60/60 lessons close the shipped loop LEARN → SEE → DECIDE → CONSEQUENCE → UNDERSTAND → RETRY → APPLY → REFLECT, and 0 lessons are reading-heavier than they are decision-heavy (scripts/loop-audit.js). 60 retry moments, each naming which of six axes moves: disclosure 15, clientResponse 12, continuation 10, recommendation 9, trust 7, objection 7. A reveal is never a retry: translate and drill blocks are excluded from the retry count by the audit itself.",
+  "bookProvenance": "Each lesson carries provenance.chapter and provenance.principle, rendered on screen. test/verify-book-citations.js (23 assertions) checks those citations against test/fixtures/book-index.json — a fingerprint index of chapter titles, word counts, distinctive terms and per-chapter client names, GENERATED FROM the author’s EPUB. That is what is machine-checked: the citations against the index. It is NOT an independent verification against the book masters, which were not present in the build environment when this RC was frozen. The masters (EN + ES) are supplied to reviewers as a separate delivery for exactly that confirmation. The book text is not stored in, and is not shipped with, the product.",
   "validation": "NOT VALIDATED WITH REAL USERS. No efficacy claim is made anywhere in the product. See PILOT_USER_TEST.md for the unrun protocol.",
   "languagePolicy": "Both languages ship. Every client-facing string is a T(en, es) pair resolved at the API boundary; parity is enforced on instructional value, not only on key sets — see test/verify-spanish-is-spanish.js and test/verify-no-english-comparisons.js.",
   "treatmentPolicy": "Every lesson applies its own principle to named treatments a Madrid clinic sells, at plausible 2026 prices, in that treatment’s own vocabulary. No efficacy or clinical claim is made anywhere: the product describes what is said in the room, never what a treatment achieves. Enforced by test/verify-treatments.js and test/verify-nothing-invented.js.",
@@ -43,5 +43,15 @@
     "No hosted instance. All deploy artifacts (Dockerfile, render.yaml, fly.toml) exist and are verified, but this environment blocks tunnels and PaaS APIs, so the product has never been served from a public URL.",
     "Never seen in its real typefaces: Google Fonts is blocked here, so all visual verification used fallback faces.",
     "No real-user validation, therefore no efficacy claim."
-  ]
+  ],
+  "canonicalProvenance": "server/framework/canonical.js cites MBOK v0.17 per element (Ch.1 s1.16 for the 8 phases, Ch.2 for the 4 Duties, Ch.3 for the 7 Stages and 6 Standards, Ch.6 for the Relationship Continuum). Those citations are asserted by the implementation and are NOT machine-checked: the MBOK document was not present in the build environment. The MBOK v0.17 master is supplied to reviewers as a separate delivery so the mapping can be confirmed against the source.",
+  "entitlement": {
+    "plan": "founding_pilot",
+    "name": "Founding Pilot",
+    "priceEur": 490,
+    "oneTime": true,
+    "clinics": 1,
+    "practitionerSeats": 5,
+    "note": "The seat count is governance and lives only in server/tenancy.js PLANS. test/verify-entitlement.js fails if the API, the landing page or the in-product copy states a different number in either language."
+  }
 }
