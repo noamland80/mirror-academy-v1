@@ -33,6 +33,7 @@ const payments = require('./payments');
 const audit = require('./audit');
 const onboarding = require('./onboarding');
 const mailer = require('./mailer');
+const verification = require('./verification');
 
 /** The case an attempt belongs to. */
 const S = a => scenarios.get(a.scenario);
@@ -922,6 +923,66 @@ app.get('/api/admin/clinics', async (req, res) => {
   if (!operator(req, res)) return;
   try { res.json({ clinics: await tenancy.listClinics(db) }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ---------------------------------------------------------------------------
+// THE VERIFICATION TENANT
+//
+// A disposable clinic carrying a deliberately stale `seats=10` row, so the
+// legacy-seat hazard can be proved CLOSED on the running instance by somebody
+// who does not take the test suite's word for it.
+//
+// It exists only when the operator asks for it, it is never seeded, its id
+// always begins `clinic_verify_`, and removal refuses any other id. The
+// production database still starts with zero clinics and zero accounts, and
+// the cold buyer journey remains the only thing that creates a real tenant.
+// See server/verification.js.
+// ---------------------------------------------------------------------------
+app.post('/api/admin/verification-tenant', async (req, res) => {
+  if (!operator(req, res)) return;
+  try {
+    const made = await verification.create(db, {
+      staleSeats: Number((req.body || {}).staleSeats) || 10
+    });
+    const proof = await verification.describe(db, made.clinicId);
+    // The password is returned exactly once, to the operator who asked for it.
+    res.status(201).json({ ...proof, manager: made.manager, password: made.password });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/verification-tenant', async (req, res) => {
+  if (!operator(req, res)) return;
+  try { res.json({ tenants: await verification.list(db) }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/verification-tenant/:id', async (req, res) => {
+  if (!operator(req, res)) return;
+  try {
+    const d = await verification.describe(db, req.params.id);
+    if (!d) return res.status(404).json({ error: 'No such verification tenant' });
+    res.json(d);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+/** Put the stale row back, after a restart has repaired it. */
+app.post('/api/admin/verification-tenant/:id/restale', async (req, res) => {
+  if (!operator(req, res)) return;
+  try {
+    res.json(await verification.restale(db, req.params.id,
+      Number((req.body || {}).staleSeats) || 10));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/verification-tenant/:id', async (req, res) => {
+  if (!operator(req, res)) return;
+  try {
+    const gone = await verification.remove(db, req.params.id);
+    const clinics = await db.get(`SELECT COUNT(*) n FROM clinics`);
+    res.json({ ...gone, clinicsRemaining: clinics.n });
+  } catch (e) {
+    res.status(e.code === 'NOT_VERIFICATION_TENANT' ? 400 : 500).json({ error: e.message });
+  }
 });
 
 /** The manager's own clinic: plan, seats, payment state. */
