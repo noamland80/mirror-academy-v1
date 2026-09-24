@@ -64,8 +64,8 @@ function attempt({ id, practitionerId, startedAt, optionIds, phaseHolds }) {
 
   const EASY = 'disc-accept';       // one of the took_the_easy_yes pattern options
   const GOOD = 'disc-slow';         // not in the pattern
-  const BEFORE = '2026-09-01T09:00:00.000Z';
-  const AFTER = '2026-09-20T09:00:00.000Z';
+  const BEFORE = new Date(Date.now() - 21 * 864e5).toISOString();
+  const AFTER = new Date(Date.now() + 36e5).toISOString();
 
   sec('RECORDING A COACHING CONVERSATION');
   let err = null;
