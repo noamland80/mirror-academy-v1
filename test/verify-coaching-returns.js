@@ -96,7 +96,7 @@ const PRIVATE_NOTE =
 
   sec('SHE IS COACHED, AND THE LOOP CLOSES ON HER SCREEN');
   const EASY = 'disc-accept', GOOD = 'disc-slow';
-  const BEFORE = '2026-09-01T09:00:00.000Z', AFTER = '2026-09-20T09:00:00.000Z';
+  const BEFORE = new Date(Date.now() - 21 * 864e5).toISOString(), AFTER = new Date(Date.now() + 36e5).toISOString();
   for (const a of [
     attempt('e1', elena.id, BEFORE, [EASY, EASY, EASY], [false, false, false]),
     attempt('e2', elena.id, BEFORE, [EASY, EASY, GOOD], [false, false, true]),
